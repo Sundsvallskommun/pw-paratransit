@@ -144,12 +144,12 @@
 
 ## Status
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_template-camunda&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_template-camunda)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_template-camunda&metric=reliability_rating)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_template-camunda)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_template-camunda&metric=security_rating)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_template-camunda)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_template-camunda&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_template-camunda)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_template-camunda&metric=vulnerabilities)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_template-camunda)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_template-camunda&metric=bugs)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_template-camunda)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_pw-paratransit&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_pw-paratransit)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_pw-paratransit&metric=reliability_rating)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_pw-paratransit)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_pw-paratransit&metric=security_rating)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_pw-paratransit)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_pw-paratransit&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_pw-paratransit)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_pw-paratransit&metric=vulnerabilities)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_pw-paratransit)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_pw-paratransit&metric=bugs)](https://sonarcloud.io/summary/overall?id=Sundsvallskommun_pw-paratransit)
 
 ## 
 
