@@ -6,10 +6,10 @@
 		<artifactId>dept44-service-parent</artifactId>
 		<version>6.0.9</version>
 	</parent>
-	<groupId>se.sundsvall.workflow</groupId>
-	<artifactId>template-camunda</artifactId>
+	<groupId>se.sundsvall.paratransit</groupId>
+	<artifactId>pw-paratransit</artifactId>
 	<version>0.1</version>
-	<name>template-camunda</name>
+	<name>pw-paratransit</name>
 	<properties>
 		<!-- Camunda properties -->
 		<camunda.version>7.23.0</camunda.version>
@@ -109,7 +109,7 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<configuration>
 					<excludes>
-						<exclude>**/se/sundsvall/workflow/Application*</exclude>
+						<exclude>**/se/sundsvall/paratransit/Application*</exclude>
 						<exclude>**/generated/se/sundsvall/**</exclude>
 					</excludes>
 				</configuration>
