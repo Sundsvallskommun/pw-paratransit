@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,8 +23,7 @@ import se.sundsvall.paratransit.service.ProcessService;
 @ActiveProfiles("junit")
 class ProcessResourceTest {
 
-	private static final String START_PATH = "/{municipalityId}/process/start/{businessKey}";
-	private static final String UPDATE_PATH = "/{municipalityId}/process/update/{processInstanceId}";
+	static final String PATH = "/2281/SBK_PARKING_PERMIT";
 
 	@MockitoBean
 	private ProcessService processServiceMock;
@@ -41,15 +39,15 @@ class ProcessResourceTest {
 
 		// Arrange
 		final var municipalityId = "2281";
-		final var businessKey = "businessKey";
+		final var namespace = "SBK_PARKING_PERMIT";
+		final var caseNumber = 123L;
 		final var processInstanceId = randomUUID().toString();
 
-		when(processServiceMock.startProcess(any())).thenReturn(processInstanceId);
+		when(processServiceMock.startProcess(any(), any(), any())).thenReturn(processInstanceId);
 
 		// Act
 		final var response = webTestClient.post()
-			.uri(builder -> builder.path(START_PATH)
-				.build(Map.of("municipalityId", municipalityId, "businessKey", businessKey)))
+			.uri(PATH + "/process/start/" + caseNumber)
 			.exchange()
 			.expectStatus().isAccepted()
 			.expectHeader().contentType(APPLICATION_JSON)
@@ -59,7 +57,7 @@ class ProcessResourceTest {
 
 		// Assert
 		assertThat(response.getProcessId()).isEqualTo(processInstanceId);
-		verify(processServiceMock).startProcess(businessKey);
+		verify(processServiceMock).startProcess(municipalityId, namespace, caseNumber);
 		verifyNoMoreInteractions(processServiceMock);
 	}
 
@@ -68,20 +66,20 @@ class ProcessResourceTest {
 
 		// Arrange
 		final var municipalityId = "2281";
+		final var namespace = "SBK_PARKING_PERMIT";
 		final var processInstanceId = randomUUID().toString();
 
-		when(processServiceMock.startProcess(any())).thenReturn(processInstanceId);
+		when(processServiceMock.startProcess(any(), any(), any())).thenReturn(processInstanceId);
 
 		// Act
 		webTestClient.post()
-			.uri(builder -> builder.path(UPDATE_PATH)
-				.build(Map.of("municipalityId", municipalityId, "processInstanceId", processInstanceId)))
+			.uri(PATH + "/process/update/" + processInstanceId)
 			.exchange()
 			.expectStatus().isAccepted()
 			.expectBody().isEmpty();
 
 		// Assert
-		verify(processServiceMock).updateProcess(processInstanceId);
+		verify(processServiceMock).updateProcess(municipalityId, namespace, processInstanceId);
 		verifyNoMoreInteractions(processServiceMock);
 	}
 }

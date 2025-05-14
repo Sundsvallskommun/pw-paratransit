@@ -10,6 +10,7 @@ import generated.se.sundsvall.camunda.DeploymentWithDefinitionsDto;
 import generated.se.sundsvall.camunda.HistoricExternalTaskLogDto;
 import generated.se.sundsvall.camunda.HistoricIncidentDto;
 import generated.se.sundsvall.camunda.HistoricProcessInstanceDto;
+import generated.se.sundsvall.camunda.PatchVariablesDto;
 import generated.se.sundsvall.camunda.ProcessInstanceDto;
 import generated.se.sundsvall.camunda.ProcessInstanceWithVariablesDto;
 import generated.se.sundsvall.camunda.StartProcessInstanceDto;
@@ -37,6 +38,9 @@ public interface CamundaClient {
 
 	@PostMapping(path = "process-definition/key/{key}/tenant-id/{tenant-id}/start", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
 	ProcessInstanceWithVariablesDto startProcessWithTenant(@PathVariable("key") String key, @PathVariable("tenant-id") String tenantId, StartProcessInstanceDto startProcessInstanceDto);
+
+	@PostMapping(path = "process-instance/{id}/variables", consumes = APPLICATION_JSON_VALUE)
+	void setProcessInstanceVariables(@PathVariable("id") String id, PatchVariablesDto patchVariablesDto);
 
 	@PutMapping(path = "process-instance/{id}/variables/{varName}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
 	void setProcessInstanceVariable(@PathVariable("id") String id, @PathVariable("varName") String variableName, VariableValueDto variableValueDto);

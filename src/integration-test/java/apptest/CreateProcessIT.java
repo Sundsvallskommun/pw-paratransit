@@ -2,7 +2,6 @@ package apptest;
 
 import static generated.se.sundsvall.camunda.HistoricProcessInstanceDto.StateEnum.ACTIVE;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.setDefaultPollDelay;
 import static org.awaitility.Awaitility.setDefaultPollInterval;
@@ -11,14 +10,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.Duration;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
 import se.sundsvall.paratransit.Application;
 import se.sundsvall.paratransit.api.model.StartProcessResponse;
@@ -48,7 +44,7 @@ class CreateProcessIT extends AbstractCamundaAppTest {
 
 		// === Start process ===
 		final var startResponse = setupCall()
-			.withServicePath("/2281/process/start/businessKey")
+			.withServicePath("/2281/SBK_PARKING_PERMIT/process/start/" + 123L)
 			.withHttpMethod(POST)
 			.withExpectedResponseStatus(ACCEPTED)
 			.sendRequest()
@@ -57,6 +53,6 @@ class CreateProcessIT extends AbstractCamundaAppTest {
 		await()
 			.until(() -> camundaClient.getHistoricProcessInstance(startResponse.getProcessId()).getState(), equalTo(ACTIVE));
 
-		//TODO Fix this real test when integrations and workers are in place
+		//TODO Fix real test when integrations and workers are in place
 	}
 }
