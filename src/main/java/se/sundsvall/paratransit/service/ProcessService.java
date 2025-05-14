@@ -1,14 +1,22 @@
 package se.sundsvall.paratransit.service;
 
 import static org.zalando.problem.Status.NOT_FOUND;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_REQUEST_ID;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_UPDATE_AVAILABLE;
 import static se.sundsvall.paratransit.Constants.PROCESS_KEY;
 import static se.sundsvall.paratransit.Constants.TENANTID_TEMPLATE;
 import static se.sundsvall.paratransit.Constants.TRUE;
-import static se.sundsvall.paratransit.Constants.UPDATE_AVAILABLE;
+import static se.sundsvall.paratransit.integration.camunda.mapper.CamundaMapper.toPatchVariablesDto;
+import static se.sundsvall.paratransit.integration.camunda.mapper.CamundaMapper.toStartProcessInstanceDto;
+import static se.sundsvall.paratransit.integration.camunda.mapper.CamundaMapper.toVariableValueDto;
 
-import generated.se.sundsvall.camunda.StartProcessInstanceDto;
+import java.util.Map;
+import org.camunda.bpm.engine.variable.type.ValueType;
 import org.springframework.stereotype.Service;
 import org.zalando.problem.Problem;
+import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 
 @Service
@@ -20,15 +28,21 @@ public class ProcessService {
 		this.camundaClient = camundaClient;
 	}
 
-	public String startProcess(String businessKey) {
-		return camundaClient.startProcessWithTenant(PROCESS_KEY, TENANTID_TEMPLATE, new StartProcessInstanceDto().businessKey(businessKey)).getId();
+	public String startProcess(String municipalityId, String namespace, Long caseNumber) {
+		return camundaClient.startProcessWithTenant(PROCESS_KEY, TENANTID_TEMPLATE, toStartProcessInstanceDto(municipalityId, namespace, caseNumber)).getId();
 	}
 
-	public void updateProcess(String processInstanceId) {
+	public void updateProcess(String municipalityId, String namespace, String processInstanceId) {
 
 		verifyExistingProcessInstance(processInstanceId);
 
-		camundaClient.setProcessInstanceVariable(processInstanceId, UPDATE_AVAILABLE, TRUE);
+		final var variablesToUpdate = Map.of(
+			CAMUNDA_VARIABLE_MUNICIPALITY_ID, toVariableValueDto(ValueType.STRING, municipalityId),
+			CAMUNDA_VARIABLE_NAMESPACE, toVariableValueDto(ValueType.STRING, namespace),
+			CAMUNDA_VARIABLE_UPDATE_AVAILABLE, TRUE,
+			CAMUNDA_VARIABLE_REQUEST_ID, toVariableValueDto(ValueType.STRING, RequestId.get()));
+
+		camundaClient.setProcessInstanceVariables(processInstanceId, toPatchVariablesDto(variablesToUpdate));
 	}
 
 	private void verifyExistingProcessInstance(String processInstanceId) {
