@@ -2,6 +2,7 @@ package se.sundsvall.paratransit.api;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.ALL_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.accepted;
 import static se.sundsvall.paratransit.Constants.NAMESPACE_REGEXP;
@@ -40,7 +41,7 @@ class ProcessResource {
 		this.service = service;
 	}
 
-	@PostMapping(path = "/start/{caseNumber}")
+	@PostMapping(path = "/start/{caseNumber}", produces = APPLICATION_JSON_VALUE)
 	@Operation(description = "Start a new process instance for the provided case number", responses = {
 		@ApiResponse(responseCode = "202", description = "Accepted", useReturnTypeSchema = true),
 		@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
@@ -59,7 +60,7 @@ class ProcessResource {
 			.body(new StartProcessResponse(service.startProcess(municipalityId, namespace, caseNumber)));
 	}
 
-	@PostMapping(path = "/update/{processInstanceId}")
+	@PostMapping(path = "/update/{processInstanceId}", produces = APPLICATION_JSON_VALUE)
 	@Operation(description = "Update a process instance matching the provided processInstanceId", responses = {
 		@ApiResponse(responseCode = "202", description = "Accepted", useReturnTypeSchema = true),
 		@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
