@@ -16,8 +16,6 @@ openapi:
   name: ${spring.application.name}
   title: ${spring.application.name}
   version: '@project.version@'
-
-  
 #----------------------------------------
 # Camunda integration settings
 #----------------------------------------
