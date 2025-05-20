@@ -32,5 +32,19 @@ camunda:
 # Camunda integration settings
 #----------------------------------------
 config:
+  common:
+    token-uri: token.url
+    client-id: client.id
+    client-secret: client.secret
   camunda:
     base-url: camunda.base.url
+  casedata:
+    base-url: casedata.base.url
+    token-uri: ${config.common.token-uri}
+    client-id: ${config.common.client-id}
+    client-secret: ${config.common.client-secret}
+  templating:
+    base-url: templating.base.url
+    token-uri: ${config.common.token-uri}
+    client-id: ${config.common.client-id}
+    client-secret: ${config.common.client-secret}
