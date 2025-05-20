@@ -23,6 +23,19 @@ openapi:
 config:
   camunda:
     base-url: http://localhost:${wiremock.server.port}/api-camunda/engine-rest
+  common:
+    token-uri: http://localhost:${wiremock.server.port}/api-gateway/token
+    client-id: the-client-id
+    client-secret: the-client-secret
+  casedata:
+    base-url: http://localhost:${wiremock.server.port}/api-casedata
+    token-uri: ${config.common.token-uri}
+    client-id: ${config.common.client-id}
+    client-secret: ${config.common.client-secret}
+  templating:
+    base-url: http://localhost:${wiremock.server.port}/api-templating
+    token-uri: ${config.common.token-uri}
+    client-id: ${config.common.client-id}
   citizen:
     base-url: http://localhost:${wiremock.server.port}/api-citizen
     token-uri: ${config.common.token-uri}
