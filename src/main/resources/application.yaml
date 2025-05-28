@@ -42,6 +42,14 @@ integration:
     connectTimeout: 5
     readTimeout: 20
     url: ${config.camunda.base-url}
+  casedata:
+    connectTimeout: 5
+    readTimeout: 20
+    url: ${config.casedata.base-url}
+  templating:
+    connectTimeout: 5
+    readTimeout: 20
+    url: ${config.templating.base-url}
   citizen:
     connectTimeout: 5
     readTimeout: 20
@@ -61,6 +69,10 @@ integration:
 resilience4j.circuitbreaker:
   instances:
     camunda:
+      ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
+    casedata:
+      ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
+    templating:
       ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
     messaging:
       ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem

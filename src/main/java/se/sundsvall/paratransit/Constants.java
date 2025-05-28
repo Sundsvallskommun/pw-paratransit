@@ -35,6 +35,13 @@ public class Constants {
 	public static final String CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE = "timeToSendControlMessage";
 	public static final String CAMUNDA_VARIABLE_IS_APPEAL = "isAppeal";
 
+	public static final String CASEDATA_KEY_PHASE_STATUS = "process.phaseStatus";
+	public static final String CASEDATA_KEY_PHASE_ACTION = "process.phaseAction";
+	public static final String CASEDATA_KEY_DISPLAY_PHASE = "process.displayPhase";
+
+	public static final String ROLE_APPLICANT = "APPLICANT";
+	public static final String ROLE_REPORTER = "REPORTER";
+
 	public static final String MESSAGING_KEY_FLOW_INSTANCE_ID = "flowInstanceId";
 
 }
