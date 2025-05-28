@@ -34,3 +34,18 @@ camunda:
 config:
   camunda:
     base-url: camunda.base.url
+  citizen:
+    base-url: citizen.base.url
+    token-uri: ${config.common.token-uri}
+    client-id: ${config.common.client-id}
+    client-secret: ${config.common.client-secret}
+  messaging:
+    base-url: messaging.base.url
+    token-uri: ${config.common.token-uri}
+    client-id: ${config.common.client-id}
+    client-secret: ${config.common.client-secret}
+  partyassets:
+    base-url: partyassets.base.url
+    token-uri: ${config.common.token-uri}
+    client-id: ${config.common.client-id}
+    client-secret: ${config.common.client-secret}
