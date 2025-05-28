@@ -37,14 +37,14 @@ public class CaseDataMapper {
 	public static PatchErrand toPatchErrand(final String externalCaseId, final String phase, final String phaseStatus, final String phaseAction, final String displayPhase, final List<ExtraParameter> extraParameters) {
 		final var patchErrand = toPatchErrand(externalCaseId, phase, phaseStatus, phaseAction, extraParameters);
 
-		var result = patchErrand.getExtraParameters().stream()
+		var parameters = patchErrand.getExtraParameters().stream()
 			.filter(extraParameter -> !CASEDATA_KEY_DISPLAY_PHASE.equals(extraParameter.getKey()))
 			.collect(Collectors.toCollection(ArrayList::new));
 
-		Optional.ofNullable(displayPhase).ifPresentOrElse(display -> result.add(new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).values(List.of(display))),
-			() -> result.add(new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).values(emptyList())));
+		Optional.ofNullable(displayPhase).ifPresentOrElse(display -> parameters.add(new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).values(List.of(display))),
+			() -> parameters.add(new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).values(emptyList())));
 
-		return patchErrand.extraParameters(result);
+		return patchErrand.extraParameters(parameters);
 	}
 
 	public static PatchErrand toPatchErrand(final String externalCaseId, final String phase, final String phaseStatus, final String phaseAction, final List<ExtraParameter> extraParameters) {
@@ -52,18 +52,18 @@ public class CaseDataMapper {
 			.externalCaseId(externalCaseId)
 			.phase(phase);
 
-		var result = Optional.ofNullable(extraParameters).orElse(emptyList()).stream()
+		var parameters = Optional.ofNullable(extraParameters).orElse(emptyList()).stream()
 			.filter(extraParameter -> !CASEDATA_KEY_PHASE_STATUS.equals(extraParameter.getKey()) && !CASEDATA_KEY_PHASE_ACTION.equals(extraParameter.getKey()))
 			.collect(Collectors.toCollection(ArrayList::new));
 
-		Optional.ofNullable(phaseStatus).ifPresentOrElse(status -> result.add(new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).values(List.of(status))),
-			() -> result.add(new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).values(emptyList())));
+		Optional.ofNullable(phaseStatus).ifPresentOrElse(status -> parameters.add(new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).values(List.of(status))),
+			() -> parameters.add(new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).values(emptyList())));
 
 		// Cannot be null since that could erase action when it is "AUTOMATIC"
-		Optional.ofNullable(phaseAction).ifPresentOrElse(action -> result.add(new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).values(List.of(action))),
+		Optional.ofNullable(phaseAction).ifPresentOrElse(action -> parameters.add(new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).values(List.of(action))),
 			() -> { throw new IllegalArgumentException("phaseAction cannot be null"); });
 
-		return patchErrand.extraParameters(result);
+		return patchErrand.extraParameters(parameters);
 	}
 
 	public static Stakeholder toStakeholder(final String role, final TypeEnum type, final String firstName, final String lastName) {

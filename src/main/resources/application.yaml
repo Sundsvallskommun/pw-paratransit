@@ -70,6 +70,10 @@ resilience4j.circuitbreaker:
   instances:
     camunda:
       ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
+    casedata:
+      ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
+    templating:
+      ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
     messaging:
       ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
     citizen:
