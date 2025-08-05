@@ -1,6 +1,46 @@
 spring:
   application:
     name: pw-paratransit
+  security:
+    oauth2:
+      client:
+        provider:
+          casedata:
+            token-uri: ${config.casedata.token-uri}
+          templating:
+            token-uri: ${config.templating.token-uri}
+          messaging:
+            token-uri: ${config.messaging.token-uri}
+          citizen:
+            token-uri: ${config.citizen.token-uri}
+          partyassets:
+            token-uri: ${config.partyassets.token-uri}
+        registration:
+          casedata:
+            authorization-grant-type: client_credentials
+            provider: casedata
+            client-id: ${config.casedata.client-id}
+            client-secret: ${config.casedata.client-secret}
+          templating:
+            authorization-grant-type: client_credentials
+            provider: templating
+            client-id: ${config.templating.client-id}
+            client-secret: ${config.templating.client-secret}
+          messaging:
+            authorization-grant-type: client_credentials
+            provider: messaging
+            client-id: ${config.messaging.client-id}
+            client-secret: ${config.messaging.client-secret}
+          citizen:
+            authorization-grant-type: client_credentials
+            provider: citizen
+            client-id: ${config.citizen.client-id}
+            client-secret: ${config.citizen.client-secret}
+          partyassets:
+            authorization-grant-type: client_credentials
+            provider: partyassets
+            client-id: ${config.partyassets.client-id}
+            client-secret: ${config.partyassets.client-secret}
 #----------------------------------------
 # Open API
 #----------------------------------------
