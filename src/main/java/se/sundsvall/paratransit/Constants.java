@@ -66,6 +66,9 @@ public class Constants {
 	public static final String ROLE_APPLICANT = "APPLICANT";
 	public static final String ROLE_REPORTER = "REPORTER";
 
+	public static final String CASE_TYPE_APPEAL = "APPEAL";
+	public static final String CASE_TYPE_PARATRANSIT = "PARATRANSIT";
+
 	public static final String MESSAGING_KEY_FLOW_INSTANCE_ID = "flowInstanceId";
 
 }
