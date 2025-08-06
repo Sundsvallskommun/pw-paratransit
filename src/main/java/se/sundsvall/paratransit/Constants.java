@@ -63,6 +63,8 @@ public class Constants {
 	public static final String CASEDATA_STATUS_CASE_DECIDED = "Beslutad";
 	public static final String CASEDATA_STATUS_CASE_FINALIZED = "Ärende avslutat";
 
+	public static final String CATEGORY_BESLUT = "BESLUT";
+
 	public static final String ROLE_APPLICANT = "APPLICANT";
 	public static final String ROLE_REPORTER = "REPORTER";
 
