@@ -27,12 +27,13 @@ import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 @ExternalTaskSubscription("UpdateErrandPhaseTask")
 public class UpdateErrandPhaseTaskWorker extends AbstractWorker {
 
-	UpdateErrandPhaseTaskWorker(CamundaClient camundaClient, CaseDataClient caseDataClient, FailureHandler failureHandler) {
+	UpdateErrandPhaseTaskWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
+
 		super(camundaClient, caseDataClient, failureHandler);
 	}
 
 	@Override
-	public void executeBusinessLogic(ExternalTask externalTask, ExternalTaskService externalTaskService) {
+	public void executeBusinessLogic(final ExternalTask externalTask, final ExternalTaskService externalTaskService) {
 		try {
 			final String municipalityId = getMunicipalityId(externalTask);
 			final String namespace = getNamespace(externalTask);
@@ -71,7 +72,7 @@ public class UpdateErrandPhaseTaskWorker extends AbstractWorker {
 		}
 	}
 
-	private boolean isErrandFinalized(Errand errand) {
+	private boolean isErrandFinalized(final Errand errand) {
 		return Optional.ofNullable(errand.getStatuses()).orElse(emptyList()).stream()
 			.anyMatch(status -> CASEDATA_STATUS_CASE_FINALIZED.equals(status.getStatusType()));
 	}

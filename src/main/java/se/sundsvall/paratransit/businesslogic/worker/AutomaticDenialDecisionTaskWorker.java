@@ -44,14 +44,15 @@ public class AutomaticDenialDecisionTaskWorker extends AbstractWorker {
 	private final MessagingService messagingService;
 	private final TextProvider textProvider;
 
-	AutomaticDenialDecisionTaskWorker(CamundaClient camundaClient, CaseDataClient caseDataClient, FailureHandler failureHandler, MessagingService messagingService, TextProvider textProvider) {
+	AutomaticDenialDecisionTaskWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler,
+		final MessagingService messagingService, final TextProvider textProvider) {
 		super(camundaClient, caseDataClient, failureHandler);
 		this.messagingService = messagingService;
 		this.textProvider = textProvider;
 	}
 
 	@Override
-	public void executeBusinessLogic(ExternalTask externalTask, ExternalTaskService externalTaskService) {
+	public void executeBusinessLogic(final ExternalTask externalTask, final ExternalTaskService externalTaskService) {
 		try {
 			final String municipalityId = getMunicipalityId(externalTask);
 			final String namespace = getNamespace(externalTask);
@@ -102,7 +103,7 @@ public class AutomaticDenialDecisionTaskWorker extends AbstractWorker {
 			.orElseThrow(() -> Problem.valueOf(Status.BAD_GATEWAY, "CaseData integration did not return any location for created stakeholder"));
 	}
 
-	private static boolean isProcessEngineStakeholder(Stakeholder stakeholder) {
+	private static boolean isProcessEngineStakeholder(final Stakeholder stakeholder) {
 		// TODO: Check if this role should be used
 		return stakeholder.getRoles().contains(ROLE_REPORTER) &&
 			PROCESS_ENGINE_FIRST_NAME.equals(stakeholder.getFirstName()) &&

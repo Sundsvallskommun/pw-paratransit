@@ -33,7 +33,7 @@ public class CaseDataMapper {
 
 	private CaseDataMapper() {}
 
-	public static PatchErrand toPatchErrand(Errand errand, String phase, String displayPhase, String phaseStatus, String phaseAction) {
+	public static PatchErrand toPatchErrand(final Errand errand, final String phase, final String displayPhase, final String phaseStatus, final String phaseAction) {
 		var patchErrand = toPatchErrand(errand, phase, phaseStatus, phaseAction);
 		return patchErrand.extraParameters(patchErrand.getExtraParameters().stream()
 			.filter(e -> !CASEDATA_KEY_DISPLAY_PHASE.equals(e.getKey()))
@@ -41,7 +41,7 @@ public class CaseDataMapper {
 			.addExtraParametersItem((new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).values(displayPhase == null ? emptyList() : List.of(displayPhase))));
 	}
 
-	public static PatchErrand toPatchErrand(Errand errand, String phase, String phaseStatus, String phaseAction) {
+	public static PatchErrand toPatchErrand(final Errand errand, final String phase, final String phaseStatus, final String phaseAction) {
 		return new PatchErrand()
 			.externalCaseId(errand.getExternalCaseId())
 			.phase(phase)
@@ -54,7 +54,7 @@ public class CaseDataMapper {
 			.addExtraParametersItem(new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).values(phaseAction == null ? emptyList() : List.of(phaseAction)));
 	}
 
-	public static PatchErrand toPatchErrand(Errand errand, String externalCaseId, String phaseAction) {
+	public static PatchErrand toPatchErrand(final Errand errand, final String externalCaseId, final String phaseAction) {
 		return new PatchErrand()
 			.externalCaseId(externalCaseId)
 			.facilities(null)

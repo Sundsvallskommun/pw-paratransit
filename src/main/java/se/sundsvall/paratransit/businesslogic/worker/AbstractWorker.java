@@ -31,14 +31,14 @@ public abstract class AbstractWorker implements ExternalTaskHandler {
 
 	protected final FailureHandler failureHandler;
 
-	protected AbstractWorker(CamundaClient camundaClient, CaseDataClient caseDataClient, FailureHandler failureHandler) {
+	protected AbstractWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
 		this.logger = LoggerFactory.getLogger(getClass());
 		this.camundaClient = camundaClient;
 		this.caseDataClient = caseDataClient;
 		this.failureHandler = failureHandler;
 	}
 
-	protected void clearUpdateAvailable(ExternalTask externalTask) {
+	protected void clearUpdateAvailable(final ExternalTask externalTask) {
 		/*
 		 * Clearing process variable has to be a blocking operation.
 		 * Using ExternalTaskService.setVariables() will not work without creating race conditions.
@@ -46,43 +46,48 @@ public abstract class AbstractWorker implements ExternalTaskHandler {
 		camundaClient.setProcessInstanceVariable(externalTask.getProcessInstanceId(), UPDATE_AVAILABLE, FALSE);
 	}
 
-	protected void setProcessInstanceVariable(ExternalTask externalTask, String variableName, VariableValueDto variableValue) {
+	protected void setProcessInstanceVariable(final ExternalTask externalTask, final String variableName, final VariableValueDto variableValue) {
+
 		camundaClient.setProcessInstanceVariable(externalTask.getProcessInstanceId(), variableName, variableValue);
 	}
 
 	protected Errand getErrand(final String municipalityId, final String namespace, final Long caseNumber) {
+
 		return caseDataClient.getErrandById(municipalityId, namespace, caseNumber);
 	}
 
-	protected List<Attachment> getErrandAttachments(String municipalityId, String namespace, Long caseNumber) {
+	protected List<Attachment> getErrandAttachments(final String municipalityId, final String namespace, final Long caseNumber) {
 		return caseDataClient.getErrandAttachments(municipalityId, namespace, caseNumber);
 	}
 
-	protected void logInfo(String msg, Object... arguments) {
+	protected void logInfo(final String msg, final Object... arguments) {
 		logger.info(msg, arguments);
 	}
 
-	protected void logException(ExternalTask externalTask, Exception exception) {
+	protected void logException(final ExternalTask externalTask, final Exception exception) {
 		logger.error("Exception occurred in {} for task with id {} and businesskey {}", this.getClass().getSimpleName(), externalTask.getId(), externalTask.getBusinessKey(), exception);
 	}
 
-	protected abstract void executeBusinessLogic(ExternalTask externalTask, ExternalTaskService externalTaskService);
+	protected abstract void executeBusinessLogic(final ExternalTask externalTask, final ExternalTaskService externalTaskService);
 
 	@Override
-	public void execute(ExternalTask externalTask, ExternalTaskService externalTaskService) {
+	public void execute(final ExternalTask externalTask, final ExternalTaskService externalTaskService) {
 		RequestId.init(externalTask.getVariable(CAMUNDA_VARIABLE_REQUEST_ID));
 		executeBusinessLogic(externalTask, externalTaskService);
 	}
 
-	protected String getMunicipalityId(ExternalTask externalTask) {
+	protected String getMunicipalityId(final ExternalTask externalTask) {
+
 		return externalTask.getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID);
 	}
 
-	protected String getNamespace(ExternalTask externalTask) {
+	protected String getNamespace(final ExternalTask externalTask) {
+
 		return externalTask.getVariable(CAMUNDA_VARIABLE_NAMESPACE);
 	}
 
-	protected Long getCaseNumber(ExternalTask externalTask) {
+	protected Long getCaseNumber(final ExternalTask externalTask) {
+
 		return externalTask.getVariable(CAMUNDA_VARIABLE_CASE_NUMBER);
 	}
 }

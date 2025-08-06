@@ -13,7 +13,7 @@ public class SimplifiedServiceTextProperties {
 		return message;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage(final String message) {
 		this.message = message;
 	}
 
@@ -21,7 +21,7 @@ public class SimplifiedServiceTextProperties {
 		return subject;
 	}
 
-	public void setSubject(String subject) {
+	public void setSubject(final String subject) {
 		this.subject = subject;
 	}
 
@@ -29,7 +29,7 @@ public class SimplifiedServiceTextProperties {
 		return htmlBody;
 	}
 
-	public void setHtmlBody(String htmlBody) {
+	public void setHtmlBody(final String htmlBody) {
 		this.htmlBody = htmlBody;
 	}
 
@@ -37,7 +37,7 @@ public class SimplifiedServiceTextProperties {
 		return plainBody;
 	}
 
-	public void setPlainBody(String plainBody) {
+	public void setPlainBody(final String plainBody) {
 		this.plainBody = plainBody;
 	}
 
@@ -45,7 +45,7 @@ public class SimplifiedServiceTextProperties {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -53,7 +53,7 @@ public class SimplifiedServiceTextProperties {
 		return delay;
 	}
 
-	public void setDelay(String delay) {
+	public void setDelay(final String delay) {
 		this.delay = delay;
 	}
 }

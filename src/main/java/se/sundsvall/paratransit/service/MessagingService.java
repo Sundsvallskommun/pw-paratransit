@@ -30,17 +30,18 @@ public class MessagingService {
 
 	private final MessagingMapper messagingMapper;
 
-	MessagingService(MessagingClient messagingClient, TemplatingClient templatingClient, MessagingMapper messagingMapper) {
+	MessagingService(final MessagingClient messagingClient, final TemplatingClient templatingClient, final MessagingMapper messagingMapper) {
 		this.messagingClient = messagingClient;
 		this.templatingClient = templatingClient;
 		this.messagingMapper = messagingMapper;
 	}
 
-	public RenderResponse renderPdfDecision(String municipalityId, Errand errand) {
+	public RenderResponse renderPdfDecision(final String municipalityId, final Errand errand) {
+
 		return templatingClient.renderPdf(municipalityId, toRenderRequestWhenNotMemberOfMunicipality(errand));
 	}
 
-	public UUID sendMessageToNonCitizen(String municipalityId, Errand errand, RenderResponse pdf) {
+	public UUID sendMessageToNonCitizen(final String municipalityId, final Errand errand, final RenderResponse pdf) {
 		final var partyId = getStakeholder(errand, PERSON, ROLE_APPLICANT).getPersonId();
 
 		if (isNotEmpty(errand.getExternalCaseId())) {
@@ -51,7 +52,7 @@ public class MessagingService {
 		return extractId(messageResult.getMessages());
 	}
 
-	public UUID sendDenialDecisionMessage(String municipalityId, Errand errand, RenderResponse pdf) {
+	public UUID sendDenialDecisionMessage(final String municipalityId, final Errand errand, final RenderResponse pdf) {
 		final var partyId = getStakeholder(errand, PERSON, ROLE_APPLICANT).getPersonId();
 
 		final var messageResult = messagingClient.sendLetter(municipalityId, messagingMapper.toLetterRequestDenial(pdf, partyId, municipalityId));
@@ -59,7 +60,7 @@ public class MessagingService {
 		return extractId(messageResult.getMessages());
 	}
 
-	public UUID sendMessageSimplifiedService(String municipalityId, Errand errand) {
+	public UUID sendMessageSimplifiedService(final String municipalityId, final Errand errand) {
 		final var partyId = getStakeholder(errand, PERSON, ROLE_APPLICANT).getPersonId();
 
 		if (isNotEmpty(errand.getExternalCaseId())) {
@@ -72,7 +73,7 @@ public class MessagingService {
 		return extractId(messageResult.getMessages());
 	}
 
-	private UUID extractId(List<MessageResult> messageResults) {
+	private UUID extractId(final List<MessageResult> messageResults) {
 		return ofNullable(messageResults).orElse(emptyList()).stream()
 			.map(MessageResult::getMessageId)
 			.filter(Objects::nonNull)

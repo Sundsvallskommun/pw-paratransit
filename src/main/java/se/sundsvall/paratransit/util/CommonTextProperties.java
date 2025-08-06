@@ -12,7 +12,7 @@ public class CommonTextProperties {
 		return department;
 	}
 
-	public void setDepartment(String department) {
+	public void setDepartment(final String department) {
 		this.department = department;
 	}
 
@@ -20,7 +20,7 @@ public class CommonTextProperties {
 		return contactInfoEmail;
 	}
 
-	public void setContactInfoEmail(String contactInfoEmail) {
+	public void setContactInfoEmail(final String contactInfoEmail) {
 		this.contactInfoEmail = contactInfoEmail;
 	}
 
@@ -28,7 +28,7 @@ public class CommonTextProperties {
 		return contactInfoPhonenumber;
 	}
 
-	public void setContactInfoPhonenumber(String contactInfoPhonenumber) {
+	public void setContactInfoPhonenumber(final String contactInfoPhonenumber) {
 		this.contactInfoPhonenumber = contactInfoPhonenumber;
 	}
 
@@ -36,7 +36,7 @@ public class CommonTextProperties {
 		return contactInfoText;
 	}
 
-	public void setContactInfoText(String contactInfoText) {
+	public void setContactInfoText(final String contactInfoText) {
 		this.contactInfoText = contactInfoText;
 	}
 
@@ -44,7 +44,7 @@ public class CommonTextProperties {
 		return contactInfoUrl;
 	}
 
-	public void setContactInfoUrl(String contactInfoUrl) {
+	public void setContactInfoUrl(final String contactInfoUrl) {
 		this.contactInfoUrl = contactInfoUrl;
 	}
 }

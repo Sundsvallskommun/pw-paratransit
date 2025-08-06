@@ -17,12 +17,13 @@ import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 @ExternalTaskSubscription("CheckAppealTask")
 public class CheckAppealTaskWorker extends AbstractWorker {
 
-	CheckAppealTaskWorker(CamundaClient camundaClient, CaseDataClient caseDataClient, FailureHandler failureHandler) {
+	CheckAppealTaskWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
+
 		super(camundaClient, caseDataClient, failureHandler);
 	}
 
 	@Override
-	public void executeBusinessLogic(ExternalTask externalTask, ExternalTaskService externalTaskService) {
+	public void executeBusinessLogic(final ExternalTask externalTask, final ExternalTaskService externalTaskService) {
 		try {
 			final String municipalityId = getMunicipalityId(externalTask);
 			final String namespace = getNamespace(externalTask);
@@ -43,7 +44,7 @@ public class CheckAppealTaskWorker extends AbstractWorker {
 		}
 	}
 
-	private boolean isAppeal(Errand errand) {
+	private boolean isAppeal(final Errand errand) {
 		return CASE_TYPE_APPEAL.equals(errand.getCaseType());
 	}
 }

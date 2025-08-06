@@ -16,7 +16,7 @@ public class TextProperties {
 		return commons;
 	}
 
-	public void setCommons(Map<String, CommonTextProperties> commons) {
+	public void setCommons(final Map<String, CommonTextProperties> commons) {
 		this.commons = commons;
 	}
 
@@ -24,7 +24,7 @@ public class TextProperties {
 		return denials;
 	}
 
-	public void setDenials(Map<String, DenialTextProperties> denials) {
+	public void setDenials(final Map<String, DenialTextProperties> denials) {
 		this.denials = denials;
 	}
 
@@ -32,7 +32,7 @@ public class TextProperties {
 		return simplifiedServices;
 	}
 
-	public void setSimplifiedServices(Map<String, SimplifiedServiceTextProperties> simplifiedServices) {
+	public void setSimplifiedServices(final Map<String, SimplifiedServiceTextProperties> simplifiedServices) {
 		this.simplifiedServices = simplifiedServices;
 	}
 }

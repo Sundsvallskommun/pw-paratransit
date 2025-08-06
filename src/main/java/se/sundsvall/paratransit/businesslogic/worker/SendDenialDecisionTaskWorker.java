@@ -1,8 +1,8 @@
 package se.sundsvall.paratransit.businesslogic.worker;
 
-import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toStatus;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MESSAGE_ID;
 
-import java.util.Optional;
+import java.util.Map;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -10,14 +10,18 @@ import org.springframework.stereotype.Component;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+import se.sundsvall.paratransit.service.MessagingService;
 
 @Component
-@ExternalTaskSubscription("UpdateErrandStatusTask")
-public class UpdateErrandStatusTaskWorker extends AbstractWorker {
+@ExternalTaskSubscription("SendDenialDecisionTask")
+public class SendDenialDecisionTaskWorker extends AbstractWorker {
 
-	UpdateErrandStatusTaskWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
+	private final MessagingService messagingService;
 
+	SendDenialDecisionTaskWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler,
+		final MessagingService messagingService) {
 		super(camundaClient, caseDataClient, failureHandler);
+		this.messagingService = messagingService;
 	}
 
 	@Override
@@ -28,13 +32,12 @@ public class UpdateErrandStatusTaskWorker extends AbstractWorker {
 			final Long caseNumber = getCaseNumber(externalTask);
 
 			final var errand = getErrand(municipalityId, namespace, caseNumber);
-			logInfo("Executing update of status for errand with id {}", errand.getId());
+			logInfo("Executing delivery of decision message to applicant for errand with id {}", errand.getId());
 
-			final var status = externalTask.getVariable("status").toString();
-			final var statusDescription = Optional.ofNullable(externalTask.getVariable("statusDescription")).map(Object::toString).orElse(status);
-			caseDataClient.patchStatus(municipalityId, namespace, errand.getId(), toStatus(status, statusDescription));
+			final var pdf = messagingService.renderPdfDecision(municipalityId, errand);
+			final var messageId = messagingService.sendMessageToNonCitizen(municipalityId, errand, pdf).toString();
 
-			externalTaskService.complete(externalTask);
+			externalTaskService.complete(externalTask, Map.of(CAMUNDA_VARIABLE_MESSAGE_ID, messageId));
 		} catch (final Exception exception) {
 			logException(externalTask, exception);
 			failureHandler.handleException(externalTaskService, externalTask, exception.getMessage());

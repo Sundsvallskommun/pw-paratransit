@@ -25,13 +25,10 @@ public class Constants {
 	public static final String CAMUNDA_VARIABLE_MESSAGE_ID = "messageId";
 	public static final String CAMUNDA_VARIABLE_FINAL_DECISION = "finalDecision";
 	public static final String CAMUNDA_VARIABLE_IS_APPROVED = "isApproved";
-	public static final String CAMUNDA_VARIABLE_RULE_ENGINE_RESPONSE = "ruleEngineResponse";
-	public static final String CAMUNDA_VARIABLE_SANITY_CHECK_PASSED = "sanityCheckPassed";
 	public static final String CAMUNDA_VARIABLE_PHASE = "phase";
 	public static final String CAMUNDA_VARIABLE_PHASE_STATUS = "phaseStatus";
 	public static final String CAMUNDA_VARIABLE_PHASE_ACTION = "phaseAction";
 	public static final String CAMUNDA_VARIABLE_DISPLAY_PHASE = "displayPhase";
-	public static final String CAMUNDA_VARIABLE_CARD_EXISTS = "cardExists";
 	public static final String CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE = "timeToSendControlMessage";
 	public static final String CAMUNDA_VARIABLE_IS_APPEAL = "isAppeal";
 

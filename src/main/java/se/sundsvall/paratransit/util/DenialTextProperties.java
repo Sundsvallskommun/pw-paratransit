@@ -17,7 +17,7 @@ public class DenialTextProperties {
 		return message;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage(final String message) {
 		this.message = message;
 	}
 
@@ -25,7 +25,7 @@ public class DenialTextProperties {
 		return filename;
 	}
 
-	public void setFilename(String filename) {
+	public void setFilename(final String filename) {
 		this.filename = filename;
 	}
 
@@ -33,7 +33,7 @@ public class DenialTextProperties {
 		return subject;
 	}
 
-	public void setSubject(String subject) {
+	public void setSubject(final String subject) {
 		this.subject = subject;
 	}
 
@@ -41,7 +41,7 @@ public class DenialTextProperties {
 		return htmlBody;
 	}
 
-	public void setHtmlBody(String htmlBody) {
+	public void setHtmlBody(final String htmlBody) {
 		this.htmlBody = htmlBody;
 	}
 
@@ -49,7 +49,7 @@ public class DenialTextProperties {
 		return plainBody;
 	}
 
-	public void setPlainBody(String plainBody) {
+	public void setPlainBody(final String plainBody) {
 		this.plainBody = plainBody;
 	}
 
@@ -57,7 +57,7 @@ public class DenialTextProperties {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -65,7 +65,7 @@ public class DenialTextProperties {
 		return lawHeading;
 	}
 
-	public void setLawHeading(String lawHeading) {
+	public void setLawHeading(final String lawHeading) {
 		this.lawHeading = lawHeading;
 	}
 
@@ -73,7 +73,7 @@ public class DenialTextProperties {
 		return lawSfs;
 	}
 
-	public void setLawSfs(String lawSfs) {
+	public void setLawSfs(final String lawSfs) {
 		this.lawSfs = lawSfs;
 	}
 
@@ -81,7 +81,7 @@ public class DenialTextProperties {
 		return lawChapter;
 	}
 
-	public void setLawChapter(String lawChapter) {
+	public void setLawChapter(final String lawChapter) {
 		this.lawChapter = lawChapter;
 	}
 
@@ -89,7 +89,7 @@ public class DenialTextProperties {
 		return lawArticle;
 	}
 
-	public void setLawArticle(String lawArticle) {
+	public void setLawArticle(final String lawArticle) {
 		this.lawArticle = lawArticle;
 	}
 }

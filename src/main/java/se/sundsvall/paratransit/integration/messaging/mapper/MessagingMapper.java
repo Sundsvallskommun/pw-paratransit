@@ -27,11 +27,11 @@ public class MessagingMapper {
 
 	private final TextProvider textProvider;
 
-	MessagingMapper(TextProvider textProvider) {
+	MessagingMapper(final TextProvider textProvider) {
 		this.textProvider = textProvider;
 	}
 
-	public WebMessageRequest toWebMessageRequestDenial(RenderResponse renderResponse, String partyId, String externalCaseId, String municipalityId) {
+	public WebMessageRequest toWebMessageRequestDenial(final RenderResponse renderResponse, final String partyId, final String externalCaseId, final String municipalityId) {
 		return new WebMessageRequest()
 			.addAttachmentsItem(toWebMessageAttachment(renderResponse, municipalityId))
 			.message(textProvider.getDenialTexts(municipalityId).getMessage())
@@ -41,7 +41,7 @@ public class MessagingMapper {
 				.addExternalReferencesItem(new ExternalReference().key(MESSAGING_KEY_FLOW_INSTANCE_ID).value(externalCaseId)));
 	}
 
-	public WebMessageRequest toWebMessageRequestSimplifiedService(String partyId, String externalCaseId, String municipalityId) {
+	public WebMessageRequest toWebMessageRequestSimplifiedService(final String partyId, final String externalCaseId, final String municipalityId) {
 		return new WebMessageRequest()
 			.message(textProvider.getSimplifiedServiceTexts(municipalityId).getPlainBody())
 			.oepInstance(EXTERNAL)
@@ -50,14 +50,14 @@ public class MessagingMapper {
 				.addExternalReferencesItem(new ExternalReference().key(MESSAGING_KEY_FLOW_INSTANCE_ID).value(externalCaseId)));
 	}
 
-	private WebMessageAttachment toWebMessageAttachment(RenderResponse renderResponse, String municipalityId) {
+	private WebMessageAttachment toWebMessageAttachment(final RenderResponse renderResponse, final String municipalityId) {
 		return new WebMessageAttachment()
 			.base64Data(renderResponse.getOutput())
 			.fileName(textProvider.getDenialTexts(municipalityId).getFilename())
 			.mimeType(APPLICATION_PDF.getValue());
 	}
 
-	public LetterRequest toLetterRequestDenial(RenderResponse renderResponse, String partyId, String municipalityId) {
+	public LetterRequest toLetterRequestDenial(final RenderResponse renderResponse, final String partyId, final String municipalityId) {
 		return new LetterRequest()
 			.addAttachmentsItem(toLetterAttachment(renderResponse, municipalityId))
 			.body(Base64.getEncoder().encodeToString(textProvider.getDenialTexts(municipalityId).getHtmlBody().getBytes(defaultCharset())))
@@ -68,7 +68,7 @@ public class MessagingMapper {
 			.subject(textProvider.getDenialTexts(municipalityId).getSubject());
 	}
 
-	public LetterRequest toLetterRequestSimplifiedService(String partyId, String municipalityId) {
+	public LetterRequest toLetterRequestSimplifiedService(final String partyId, final String municipalityId) {
 		return new LetterRequest()
 			.body(Base64.getEncoder().encodeToString(textProvider.getSimplifiedServiceTexts(municipalityId).getHtmlBody().getBytes(defaultCharset())))
 			.contentType(TEXT_HTML)
@@ -78,12 +78,12 @@ public class MessagingMapper {
 			.subject(textProvider.getSimplifiedServiceTexts(municipalityId).getSubject());
 	}
 
-	private LetterSender toLetterSender(String municipalityId) {
+	private LetterSender toLetterSender(final String municipalityId) {
 		return new LetterSender()
 			.supportInfo(toLetterSenderSupportInfo(municipalityId));
 	}
 
-	private LetterSenderSupportInfo toLetterSenderSupportInfo(String municipalityId) {
+	private LetterSenderSupportInfo toLetterSenderSupportInfo(final String municipalityId) {
 		return new LetterSenderSupportInfo()
 			.emailAddress(textProvider.getCommonTexts(municipalityId).getContactInfoEmail())
 			.phoneNumber(textProvider.getCommonTexts(municipalityId).getContactInfoPhonenumber())
@@ -91,7 +91,7 @@ public class MessagingMapper {
 			.url(textProvider.getCommonTexts(municipalityId).getContactInfoUrl());
 	}
 
-	private LetterAttachment toLetterAttachment(RenderResponse renderResponse, String municipalityId) {
+	private LetterAttachment toLetterAttachment(final RenderResponse renderResponse, final String municipalityId) {
 		return new LetterAttachment()
 			.content(renderResponse.getOutput())
 			.contentType(APPLICATION_PDF)

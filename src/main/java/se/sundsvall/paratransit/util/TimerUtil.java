@@ -11,7 +11,7 @@ public final class TimerUtil {
 
 	private TimerUtil() {}
 
-	public static Date getControlMessageTime(Decision decision, String controlMessageDelay) {
+	public static Date getControlMessageTime(final Decision decision, final String controlMessageDelay) {
 		var decisionCreated = OffsetDateTime.now();
 		if (nonNull(decision) && nonNull(decision.getCreated())) {
 			decisionCreated = decision.getCreated();
