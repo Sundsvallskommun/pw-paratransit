@@ -17,17 +17,17 @@ public final class ErrandUtil {
 
 	private ErrandUtil() {}
 
-	public static Stakeholder getStakeholder(Errand errand, String role) {
+	public static Stakeholder getStakeholder(final Errand errand, final String role) {
 		return getOptionalStakeholder(errand, null, role)
 			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, "Errand is missing stakeholder with role '%s'".formatted(role)));
 	}
 
-	public static Stakeholder getStakeholder(Errand errand, TypeEnum type, String role) {
+	public static Stakeholder getStakeholder(final Errand errand, final TypeEnum type, final String role) {
 		return getOptionalStakeholder(errand, type, role)
 			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, "Errand is missing stakeholder of type '%s' with role '%s'".formatted(type, role)));
 	}
 
-	public static Optional<Stakeholder> getOptionalStakeholder(Errand errand, TypeEnum type, String role) {
+	public static Optional<Stakeholder> getOptionalStakeholder(final Errand errand, final TypeEnum type, final String role) {
 		return ofNullable(errand.getStakeholders()).orElse(emptyList())
 			.stream()
 			.filter(stakeholder -> isNull(type) || type.equals(stakeholder.getType()))
@@ -35,7 +35,7 @@ public final class ErrandUtil {
 			.findAny();
 	}
 
-	public static Optional<Address> getAddress(Stakeholder stakeholder, AddressCategoryEnum addressCategory) {
+	public static Optional<Address> getAddress(final Stakeholder stakeholder, final AddressCategoryEnum addressCategory) {
 		return ofNullable(stakeholder.getAddresses()).orElse(emptyList())
 			.stream()
 			.filter(address -> isNull(addressCategory) || addressCategory.equals(address.getAddressCategory()))

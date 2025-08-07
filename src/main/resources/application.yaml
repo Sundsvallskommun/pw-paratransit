@@ -1,6 +1,46 @@
 spring:
   application:
     name: pw-paratransit
+  security:
+    oauth2:
+      client:
+        provider:
+          casedata:
+            token-uri: ${config.casedata.token-uri}
+          templating:
+            token-uri: ${config.templating.token-uri}
+          messaging:
+            token-uri: ${config.messaging.token-uri}
+          citizen:
+            token-uri: ${config.citizen.token-uri}
+          partyassets:
+            token-uri: ${config.partyassets.token-uri}
+        registration:
+          casedata:
+            authorization-grant-type: client_credentials
+            provider: casedata
+            client-id: ${config.casedata.client-id}
+            client-secret: ${config.casedata.client-secret}
+          templating:
+            authorization-grant-type: client_credentials
+            provider: templating
+            client-id: ${config.templating.client-id}
+            client-secret: ${config.templating.client-secret}
+          messaging:
+            authorization-grant-type: client_credentials
+            provider: messaging
+            client-id: ${config.messaging.client-id}
+            client-secret: ${config.messaging.client-secret}
+          citizen:
+            authorization-grant-type: client_credentials
+            provider: citizen
+            client-id: ${config.citizen.client-id}
+            client-secret: ${config.citizen.client-secret}
+          partyassets:
+            authorization-grant-type: client_credentials
+            provider: partyassets
+            client-id: ${config.partyassets.client-id}
+            client-secret: ${config.partyassets.client-secret}
 #----------------------------------------
 # Open API
 #----------------------------------------
@@ -80,3 +120,49 @@ resilience4j.circuitbreaker:
       ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
     partyassets:
       ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
+#----------------------------------------
+# Text properties
+#----------------------------------------
+texts:
+  commons:
+    2281:
+      department: SBK(Gatuavdelningen, Trafiksektionen)
+      contact-info-email: sundsvalls.kommun@sundsvall.se
+      contact-info-phonenumber: +46 60 191000
+      contact-info-text: Kontakta oss via epost eller telefon.
+      contact-info-url: https://sundsvall.se/
+  denials:
+    2281:
+      message: Ärendet avskrivs
+      filename: beslut.pdf
+      subject: Beslut från Sundsvalls kommun
+      htmlBody: <p><strong>Hej</strong></p><p>Du har f&aring;tt ett beslut fr&aring;n Sundsvalls kommun.</p><p>Med v&auml;nlig h&auml;lsning<br /><strong>Sundsvalls kommun</strong></p>
+      plainBody: |-
+        Hej
+        
+        Du har fått ett beslut från Sundsvalls kommun.
+        
+        Med vänlig hälsning
+        Sundsvalls kommun
+      description: Personen inte folkbokförd i Sundsvalls kommun.
+      lawHeading: 13 kap. 8§ Parkeringstillstånd för rörelsehindrade
+      lawSfs: Trafikförordningen (1998:1276)
+      lawChapter: 13
+      lawArticle: 8
+  simplified-services:
+    2281:
+      delay: "P1D"
+      message: Kontrollmeddelande för förenklad delgivning
+      subject: Kontrollmeddelande för förenklad delgivning
+      htmlBody: |-
+        <p><strong>Kontrollmeddelande f&ouml;r f&ouml;renklad delgivning</strong></p><p>Vi har nyligen delgivit dig ett beslut via brev. Du f&aring;r nu ett kontrollmeddelande f&ouml;r att s&auml;kerst&auml;lla att du mottagit informationen.</p>
+        <p>N&aumlr det har g&aringtt tv&aring veckor fr&aringn det att beslutet skickades anses du blivit delgiven och du har d&aring tre veckor p&aring dig att &oumlverklaga beslutet.</p>
+        <p>Om du bara f&aringtt kontkontrollmeddelandet men inte sj&auml;lva delgivningen med beslutet m&aring;ste du kontakta oss via e-post till</p>
+        <p><a href="mailto:kontakt@sundsvall.se">kontakt@sundsvall.se</a> eller telefon till 060-19 10 00.</p>
+      plainBody: |-
+        Kontrollmeddelande för förenklad delgivning
+        
+        Vi har nyligen delgivit dig ett beslut via brev. Du får nu ett kontrollmeddelande för att säkerställa att du mottagit informationen.
+        När det har gått två veckor från det att beslutet skickades anses du blivit delgiven och du har då tre veckor på dig att överklaga beslutet.
+        Om du bara fått kontrollmeddelandet men inte själva delgivningen med beslutet måste du kontakta oss via e-post till
+        kontakt@sundsvall.se eller telefon till 060-19 10 00.

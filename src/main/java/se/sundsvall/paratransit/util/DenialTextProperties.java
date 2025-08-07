@@ -1,0 +1,95 @@
+package se.sundsvall.paratransit.util;
+
+public class DenialTextProperties {
+
+	private String message;
+	private String filename;
+	private String subject;
+	private String htmlBody;
+	private String plainBody;
+	private String description;
+	private String lawHeading;
+	private String lawSfs;
+	private String lawChapter;
+	private String lawArticle;
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(final String message) {
+		this.message = message;
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(final String filename) {
+		this.filename = filename;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(final String subject) {
+		this.subject = subject;
+	}
+
+	public String getHtmlBody() {
+		return htmlBody;
+	}
+
+	public void setHtmlBody(final String htmlBody) {
+		this.htmlBody = htmlBody;
+	}
+
+	public String getPlainBody() {
+		return plainBody;
+	}
+
+	public void setPlainBody(final String plainBody) {
+		this.plainBody = plainBody;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(final String description) {
+		this.description = description;
+	}
+
+	public String getLawHeading() {
+		return lawHeading;
+	}
+
+	public void setLawHeading(final String lawHeading) {
+		this.lawHeading = lawHeading;
+	}
+
+	public String getLawSfs() {
+		return lawSfs;
+	}
+
+	public void setLawSfs(final String lawSfs) {
+		this.lawSfs = lawSfs;
+	}
+
+	public String getLawChapter() {
+		return lawChapter;
+	}
+
+	public void setLawChapter(final String lawChapter) {
+		this.lawChapter = lawChapter;
+	}
+
+	public String getLawArticle() {
+		return lawArticle;
+	}
+
+	public void setLawArticle(final String lawArticle) {
+		this.lawArticle = lawArticle;
+	}
+}
