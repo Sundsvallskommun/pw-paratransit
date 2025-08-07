@@ -1,10 +1,14 @@
 package se.sundsvall.paratransit.businesslogic.worker;
 
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_REQUEST_ID;
+import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.FALSE;
+import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
 import static se.sundsvall.paratransit.Constants.UPDATE_AVAILABLE;
 
 import generated.se.sundsvall.camunda.VariableValueDto;
@@ -89,5 +93,14 @@ public abstract class AbstractWorker implements ExternalTaskHandler {
 	protected Long getCaseNumber(final ExternalTask externalTask) {
 
 		return externalTask.getVariable(CAMUNDA_VARIABLE_CASE_NUMBER);
+	}
+
+	protected boolean isCancel(final Errand errand) {
+		return ofNullable(errand.getExtraParameters()).orElse(emptyList()).stream()
+			.filter(extraParameters -> CASEDATA_KEY_PHASE_ACTION.equals(extraParameters.getKey()))
+			.findFirst()
+			.map(extraParameters -> extraParameters.getValues().getFirst())
+			.filter(PHASE_ACTION_CANCEL::equals)
+			.isPresent();
 	}
 }
