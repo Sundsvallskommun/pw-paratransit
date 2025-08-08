@@ -196,12 +196,12 @@
         <bpmn:incoming>Flow_1psn0al</bpmn:incoming>
         <bpmn:incoming>Flow_014wwms</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:serviceTask id="Activity_0gvz23t" name="Verify that notifier stakeholder exists" camunda:type="external" camunda:topic="VerifyAdministratorStakeholderExists">
+      <bpmn:serviceTask id="Activity_0gvz23t" name="Verify that reporter stakeholder exists" camunda:type="external" camunda:topic="VerifyAdministratorStakeholderExists">
         <bpmn:incoming>Flow_0d4d0pg</bpmn:incoming>
         <bpmn:incoming>Flow_1j1pnib</bpmn:incoming>
         <bpmn:outgoing>Flow_11pcz23</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:exclusiveGateway id="Gateway_0ebirpi" name="Is stakeholder with role NOTIFIER assigned" default="Flow_1428uxt">
+      <bpmn:exclusiveGateway id="Gateway_0ebirpi" name="Is stakeholder with role REPORTER assigned" default="Flow_1428uxt">
         <bpmn:incoming>Flow_11pcz23</bpmn:incoming>
         <bpmn:outgoing>Flow_014wwms</bpmn:outgoing>
         <bpmn:outgoing>actualization_stakholder_is_assigend</bpmn:outgoing>
@@ -254,7 +254,7 @@
       <bpmn:sequenceFlow id="Flow_1j1pnib" sourceRef="Event_06jr1ps" targetRef="Activity_0gvz23t" />
       <bpmn:sequenceFlow id="Flow_11pcz23" sourceRef="Activity_0gvz23t" targetRef="Gateway_0ebirpi" />
       <bpmn:sequenceFlow id="actualization_stakholder_is_assigend" name="yes" sourceRef="Gateway_0ebirpi" targetRef="external_task_actualization_update_display_phase">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${assignedToAdministrator == 'true' &amp;&amp; phaseAction != 'CANCEL'} </bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${assignedToReporter == 'true' &amp;&amp; phaseAction != 'CANCEL'} </bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_1428uxt" name="No" sourceRef="Gateway_0ebirpi" targetRef="Event_06jr1ps" />
       <bpmn:sequenceFlow id="Flow_0uir48n" sourceRef="external_task_actualization_update_display_phase" targetRef="external_task_actualization_update_errand_status_to_under_review" />

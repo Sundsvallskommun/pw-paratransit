@@ -17,6 +17,8 @@ public class Constants {
 	public static final VariableValueDto TRUE = new VariableValueDto().type(ValueType.BOOLEAN.getName()).value(true);
 	public static final VariableValueDto FALSE = new VariableValueDto().type(ValueType.BOOLEAN.getName()).value(false);
 
+	public static final String CAMUNDA_VARIABLE_APPLICANT_NOT_RESIDENT_OF_MUNICIPALITY = "applicantNotResidentOfMunicipality";
+	public static final String CAMUNDA_VARIABLE_ASSIGNED_TO_REPORTER = "assignedToReporter";
 	public static final String CAMUNDA_VARIABLE_CASE_NUMBER = "caseNumber";
 	public static final String CAMUNDA_VARIABLE_REQUEST_ID = "requestId";
 	public static final String CAMUNDA_VARIABLE_MUNICIPALITY_ID = "municipalityId";
@@ -39,7 +41,7 @@ public class Constants {
 	public static final String CASEDATA_PHASE_ACTUALIZATION = "Aktualisering";
 	public static final String CASEDATA_PHASE_INVESTIGATION = "Utredning";
 	public static final String CASEDATA_PHASE_DECISION = "Beslut";
-	public static final String CASEDATA_PHASE_CANCELED = "Canceled";
+	public static final String CASEDATA_PHASE_CANCELED = "Avslutad";
 	public static final String CASEDATA_PHASE_EXECUTION = "Verkställa";
 	public static final String CASEDATA_PHASE_FOLLOW_UP = "Uppföljning";
 
