@@ -75,8 +75,8 @@ class MessagingMapperTest {
 		when(denialTextPropertiesMock.getFilename()).thenReturn(FILENAME);
 		when(denialTextPropertiesMock.getMessage()).thenReturn(MESSAGE);
 
-		final var request = messagingMapper.toWebMessageRequestDenial(RENDER_RESPONSE, PARTY_ID.toString(), externalCaseId,
-			MUNICIPALITY_ID);
+		final var request = messagingMapper.toWebMessageRequest(RENDER_RESPONSE, PARTY_ID.toString(), externalCaseId,
+			MUNICIPALITY_ID, false);
 
 		assertThat(request.getParty()).isNotNull().extracting(WebMessageParty::getPartyId, WebMessageParty::getExternalReferences).containsExactly(
 			PARTY_ID,
@@ -133,7 +133,7 @@ class MessagingMapperTest {
 		when(denialTextPropertiesMock.getHtmlBody()).thenReturn(BODY);
 		when(denialTextPropertiesMock.getFilename()).thenReturn(FILENAME);
 
-		final var request = messagingMapper.toLetterRequestDenial(RENDER_RESPONSE, PARTY_ID.toString(), MUNICIPALITY_ID);
+		final var request = messagingMapper.toLetterRequest(RENDER_RESPONSE, PARTY_ID.toString(), MUNICIPALITY_ID, false);
 
 		assertThat(request.getSubject()).isEqualTo(SUBJECT);
 		assertThat(Base64.getDecoder().decode(request.getBody())).isEqualTo(BODY.getBytes(defaultCharset()));

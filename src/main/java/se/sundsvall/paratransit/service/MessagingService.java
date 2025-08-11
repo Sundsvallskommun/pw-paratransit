@@ -6,7 +6,7 @@ import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.zalando.problem.Status.BAD_GATEWAY;
 import static se.sundsvall.paratransit.Constants.ROLE_APPLICANT;
-import static se.sundsvall.paratransit.integration.templating.mapper.TemplatingMapper.toRenderRequestWhenNotMemberOfMunicipality;
+import static se.sundsvall.paratransit.integration.templating.mapper.TemplatingMapper.toRenderDecisionRequest;
 import static se.sundsvall.paratransit.util.ErrandUtil.getStakeholder;
 
 import generated.se.sundsvall.casedata.Errand;
@@ -36,27 +36,30 @@ public class MessagingService {
 		this.messagingMapper = messagingMapper;
 	}
 
-	public RenderResponse renderPdfDecision(final String municipalityId, final Errand errand) {
+	public RenderResponse renderPdfDecision(final String municipalityId, final Errand errand, final String templateIdentifier) {
 
-		return templatingClient.renderPdf(municipalityId, toRenderRequestWhenNotMemberOfMunicipality(errand));
+		return templatingClient.renderPdf(municipalityId, toRenderDecisionRequest(errand, templateIdentifier));
 	}
 
 	public UUID sendMessageToNonCitizen(final String municipalityId, final Errand errand, final RenderResponse pdf) {
 		final var partyId = getStakeholder(errand, PERSON, ROLE_APPLICANT).getPersonId();
 
 		if (isNotEmpty(errand.getExternalCaseId())) {
-			final var messageResult = messagingClient.sendWebMessage(municipalityId, messagingMapper.toWebMessageRequestDenial(pdf, partyId, errand.getExternalCaseId(), municipalityId));
+			final var messageResult = messagingClient.sendWebMessage(municipalityId, messagingMapper.toWebMessageRequest(pdf, partyId, errand.getExternalCaseId(), municipalityId, false));
 			return extractId(List.of(messageResult));
 		}
-		final var messageResult = messagingClient.sendLetter(municipalityId, messagingMapper.toLetterRequestDenial(pdf, partyId, municipalityId));
+		final var messageResult = messagingClient.sendLetter(municipalityId, messagingMapper.toLetterRequest(pdf, partyId, municipalityId, false));
 		return extractId(messageResult.getMessages());
 	}
 
-	public UUID sendDenialDecisionMessage(final String municipalityId, final Errand errand, final RenderResponse pdf) {
+	public UUID sendDecisionMessage(final String municipalityId, final Errand errand, final RenderResponse pdf, final boolean isApproved) {
 		final var partyId = getStakeholder(errand, PERSON, ROLE_APPLICANT).getPersonId();
 
-		final var messageResult = messagingClient.sendLetter(municipalityId, messagingMapper.toLetterRequestDenial(pdf, partyId, municipalityId));
-
+		if (isNotEmpty(errand.getExternalCaseId())) {
+			final var messageResult = messagingClient.sendWebMessage(municipalityId, messagingMapper.toWebMessageRequest(pdf, partyId, errand.getExternalCaseId(), municipalityId, isApproved));
+			return extractId(List.of(messageResult));
+		}
+		final var messageResult = messagingClient.sendLetter(municipalityId, messagingMapper.toLetterRequest(pdf, partyId, municipalityId, isApproved));
 		return extractId(messageResult.getMessages());
 	}
 
