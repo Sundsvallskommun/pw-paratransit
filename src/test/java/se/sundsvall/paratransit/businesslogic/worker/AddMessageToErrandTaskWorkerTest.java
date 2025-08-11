@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.within;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -71,9 +72,6 @@ class AddMessageToErrandTaskWorkerTest {
 	private TextProvider textProviderMock;
 
 	@Mock
-	private DenialTextProperties denialTextPropertiesMock;
-
-	@Mock
 	private Errand errandMock;
 
 	@InjectMocks
@@ -95,6 +93,12 @@ class AddMessageToErrandTaskWorkerTest {
 		final var filename = "filename";
 		final var subject = "subject";
 		final var plainBody = "plainBody";
+		final var templateId = "templateId";
+		final var denialTextProperties = new DenialTextProperties();
+		denialTextProperties.setTemplateId(templateId);
+		denialTextProperties.setFilename(filename);
+		denialTextProperties.setSubject(subject);
+		denialTextProperties.setPlainBody(plainBody);
 
 		final var messageId = UUID.randomUUID().toString();
 
@@ -104,11 +108,8 @@ class AddMessageToErrandTaskWorkerTest {
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID)).thenReturn(MUNICIPALITY_ID);
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_NAMESPACE)).thenReturn(NAMESPACE);
 		when(caseDataClientMock.getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID)).thenReturn(errandMock);
-		when(messagingServiceMock.renderPdfDecision(MUNICIPALITY_ID, errandMock)).thenReturn(new RenderResponse());
-		when(textProviderMock.getDenialTexts(MUNICIPALITY_ID)).thenReturn(denialTextPropertiesMock);
-		when(denialTextPropertiesMock.getFilename()).thenReturn(filename);
-		when(denialTextPropertiesMock.getSubject()).thenReturn(subject);
-		when(denialTextPropertiesMock.getPlainBody()).thenReturn(plainBody);
+		when(textProviderMock.getDenialTexts(MUNICIPALITY_ID)).thenReturn(denialTextProperties);
+		when(messagingServiceMock.renderPdfDecision(MUNICIPALITY_ID, errandMock, templateId)).thenReturn(new RenderResponse());
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_MESSAGE_ID)).thenReturn(messageId);
 		when(errandMock.getExternalCaseId()).thenReturn(externalCaseID);
 
@@ -120,10 +121,8 @@ class AddMessageToErrandTaskWorkerTest {
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID);
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_NAMESPACE);
 		verify(caseDataClientMock).getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID);
-		verify(messagingServiceMock).renderPdfDecision(MUNICIPALITY_ID, errandMock);
-		verify(denialTextPropertiesMock).getFilename();
-		verify(denialTextPropertiesMock).getSubject();
-		verify(denialTextPropertiesMock).getPlainBody();
+		verify(messagingServiceMock).renderPdfDecision(MUNICIPALITY_ID, errandMock, templateId);
+		verify(textProviderMock, times(4)).getDenialTexts(MUNICIPALITY_ID);
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_MESSAGE_ID);
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID);
 		verify(caseDataClientMock).addMessage(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), messageRequestCaptor.capture());
@@ -141,14 +140,18 @@ class AddMessageToErrandTaskWorkerTest {
 
 	@Test
 	void executeThrowsException() {
+		// Setup
+		final var templateId = "templateId";
+		final var denialTextProperties = new DenialTextProperties();
+		denialTextProperties.setTemplateId(templateId);
 		// Mock to simulate not finding id of sent message as a process variable
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_REQUEST_ID)).thenReturn(REQUEST_ID);
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_CASE_NUMBER)).thenReturn(ERRAND_ID);
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID)).thenReturn(MUNICIPALITY_ID);
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_NAMESPACE)).thenReturn(NAMESPACE);
 		when(caseDataClientMock.getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID)).thenReturn(errandMock);
-		when(messagingServiceMock.renderPdfDecision(MUNICIPALITY_ID, errandMock)).thenReturn(new RenderResponse());
-		when(textProviderMock.getDenialTexts(MUNICIPALITY_ID)).thenReturn(denialTextPropertiesMock);
+		when(textProviderMock.getDenialTexts(MUNICIPALITY_ID)).thenReturn(denialTextProperties);
+		when(messagingServiceMock.renderPdfDecision(MUNICIPALITY_ID, errandMock, templateId)).thenReturn(new RenderResponse());
 
 		// Act
 		worker.execute(externalTaskMock, externalTaskServiceMock);
@@ -158,7 +161,8 @@ class AddMessageToErrandTaskWorkerTest {
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID);
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_NAMESPACE);
 		verify(caseDataClientMock).getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID);
-		verify(messagingServiceMock).renderPdfDecision(MUNICIPALITY_ID, errandMock);
+		verify(messagingServiceMock).renderPdfDecision(MUNICIPALITY_ID, errandMock, templateId);
+		verify(textProviderMock, times(2)).getDenialTexts(MUNICIPALITY_ID);
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_MESSAGE_ID);
 		verify(failureHandlerMock).handleException(externalTaskServiceMock, externalTaskMock, "Internal Server Error: Id of sent message could not be retreived from stored process variables");
 		verify(externalTaskMock).getId();

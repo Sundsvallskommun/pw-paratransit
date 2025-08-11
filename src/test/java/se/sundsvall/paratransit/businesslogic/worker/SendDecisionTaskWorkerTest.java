@@ -13,8 +13,10 @@ import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_I
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_REQUEST_ID;
 
+import generated.se.sundsvall.casedata.Decision;
 import generated.se.sundsvall.casedata.Errand;
 import generated.se.sundsvall.templating.RenderResponse;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
@@ -31,9 +33,12 @@ import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 import se.sundsvall.paratransit.service.MessagingService;
+import se.sundsvall.paratransit.util.ApprovalTextProperties;
+import se.sundsvall.paratransit.util.DenialTextProperties;
+import se.sundsvall.paratransit.util.TextProvider;
 
 @ExtendWith(MockitoExtension.class)
-class SendDenialDecisionTaskWorkerTest {
+class SendDecisionTaskWorkerTest {
 
 	private static final String REQUEST_ID = "RequestId";
 	private static final long ERRAND_ID = 123L;
@@ -61,13 +66,16 @@ class SendDenialDecisionTaskWorkerTest {
 	@Mock
 	private Errand errandMock;
 
+	@Mock
+	private TextProvider textProviderMock;
+
 	@InjectMocks
-	private SendDenialDecisionTaskWorker worker;
+	private SendDecisionTaskWorker worker;
 
 	@Test
 	void verifyAnnotations() {
 		assertThat(worker.getClass()).hasAnnotations(Component.class, ExternalTaskSubscription.class);
-		assertThat(worker.getClass().getAnnotation(ExternalTaskSubscription.class).value()).isEqualTo("SendDenialDecisionTask");
+		assertThat(worker.getClass().getAnnotation(ExternalTaskSubscription.class).value()).isEqualTo("SendDecisionTask");
 	}
 
 	@Test
@@ -75,6 +83,10 @@ class SendDenialDecisionTaskWorkerTest {
 		// Setup
 		final var pdf = new RenderResponse();
 		final var messageUUID = UUID.randomUUID();
+		final var templateId = "templateId";
+		final var approvalTextProperties = new ApprovalTextProperties();
+		approvalTextProperties.setTemplateId(templateId);
+		final var decisions = List.of(new Decision().decisionOutcome(Decision.DecisionOutcomeEnum.APPROVAL).decisionType(Decision.DecisionTypeEnum.FINAL));
 
 		// Mock
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_REQUEST_ID)).thenReturn(REQUEST_ID);
@@ -82,8 +94,10 @@ class SendDenialDecisionTaskWorkerTest {
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID)).thenReturn(MUNICIPALITY_ID);
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_NAMESPACE)).thenReturn(NAMESPACE);
 		when(caseDataClientMock.getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID)).thenReturn(errandMock);
-		when(messagingServiceMock.renderPdfDecision(MUNICIPALITY_ID, errandMock)).thenReturn(pdf);
-		when(messagingServiceMock.sendMessageToNonCitizen(MUNICIPALITY_ID, errandMock, pdf)).thenReturn(messageUUID);
+		when(errandMock.getDecisions()).thenReturn(decisions);
+		when(textProviderMock.getApprovalTexts(MUNICIPALITY_ID)).thenReturn(approvalTextProperties);
+		when(messagingServiceMock.renderPdfDecision(MUNICIPALITY_ID, errandMock, templateId)).thenReturn(pdf);
+		when(messagingServiceMock.sendDecisionMessage(MUNICIPALITY_ID, errandMock, pdf, true)).thenReturn(messageUUID);
 
 		// Act
 		worker.execute(externalTaskMock, externalTaskServiceMock);
@@ -94,8 +108,10 @@ class SendDenialDecisionTaskWorkerTest {
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID);
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_NAMESPACE);
 		verify(caseDataClientMock).getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID);
-		verify(messagingServiceMock).renderPdfDecision(MUNICIPALITY_ID, errandMock);
-		verify(messagingServiceMock).sendMessageToNonCitizen(MUNICIPALITY_ID, errandMock, pdf);
+		verify(errandMock).getDecisions();
+		verify(messagingServiceMock).renderPdfDecision(MUNICIPALITY_ID, errandMock, templateId);
+		verify(textProviderMock).getApprovalTexts(MUNICIPALITY_ID);
+		verify(messagingServiceMock).sendDecisionMessage(MUNICIPALITY_ID, errandMock, pdf, true);
 		verify(externalTaskServiceMock).complete(externalTaskMock, Map.of(CAMUNDA_VARIABLE_MESSAGE_ID, messageUUID.toString()));
 		verifyNoInteractions(camundaClientMock, failureHandlerMock);
 	}
@@ -104,6 +120,10 @@ class SendDenialDecisionTaskWorkerTest {
 	void executeThrowsException() {
 		// Mock to throw exception when sending message to applicant
 		final var pdf = new RenderResponse();
+		final var templateId = "templateId";
+		final var denialTextProperties = new DenialTextProperties();
+		denialTextProperties.setTemplateId(templateId);
+		final var decisions = List.of(new Decision().decisionOutcome(Decision.DecisionOutcomeEnum.REJECTION).decisionType(Decision.DecisionTypeEnum.FINAL));
 
 		// Mock
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_REQUEST_ID)).thenReturn(REQUEST_ID);
@@ -111,8 +131,10 @@ class SendDenialDecisionTaskWorkerTest {
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID)).thenReturn(MUNICIPALITY_ID);
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_NAMESPACE)).thenReturn(NAMESPACE);
 		when(caseDataClientMock.getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID)).thenReturn(errandMock);
-		when(messagingServiceMock.renderPdfDecision(MUNICIPALITY_ID, errandMock)).thenReturn(pdf);
-		when(messagingServiceMock.sendMessageToNonCitizen(MUNICIPALITY_ID, errandMock, pdf)).thenThrow(Problem.valueOf(BAD_GATEWAY, "No message id received from messaging service"));
+		when(textProviderMock.getDenialTexts(MUNICIPALITY_ID)).thenReturn(denialTextProperties);
+		when(messagingServiceMock.renderPdfDecision(MUNICIPALITY_ID, errandMock, templateId)).thenReturn(pdf);
+		when(errandMock.getDecisions()).thenReturn(decisions);
+		when(messagingServiceMock.sendDecisionMessage(MUNICIPALITY_ID, errandMock, pdf, false)).thenThrow(Problem.valueOf(BAD_GATEWAY, "No message id received from messaging service"));
 
 		// Act
 		worker.execute(externalTaskMock, externalTaskServiceMock);
@@ -123,8 +145,10 @@ class SendDenialDecisionTaskWorkerTest {
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID);
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_NAMESPACE);
 		verify(caseDataClientMock).getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID);
-		verify(messagingServiceMock).renderPdfDecision(MUNICIPALITY_ID, errandMock);
-		verify(messagingServiceMock).sendMessageToNonCitizen(MUNICIPALITY_ID, errandMock, pdf);
+		verify(errandMock).getDecisions();
+		verify(textProviderMock).getDenialTexts(MUNICIPALITY_ID);
+		verify(messagingServiceMock).renderPdfDecision(MUNICIPALITY_ID, errandMock, templateId);
+		verify(messagingServiceMock).sendDecisionMessage(MUNICIPALITY_ID, errandMock, pdf, false);
 		verify(externalTaskServiceMock, never()).complete(any(), any());
 		verify(externalTaskServiceMock, never()).complete(any());
 		verifyNoInteractions(camundaClientMock);

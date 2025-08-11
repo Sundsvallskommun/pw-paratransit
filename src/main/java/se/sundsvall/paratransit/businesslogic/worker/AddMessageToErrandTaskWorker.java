@@ -43,7 +43,8 @@ public class AddMessageToErrandTaskWorker extends AbstractWorker {
 			final var errand = getErrand(municipalityId, namespace, caseNumber);
 			logInfo("Executing addition of decision message to errand with id {}", errand.getId());
 
-			final var pdf = messagingService.renderPdfDecision(municipalityId, errand);
+			final var pdf = messagingService.renderPdfDecision(municipalityId, errand, textProvider.getDenialTexts(municipalityId).getTemplateId());
+
 			final var attachment = toMessageAttachment(textProvider.getDenialTexts(municipalityId).getFilename(), APPLICATION_PDF_VALUE, pdf);
 			final var messageId = ofNullable(externalTask.getVariable(CAMUNDA_VARIABLE_MESSAGE_ID))
 				.map(String::valueOf)

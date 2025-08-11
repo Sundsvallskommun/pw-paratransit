@@ -68,7 +68,7 @@ class MessagingServiceTest {
 		when(templatingClientMock.renderPdf(eq(MUNICIPALITY_ID), any())).thenReturn(renderResponseMock);
 
 		// Act
-		messagingService.renderPdfDecision(MUNICIPALITY_ID, errand);
+		messagingService.renderPdfDecision(MUNICIPALITY_ID, errand, "templateIdentifier");
 
 		// Assert
 		verify(templatingClientMock).renderPdf(eq(MUNICIPALITY_ID), any());
@@ -84,7 +84,7 @@ class MessagingServiceTest {
 		final var webMessageRequest = new WebMessageRequest();
 		final var messageResult = new MessageResult().messageId(UUID.randomUUID());
 
-		when(messagingMapperMock.toWebMessageRequestDenial(any(), any(), any(), eq(MUNICIPALITY_ID))).thenReturn(webMessageRequest);
+		when(messagingMapperMock.toWebMessageRequest(any(), any(), any(), eq(MUNICIPALITY_ID), eq(false))).thenReturn(webMessageRequest);
 		when(messagingClientMock.sendWebMessage(eq(MUNICIPALITY_ID), any())).thenReturn(messageResult);
 
 		// Act
@@ -107,7 +107,7 @@ class MessagingServiceTest {
 		final var messageResult = new MessageResult().messageId(UUID.randomUUID());
 		final var messageBatchResult = new MessageBatchResult().addMessagesItem(messageResult);
 
-		when(messagingMapperMock.toLetterRequestDenial(any(), any(), eq(MUNICIPALITY_ID))).thenReturn(letterRequest);
+		when(messagingMapperMock.toLetterRequest(any(), any(), eq(MUNICIPALITY_ID), eq(false))).thenReturn(letterRequest);
 		when(messagingClientMock.sendLetter(eq(MUNICIPALITY_ID), any())).thenReturn(messageBatchResult);
 
 		// Act
@@ -129,7 +129,7 @@ class MessagingServiceTest {
 		final var webMessageRequest = new WebMessageRequest();
 		final var messageResult = new MessageResult();
 
-		when(messagingMapperMock.toWebMessageRequestDenial(any(), any(), any(), eq(MUNICIPALITY_ID))).thenReturn(webMessageRequest);
+		when(messagingMapperMock.toWebMessageRequest(any(), any(), any(), eq(MUNICIPALITY_ID), eq(false))).thenReturn(webMessageRequest);
 		when(messagingClientMock.sendWebMessage(eq(MUNICIPALITY_ID), any())).thenReturn(messageResult);
 
 		// Act
@@ -153,7 +153,7 @@ class MessagingServiceTest {
 		final var letterRequest = new LetterRequest();
 		final var messageBatchResult = new MessageBatchResult();
 
-		when(messagingMapperMock.toLetterRequestDenial(any(), any(), eq(MUNICIPALITY_ID))).thenReturn(letterRequest);
+		when(messagingMapperMock.toLetterRequest(any(), any(), eq(MUNICIPALITY_ID), eq(false))).thenReturn(letterRequest);
 		when(messagingClientMock.sendLetter(eq(MUNICIPALITY_ID), any())).thenReturn(messageBatchResult);
 
 		// Act
@@ -245,11 +245,11 @@ class MessagingServiceTest {
 		final var messageResult = new MessageResult().messageId(UUID.randomUUID());
 		final var messageBatchResult = new MessageBatchResult().addMessagesItem(messageResult);
 
-		when(messagingMapperMock.toLetterRequestDenial(any(), any(), eq(MUNICIPALITY_ID))).thenReturn(letterRequest);
+		when(messagingMapperMock.toLetterRequest(any(), any(), eq(MUNICIPALITY_ID), eq(true))).thenReturn(letterRequest);
 		when(messagingClientMock.sendLetter(eq(MUNICIPALITY_ID), any())).thenReturn(messageBatchResult);
 
 		// Act
-		final var uuid = messagingService.sendDenialDecisionMessage(MUNICIPALITY_ID, errand, renderResponse);
+		final var uuid = messagingService.sendDecisionMessage(MUNICIPALITY_ID, errand, renderResponse, true);
 
 		// Assert
 		assertThat(uuid).isEqualTo(messageResult.getMessageId());
@@ -268,11 +268,11 @@ class MessagingServiceTest {
 		final var messageResult = new MessageResult();
 		final var messageBatchResult = new MessageBatchResult().addMessagesItem(messageResult);
 
-		when(messagingMapperMock.toLetterRequestDenial(any(), any(), eq(MUNICIPALITY_ID))).thenReturn(letterRequest);
+		when(messagingMapperMock.toLetterRequest(any(), any(), eq(MUNICIPALITY_ID), eq(true))).thenReturn(letterRequest);
 		when(messagingClientMock.sendLetter(eq(MUNICIPALITY_ID), any())).thenReturn(messageBatchResult);
 
 		// Act
-		final var exception = assertThrows(ThrowableProblem.class, () -> messagingService.sendDenialDecisionMessage(MUNICIPALITY_ID, errand, renderResponse));
+		final var exception = assertThrows(ThrowableProblem.class, () -> messagingService.sendDecisionMessage(MUNICIPALITY_ID, errand, renderResponse, true));
 
 		// Assert
 		assertThat(exception.getStatus().getStatusCode()).isEqualTo(BAD_GATEWAY.getStatusCode());

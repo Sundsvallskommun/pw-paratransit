@@ -16,6 +16,20 @@ class TextPropertiesTest {
 	static final String MUNICIPALITY_ID = "2281";
 	static final String MUNICIPALITY_ID_ANGE = "2260";
 
+	// Approval text properties
+	private static final String APPROVAL_DESCRIPTION = "Personen är folkbokförd i Sundsvalls kommun. Rekommenderat beslut är att godkänna ansökan.";
+	private static final String APPROVAL_FILE_NAME = "beslut.pdf";
+	private static final String APPROVAL_MESSAGE = "Ärendet godkänns";
+	private static final String APPROVAL_SUBJECT = "Beslut från Sundsvalls kommun";
+	private static final String APPROVAL_HTML_BODY = "<p><strong>Hej</strong></p><p>Du har f&aring;tt ett beslut fr&aring;n Sundsvalls kommun.</p><p>Med v&auml;nlig h&auml;lsning<br /><strong>Sundsvalls kommun</strong></p>";
+	private static final String APPROVAL_PLAIN_BODY = """
+		Hej
+
+		Du har fått ett beslut från Sundsvalls kommun.
+
+		Med vänlig hälsning
+		Sundsvalls kommun""";
+
 	// Common text properties
 	private static final String COMMON_DEPARTMENT = "SBK(Gatuavdelningen, Trafiksektionen)";
 	private static final String COMMON_CONTACTINFO_EMAIL = "sundsvalls.kommun@sundsvall.se";
@@ -57,6 +71,16 @@ class TextPropertiesTest {
 
 	@Autowired
 	private TextProperties textProperties;
+
+	@Test
+	void approvalText() {
+		assertThat(textProperties.getApprovals().get(MUNICIPALITY_ID).getDescription()).isEqualTo(APPROVAL_DESCRIPTION);
+		assertThat(textProperties.getApprovals().get(MUNICIPALITY_ID).getFilename()).isEqualTo(APPROVAL_FILE_NAME);
+		assertThat(textProperties.getApprovals().get(MUNICIPALITY_ID).getHtmlBody()).isEqualTo(APPROVAL_HTML_BODY);
+		assertThat(textProperties.getApprovals().get(MUNICIPALITY_ID).getSubject()).isEqualTo(APPROVAL_SUBJECT);
+		assertThat(textProperties.getApprovals().get(MUNICIPALITY_ID).getMessage()).isEqualTo(APPROVAL_MESSAGE);
+		assertThat(textProperties.getApprovals().get(MUNICIPALITY_ID).getPlainBody()).isEqualTo(APPROVAL_PLAIN_BODY);
+	}
 
 	@Test
 	void commonTexts() {
