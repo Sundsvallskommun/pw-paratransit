@@ -6,9 +6,6 @@ info:
     name: MIT License
     url: https://opensource.org/licenses/MIT
   version: "3.0"
-servers:
-  - url: https://party-assets-af-partyassets.apps.ocp201.sundsvall.se
-    description: Generated server url
 tags:
   - name: Metadata for statusreasons
     description: Statusreasons metadata operations
