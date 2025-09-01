@@ -1,0 +1,143 @@
+{
+	"municipalityId": "2281",
+	"externalCaseId": "2971",
+	"attachments": [],
+	"notes": [],
+	"errandNumber": "PRH-2022-000001",
+	"createdByClient": "WSO2_CaseManagementUI",
+	"messageIds": [],
+	"description": "",
+	"extraParameters": [
+		{
+			"values": [
+				"{{parameters.phaseActionParameter}}"
+			],
+			"key": "process.phaseAction"
+		},
+		{
+			"values": [
+				"{{parameters.displayPhaseParameter}}"
+			],
+			"key": "process.displayPhase"
+		},
+		{
+			"values": [
+				"{{parameters.phaseStatusParameter}}"
+			],
+			"key": "process.phaseStatus"
+		}
+	],
+	"stakeholders": [
+		{
+			"firstName": "John",
+			"lastName": "Doe",
+			"addresses": [
+				{
+					"city": "SUNDSVALL",
+					"street": "STORGATAN 1",
+					"postalCode": "850 00"
+				}
+			],
+			"contactInformation": [
+				{
+					"contactType": "PHONE",
+					"value": "070-1234567"
+				},
+				{
+					"contactType": "EMAIL",
+					"value": "john.doe@example.com"
+				}
+			],
+			"created": "2022-12-02T15:13:45.371645+01:00",
+			"roles": [
+				"APPLICANT"
+			],
+			"extraParameters": {},
+			"personId": "6b8928bb-9800-4d52-a9fa-20d88c81f1d6",
+			"id": 1,
+			"type": "PERSON",
+			"version": 0,
+			"updated": "2022-12-02T15:13:45.371676+01:00"
+		},
+		{
+			"firstName": "Kalle",
+			"lastName": "Anka",
+			"addresses": [
+				{
+					"city": "SUNDSVALL",
+					"street": "STORGATAN 1",
+					"postalCode": "850 00"
+				}
+			],
+			"contactInformation": [
+				{
+					"contactType": "PHONE",
+					"value": "070-1234567"
+				},
+				{
+					"contactType": "EMAIL",
+					"value": "john.doe@example.com"
+				}
+			],
+			"created": "2022-12-02T15:13:45.371645+01:00",
+			"roles": [
+				"{{parameters.role}}"
+			],
+			"extraParameters": {},
+			"personId": "6b8928bb-9800-4d52-a9fa-20d88c812345",
+			"id": 1,
+			"type": "PERSON",
+			"version": 0,
+			"updated": "2022-12-02T15:13:45.371676+01:00"
+		}
+	],
+	"caseType": "{{parameters.caseTypeParameter}}",
+	"diaryNumber": "",
+	"processId": "896a44d8-724b-11ed-a840-0242ac110002",
+	"caseTitleAddition": "Nytt parkeringstillstånd",
+	"decisions": [
+		{
+			"description": "Beskrivning",
+			"decisionType": "RECOMMENDED",
+			"decisionOutcome": "{{parameters.decisionOutcome}}",
+			"id": 1,
+			"version": 0,
+			"decidedAt": "{{parameters.decidedAtParameter}}"
+		},
+		{
+			"description": "Beskrivning",
+			"decisionType": "{{parameters.decisionTypeParameter}}",
+			"decisionOutcome": "{{parameters.decisionOutcome}}",
+			"id": 2,
+			"validFrom": "2024-05-17T08:31:29.181Z",
+			"version": 1,
+			"validTo": "2025-05-17T08:31:29.181Z",
+			"decidedAt": "{{parameters.decidedAtParameter}}"
+		}
+	],
+	"id": "{{parameters.caseId}}",
+	"phase": "{{parameters.phaseParameter}}",
+	"updatedBy": "UNKNOWN",
+	"created": "2022-12-02T15:13:45.363499+01:00",
+	"priority": "MEDIUM",
+	"version": 2,
+	"createdBy": "UNKNOWN",
+	"namespace": "SBK_PARKING_PERMIT",
+	"statuses": [
+		{
+			"dateTime": "2023-09-08T08:31:29.181Z",
+			"statusType": "{{parameters.statusTypeParameter}}",
+			"description": "Ärende har kommit in från e-tjänsten."
+		}
+	],
+	"facilities": [],
+	"relatesTo": [
+		{
+			"errandId": 456,
+			"errandNumber": "PRH-2022-000001",
+			"relationReason": "APPEAL"
+		}
+	],
+	"applicationReceived": "{{parameters.applicationReceivedParameter}}",
+	"updated": "2022-12-02T15:17:01.5636+01:00"
+}

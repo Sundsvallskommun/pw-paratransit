@@ -7,6 +7,8 @@ import static se.sundsvall.paratransit.integration.camunda.configuration.Camunda
 import generated.se.sundsvall.camunda.ActivityInstanceDto;
 import generated.se.sundsvall.camunda.DeploymentDto;
 import generated.se.sundsvall.camunda.DeploymentWithDefinitionsDto;
+import generated.se.sundsvall.camunda.EventSubscriptionDto;
+import generated.se.sundsvall.camunda.HistoricActivityInstanceDto;
 import generated.se.sundsvall.camunda.HistoricExternalTaskLogDto;
 import generated.se.sundsvall.camunda.HistoricIncidentDto;
 import generated.se.sundsvall.camunda.HistoricProcessInstanceDto;
@@ -80,5 +82,11 @@ public interface CamundaClient {
 
 	@GetMapping(path = "history/incident", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
 	List<HistoricIncidentDto> getHistoricIncidents(@RequestParam("processInstanceId") String processInstanceId);
+
+	@GetMapping(path = "history/activity-instance", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+	List<HistoricActivityInstanceDto> getHistoricActivities(@RequestParam("processInstanceId") String processInstanceId);
+
+	@GetMapping(path = "event-subscription", produces = APPLICATION_JSON_VALUE)
+	List<EventSubscriptionDto> getEventSubscriptions();
 
 }

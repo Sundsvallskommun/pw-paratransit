@@ -1,0 +1,22 @@
+{
+	"addresses": [
+		{
+			"country": "SVERIGE",
+			"address": "STORGATAN 1",
+			"city": "SUNDSVALL",
+			"addressType": "POPULATION_REGISTRATION_ADDRESS",
+			"postalCode": "850 00",
+			"realEstateDescription": "SUNDSVALL 1:1",
+			"municipality": "{{parameters.municipalityId}}",
+			"emigrated": false
+		}
+	],
+	"gender": "M",
+	"givenname": "John",
+	"nrDate": "20100333",
+	"personId": "{{parameters.personId}}",
+	"classified": "N",
+	"protectedNR": "N",
+	"lastname": "Doe",
+	"civilStatus": "G "
+}
