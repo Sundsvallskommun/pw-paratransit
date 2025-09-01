@@ -97,9 +97,9 @@
         <bpmn:outgoing>update_phase</bpmn:outgoing>
       </bpmn:startEvent>
       <bpmn:endEvent id="end_decision_phase" name="End decision phase">
-        <bpmn:incoming>Flow_0l8rmbg</bpmn:incoming>
+        <bpmn:incoming>Flow_1kyfw5g</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:exclusiveGateway id="gateway_is_decision_final" name="Gateway is decison made?" default="no_final_decision">
+      <bpmn:exclusiveGateway id="gateway_is_decision_final" name="Gateway is decision final" default="no_final_decision">
         <bpmn:incoming>check_decision</bpmn:incoming>
         <bpmn:outgoing>no_final_decision</bpmn:outgoing>
         <bpmn:outgoing>Flow_1kyfw5g</bpmn:outgoing>
@@ -134,30 +134,24 @@
         <bpmn:outgoing>Flow_0q6qxpu</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:sequenceFlow id="Flow_0q6qxpu" sourceRef="external_task_decision_update_errand_status" targetRef="external_task_check_decision_task" />
-      <bpmn:sequenceFlow id="Flow_1kyfw5g" sourceRef="gateway_is_decision_final" targetRef="external_task_send_decision_task">
+      <bpmn:sequenceFlow id="Flow_1kyfw5g" sourceRef="gateway_is_decision_final" targetRef="end_decision_phase">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${finalDecision}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:serviceTask id="external_task_send_decision_task" name="Send decision" camunda:type="external" camunda:topic="SendDecisionTask">
-        <bpmn:documentation />
-        <bpmn:incoming>Flow_1kyfw5g</bpmn:incoming>
-        <bpmn:outgoing>Flow_0l8rmbg</bpmn:outgoing>
-      </bpmn:serviceTask>
-      <bpmn:sequenceFlow id="Flow_0l8rmbg" sourceRef="external_task_send_decision_task" targetRef="end_decision_phase" />
     </bpmn:subProcess>
     <bpmn:subProcess id="actualization_phase" name="Actualization">
       <bpmn:incoming>Flow_1pf2pgk</bpmn:incoming>
       <bpmn:outgoing>Flow_1quthlt</bpmn:outgoing>
-      <bpmn:startEvent id="Event_102sicx" name="Start actualization phase">
+      <bpmn:startEvent id="start_actualization_phase" name="Start actualization phase">
         <bpmn:outgoing>Flow_11tem89</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:serviceTask id="Activity_1w9b99c" name="Verify resident of municipality" camunda:type="external" camunda:topic="VerifyResidentOfMunicipalityTask">
+      <bpmn:serviceTask id="external_task_verify_resident_of_municipality_task" name="Verify resident of municipality" camunda:type="external" camunda:topic="VerifyResidentOfMunicipalityTask">
         <bpmn:incoming>Flow_09n2lb1</bpmn:incoming>
         <bpmn:outgoing>Flow_1rslryq</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:endEvent id="Event_1xc6cb8" name="End actualization phase">
+      <bpmn:endEvent id="end_actualization_phase" name="End actualization phase">
         <bpmn:incoming>actualization_phase_action_is_complete</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:serviceTask id="Activity_1y2lnff" name="Update phase" camunda:type="external" camunda:topic="UpdateErrandPhaseTask">
+      <bpmn:serviceTask id="external_task_actualization_update_phase" name="Update phase" camunda:type="external" camunda:topic="UpdateErrandPhaseTask">
         <bpmn:documentation>Set phase to investigation</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:executionListener expression="${execution.setVariable(&#34;phase&#34;, &#34;Aktualisering&#34;)}" event="start" />
@@ -178,30 +172,30 @@
         <bpmn:incoming>Flow_1dqrkds</bpmn:incoming>
         <bpmn:outgoing>Flow_1it6sbg</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:exclusiveGateway id="gateway_actualization_is_phase_action_complete_or_automatic" name="Is phase action complete?" default="phase_action_is_not_complete">
+      <bpmn:exclusiveGateway id="gateway_actualization_is_phase_action_complete" name="Is phase action complete?" default="phase_action_is_not_complete">
         <bpmn:incoming>Flow_1it6sbg</bpmn:incoming>
         <bpmn:outgoing>actualization_phase_action_is_complete</bpmn:outgoing>
         <bpmn:outgoing>phase_action_is_not_complete</bpmn:outgoing>
         <bpmn:outgoing>Flow_1psn0al</bpmn:outgoing>
       </bpmn:exclusiveGateway>
-      <bpmn:exclusiveGateway id="Gateway_0mk5mf9" name="Is citizen of municipality" default="Flow_0d4d0pg">
+      <bpmn:exclusiveGateway id="gateway_actualization_is_citizen_of_municipality" name="Is citizen of municipality" default="Flow_0d4d0pg">
         <bpmn:incoming>Flow_1rslryq</bpmn:incoming>
         <bpmn:outgoing>Flow_0d4d0pg</bpmn:outgoing>
         <bpmn:outgoing>Flow_1ytda0h</bpmn:outgoing>
       </bpmn:exclusiveGateway>
-      <bpmn:endEvent id="Event_1w6twz9" name="End when not citizen of municipality">
+      <bpmn:endEvent id="end_actualization_not_citizen" name="End when not citizen of municipality">
         <bpmn:incoming>Flow_1ytda0h</bpmn:incoming>
       </bpmn:endEvent>
       <bpmn:endEvent id="end_actualization_canceled" name="End when canceled">
         <bpmn:incoming>Flow_1psn0al</bpmn:incoming>
         <bpmn:incoming>Flow_014wwms</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:serviceTask id="Activity_0gvz23t" name="Verify that reporter stakeholder exists" camunda:type="external" camunda:topic="VerifyAdministratorStakeholderExists">
+      <bpmn:serviceTask id="external_task_actualization_verify_reporter_stakeholder_exists_task" name="Verify that reporter stakeholder exists" camunda:type="external" camunda:topic="VerifyReporterStakeholderExists">
         <bpmn:incoming>Flow_0d4d0pg</bpmn:incoming>
         <bpmn:incoming>Flow_1j1pnib</bpmn:incoming>
         <bpmn:outgoing>Flow_11pcz23</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:exclusiveGateway id="Gateway_0ebirpi" name="Is stakeholder with role REPORTER assigned" default="Flow_1428uxt">
+      <bpmn:exclusiveGateway id="gateway_actualization_stakeholder_reporter_is_assigned" name="Is stakeholder with role REPORTER assigned" default="Flow_1428uxt">
         <bpmn:incoming>Flow_11pcz23</bpmn:incoming>
         <bpmn:outgoing>Flow_014wwms</bpmn:outgoing>
         <bpmn:outgoing>actualization_stakholder_is_assigend</bpmn:outgoing>
@@ -231,32 +225,32 @@
         <bpmn:incoming>Flow_0uir48n</bpmn:incoming>
         <bpmn:outgoing>Flow_1dqrkds</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:sequenceFlow id="Flow_11tem89" sourceRef="Event_102sicx" targetRef="Activity_1y2lnff" />
-      <bpmn:sequenceFlow id="Flow_09n2lb1" sourceRef="Activity_1y2lnff" targetRef="Activity_1w9b99c" />
-      <bpmn:sequenceFlow id="Flow_1rslryq" sourceRef="Activity_1w9b99c" targetRef="Gateway_0mk5mf9" />
-      <bpmn:sequenceFlow id="actualization_phase_action_is_complete" name="Yes" sourceRef="gateway_actualization_is_phase_action_complete_or_automatic" targetRef="Event_1xc6cb8">
+      <bpmn:sequenceFlow id="Flow_11tem89" sourceRef="start_actualization_phase" targetRef="external_task_actualization_update_phase" />
+      <bpmn:sequenceFlow id="Flow_09n2lb1" sourceRef="external_task_actualization_update_phase" targetRef="external_task_verify_resident_of_municipality_task" />
+      <bpmn:sequenceFlow id="Flow_1rslryq" sourceRef="external_task_verify_resident_of_municipality_task" targetRef="gateway_actualization_is_citizen_of_municipality" />
+      <bpmn:sequenceFlow id="actualization_phase_action_is_complete" name="Yes" sourceRef="gateway_actualization_is_phase_action_complete" targetRef="end_actualization_phase">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'COMPLETE' || phaseAction == 'AUTOMATIC'}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="phase_action_is_not_complete" name="No" sourceRef="gateway_actualization_is_phase_action_complete_or_automatic" targetRef="actualization_is_case_update_available" />
+      <bpmn:sequenceFlow id="phase_action_is_not_complete" name="No" sourceRef="gateway_actualization_is_phase_action_complete" targetRef="actualization_is_case_update_available" />
       <bpmn:sequenceFlow id="Flow_1265mg8" sourceRef="actualization_is_case_update_available" targetRef="external_task_actualization_check_phase_action_task" />
       <bpmn:sequenceFlow id="Flow_1dqrkds" sourceRef="external_task_actualization_update_errand_status_to_under_review" targetRef="external_task_actualization_check_phase_action_task" />
-      <bpmn:sequenceFlow id="Flow_1it6sbg" sourceRef="external_task_actualization_check_phase_action_task" targetRef="gateway_actualization_is_phase_action_complete_or_automatic" />
-      <bpmn:sequenceFlow id="Flow_1psn0al" sourceRef="gateway_actualization_is_phase_action_complete_or_automatic" targetRef="end_actualization_canceled">
+      <bpmn:sequenceFlow id="Flow_1it6sbg" sourceRef="external_task_actualization_check_phase_action_task" targetRef="gateway_actualization_is_phase_action_complete" />
+      <bpmn:sequenceFlow id="Flow_1psn0al" sourceRef="gateway_actualization_is_phase_action_complete" targetRef="end_actualization_canceled">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'CANCEL'}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_0d4d0pg" name="Yes" sourceRef="Gateway_0mk5mf9" targetRef="Activity_0gvz23t" />
-      <bpmn:sequenceFlow id="Flow_1ytda0h" name="No" sourceRef="Gateway_0mk5mf9" targetRef="Event_1w6twz9">
+      <bpmn:sequenceFlow id="Flow_0d4d0pg" name="Yes" sourceRef="gateway_actualization_is_citizen_of_municipality" targetRef="external_task_actualization_verify_reporter_stakeholder_exists_task" />
+      <bpmn:sequenceFlow id="Flow_1ytda0h" name="No" sourceRef="gateway_actualization_is_citizen_of_municipality" targetRef="end_actualization_not_citizen">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${applicantNotResidentOfMunicipality}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_014wwms" sourceRef="Gateway_0ebirpi" targetRef="end_actualization_canceled">
+      <bpmn:sequenceFlow id="Flow_014wwms" sourceRef="gateway_actualization_stakeholder_reporter_is_assigned" targetRef="end_actualization_canceled">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'CANCEL'}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_1j1pnib" sourceRef="Event_06jr1ps" targetRef="Activity_0gvz23t" />
-      <bpmn:sequenceFlow id="Flow_11pcz23" sourceRef="Activity_0gvz23t" targetRef="Gateway_0ebirpi" />
-      <bpmn:sequenceFlow id="actualization_stakholder_is_assigend" name="yes" sourceRef="Gateway_0ebirpi" targetRef="external_task_actualization_update_display_phase">
+      <bpmn:sequenceFlow id="Flow_1j1pnib" sourceRef="Event_06jr1ps" targetRef="external_task_actualization_verify_reporter_stakeholder_exists_task" />
+      <bpmn:sequenceFlow id="Flow_11pcz23" sourceRef="external_task_actualization_verify_reporter_stakeholder_exists_task" targetRef="gateway_actualization_stakeholder_reporter_is_assigned" />
+      <bpmn:sequenceFlow id="actualization_stakholder_is_assigend" name="yes" sourceRef="gateway_actualization_stakeholder_reporter_is_assigned" targetRef="external_task_actualization_update_display_phase">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${assignedToReporter == 'true' &amp;&amp; phaseAction != 'CANCEL'} </bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_1428uxt" name="No" sourceRef="Gateway_0ebirpi" targetRef="Event_06jr1ps" />
+      <bpmn:sequenceFlow id="Flow_1428uxt" name="No" sourceRef="gateway_actualization_stakeholder_reporter_is_assigned" targetRef="Event_06jr1ps" />
       <bpmn:sequenceFlow id="Flow_0uir48n" sourceRef="external_task_actualization_update_display_phase" targetRef="external_task_actualization_update_errand_status_to_under_review" />
     </bpmn:subProcess>
     <bpmn:subProcess id="investigation_phase" name="Investigation">
@@ -416,7 +410,7 @@
         <bpmn:incoming>Flow_0m6v59o</bpmn:incoming>
         <bpmn:outgoing>Flow_0ykvekf</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:exclusiveGateway id="gateway_followup_is_phase_action_complete_or_automatic" name="Is phase action complete?" default="Flow_05cikbj">
+      <bpmn:exclusiveGateway id="gateway_followup_is_phase_action_complete" name="Is phase action complete?" default="Flow_05cikbj">
         <bpmn:incoming>Flow_0ykvekf</bpmn:incoming>
         <bpmn:outgoing>Flow_05cikbj</bpmn:outgoing>
         <bpmn:outgoing>Flow_1i36ltw</bpmn:outgoing>
@@ -429,13 +423,13 @@
         </bpmn:conditionalEventDefinition>
       </bpmn:intermediateCatchEvent>
       <bpmn:sequenceFlow id="Flow_1t2k0gt" sourceRef="followup_is_case_update_available" targetRef="external_task_followup_check_phase_action" />
-      <bpmn:sequenceFlow id="Flow_0ykvekf" sourceRef="external_task_followup_check_phase_action" targetRef="gateway_followup_is_phase_action_complete_or_automatic" />
-      <bpmn:sequenceFlow id="Flow_05cikbj" name="no" sourceRef="gateway_followup_is_phase_action_complete_or_automatic" targetRef="followup_is_case_update_available" />
-      <bpmn:sequenceFlow id="Flow_1i36ltw" name="yes" sourceRef="gateway_followup_is_phase_action_complete_or_automatic" targetRef="external_task_follow_up_clean_up_notes">
+      <bpmn:sequenceFlow id="Flow_0ykvekf" sourceRef="external_task_followup_check_phase_action" targetRef="gateway_followup_is_phase_action_complete" />
+      <bpmn:sequenceFlow id="Flow_05cikbj" name="no" sourceRef="gateway_followup_is_phase_action_complete" targetRef="followup_is_case_update_available" />
+      <bpmn:sequenceFlow id="Flow_1i36ltw" name="yes" sourceRef="gateway_followup_is_phase_action_complete" targetRef="external_task_follow_up_clean_up_notes">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'COMPLETE' || phaseAction == 'AUTOMATIC'}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:serviceTask id="external_task_follow_up_update_phase_action" name="Update phase action" camunda:type="external" camunda:topic="UpdateErrandPhaseTask">
-        <bpmn:documentation>Set phase to execution</bpmn:documentation>
+        <bpmn:documentation>Set phase to followup</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:executionListener expression="${execution.setVariable(&#34;phase&#34;, &#34;Uppföljning&#34;)}" event="start" />
           <camunda:executionListener expression="${execution.setVariable(&#34;displayPhase&#34;, &#34;Uppföljning&#34;)}" event="start" />
@@ -682,7 +676,7 @@
         <di:waypoint x="1660" y="460" />
         <di:waypoint x="1660" y="320" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1202" y="384" width="76" height="14" />
+          <dc:Bounds x="1092" y="363" width="76" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0xpanp5_di" bpmnElement="Flow_0xpanp5">
@@ -801,15 +795,15 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1lwu8c8_di" bpmnElement="end_decision_phase">
-        <dc:Bounds x="1092" y="152" width="36" height="36" />
+        <dc:Bounds x="962" y="152" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2120" y="195" width="63" height="27" />
+          <dc:Bounds x="1990" y="195" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_19jrglz" bpmnElement="gateway_is_decision_final" isMarkerVisible="true">
         <dc:Bounds x="805" y="145" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="792" y="100" width="75" height="27" />
+          <dc:Bounds x="798" y="100" width="65" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0otizl3" bpmnElement="decision_is_case_update_available">
@@ -828,10 +822,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1b1izhz" bpmnElement="external_task_decision_update_errand_status">
         <dc:Bounds x="450" y="130" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_13frve6" bpmnElement="external_task_send_decision_task">
-        <dc:Bounds x="930" y="130" width="100" height="80" />
-        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0ywwh6g_di" bpmnElement="update_phase">
         <di:waypoint x="218" y="170" />
@@ -867,33 +857,29 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1kyfw5g_di" bpmnElement="Flow_1kyfw5g">
         <di:waypoint x="855" y="170" />
-        <di:waypoint x="930" y="170" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0l8rmbg_di" bpmnElement="Flow_0l8rmbg">
-        <di:waypoint x="1030" y="170" />
-        <di:waypoint x="1092" y="170" />
+        <di:waypoint x="962" y="170" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_03kxrhh">
     <bpmndi:BPMNPlane id="BPMNPlane_07t7g25" bpmnElement="actualization_phase">
-      <bpmndi:BPMNShape id="BPMNShape_0umt9cl" bpmnElement="Event_102sicx">
+      <bpmndi:BPMNShape id="BPMNShape_0umt9cl" bpmnElement="start_actualization_phase">
         <dc:Bounds x="162" y="252" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="151" y="295" width="62" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_01kmh0z" bpmnElement="Activity_1w9b99c">
+      <bpmndi:BPMNShape id="BPMNShape_01kmh0z" bpmnElement="external_task_verify_resident_of_municipality_task">
         <dc:Bounds x="452" y="230" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0n6d8s4" bpmnElement="Event_1xc6cb8">
+      <bpmndi:BPMNShape id="BPMNShape_0n6d8s4" bpmnElement="end_actualization_phase">
         <dc:Bounds x="1952" y="252" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1928" y="295" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_08b342i" bpmnElement="Activity_1y2lnff">
+      <bpmndi:BPMNShape id="BPMNShape_08b342i" bpmnElement="external_task_actualization_update_phase">
         <dc:Bounds x="280" y="230" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -907,19 +893,19 @@
         <dc:Bounds x="1470" y="230" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1igz4tk_di" bpmnElement="gateway_actualization_is_phase_action_complete_or_automatic" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="Gateway_1igz4tk_di" bpmnElement="gateway_actualization_is_phase_action_complete" isMarkerVisible="true">
         <dc:Bounds x="1645" y="245" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1693" y="226" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_17sl7y7" bpmnElement="Gateway_0mk5mf9" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="BPMNShape_17sl7y7" bpmnElement="gateway_actualization_is_citizen_of_municipality" isMarkerVisible="true">
         <dc:Bounds x="615" y="245" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="613" y="302" width="58" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0a031ed" bpmnElement="Event_1w6twz9">
+      <bpmndi:BPMNShape id="BPMNShape_0a031ed" bpmnElement="end_actualization_not_citizen">
         <dc:Bounds x="1952" y="82" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1943" y="125" width="69" height="40" />
@@ -931,11 +917,11 @@
           <dc:Bounds x="1948" y="215" width="49" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0kdwyne" bpmnElement="Activity_0gvz23t">
+      <bpmndi:BPMNShape id="BPMNShape_0kdwyne" bpmnElement="external_task_actualization_verify_reporter_stakeholder_exists_task">
         <dc:Bounds x="780" y="230" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_11z3ml8" bpmnElement="Gateway_0ebirpi" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="BPMNShape_11z3ml8" bpmnElement="gateway_actualization_stakeholder_reporter_is_assigned" isMarkerVisible="true">
         <dc:Bounds x="955" y="245" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="905" y="203" width="70" height="53" />
@@ -1169,15 +1155,15 @@
           <dc:Bounds x="156" y="145" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_19skgpv" bpmnElement="external_task_execution_update_phase">
-        <dc:Bounds x="310" y="80" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0e6gbas" bpmnElement="end_execution_phase">
         <dc:Bounds x="882" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="865" y="145" width="70" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_19skgpv" bpmnElement="external_task_execution_update_phase">
+        <dc:Bounds x="310" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_16606o6_di" bpmnElement="timer_wait_to_send_message">
         <dc:Bounds x="512" y="102" width="36" height="36" />
@@ -1233,7 +1219,7 @@
         <dc:Bounds x="460" y="80" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0qs3u58" bpmnElement="gateway_followup_is_phase_action_complete_or_automatic" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="BPMNShape_0qs3u58" bpmnElement="gateway_followup_is_phase_action_complete" isMarkerVisible="true">
         <dc:Bounds x="625" y="95" width="50" height="50" />
         <bpmndi:BPMNLabel color:color="#205022">
           <dc:Bounds x="613" y="50" width="74" height="27" />

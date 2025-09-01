@@ -19,7 +19,6 @@ import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_STATUS;
 import static se.sundsvall.paratransit.Constants.CASEDATA_PHASE_DECISION;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_CASE_FINALIZED;
-import static se.sundsvall.paratransit.Constants.PHASE_ACTION_COMPLETE;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_ONGOING;
@@ -92,8 +91,8 @@ class UpdateErrandPhaseTaskWorkerTest {
 		return Stream.of(
 			Arguments.of(CASEDATA_STATUS_CASE_FINALIZED, null),
 			Arguments.of("OTHER_STATUS", null),
-			Arguments.of(CASEDATA_STATUS_CASE_FINALIZED, PHASE_ACTION_COMPLETE),
-			Arguments.of("OTHER_STATUS", PHASE_ACTION_COMPLETE));
+			Arguments.of(CASEDATA_STATUS_CASE_FINALIZED, PHASE_ACTION_UNKNOWN),
+			Arguments.of("OTHER_STATUS", PHASE_ACTION_UNKNOWN));
 	}
 
 	@ParameterizedTest
@@ -102,9 +101,8 @@ class UpdateErrandPhaseTaskWorkerTest {
 		// Setup
 		final var externalCaseId = "externalCaseId";
 		// Sets phase action to unknown in UpdateErrandPhaseTaskWorker because it is the beginning of the phase
-		var phaseActionPersist = phaseAction != null ? phaseAction : PHASE_ACTION_UNKNOWN;
 		final var variables = new HashMap<String, Object>();
-		variables.put(CAMUNDA_VARIABLE_PHASE_ACTION, phaseActionPersist);
+		variables.put(CAMUNDA_VARIABLE_PHASE_ACTION, PHASE_ACTION_UNKNOWN);
 
 		// Mock
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_REQUEST_ID)).thenReturn(REQUEST_ID);
@@ -138,7 +136,7 @@ class UpdateErrandPhaseTaskWorkerTest {
 
 		final var phaseStatus = CASEDATA_STATUS_CASE_FINALIZED.equals(status) ? PHASE_STATUS_COMPLETED : PHASE_STATUS_ONGOING;
 		assertThat(patchErrand.getExtraParameters()).extracting(ExtraParameter::getKey, ExtraParameter::getValues).containsExactlyInAnyOrder(
-			tuple(CASEDATA_KEY_PHASE_ACTION, List.of(phaseActionPersist)),
+			tuple(CASEDATA_KEY_PHASE_ACTION, List.of(PHASE_ACTION_UNKNOWN)),
 			tuple(CASEDATA_KEY_DISPLAY_PHASE, List.of(CASEDATA_PHASE_DECISION)),
 			tuple(CASEDATA_KEY_PHASE_STATUS, List.of(phaseStatus)));
 	}
