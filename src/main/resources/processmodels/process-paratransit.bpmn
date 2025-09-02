@@ -59,7 +59,7 @@
         <bpmn:incoming>Flow_1jka2xy</bpmn:incoming>
         <bpmn:outgoing>Flow_18owkk3</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="external_task_send_denial_decision" name="Send denial decision to applicant" camunda:type="external" camunda:topic="SendDecisionTask">
+      <bpmn:serviceTask id="external_task_send_denial_decision" name="Send denial decision to applicant" camunda:type="external" camunda:topic="SendDenialDecisionTask">
         <bpmn:incoming>Flow_18owkk3</bpmn:incoming>
         <bpmn:outgoing>Flow_0ppjpc1</bpmn:outgoing>
       </bpmn:serviceTask>
@@ -201,7 +201,7 @@
         <bpmn:outgoing>actualization_stakholder_is_assigend</bpmn:outgoing>
         <bpmn:outgoing>Flow_1428uxt</bpmn:outgoing>
       </bpmn:exclusiveGateway>
-      <bpmn:intermediateCatchEvent id="Event_06jr1ps" name="Wait for case update">
+      <bpmn:intermediateCatchEvent id="actualization_wait_for_stakeholder_update" name="Wait for case update">
         <bpmn:incoming>Flow_1428uxt</bpmn:incoming>
         <bpmn:outgoing>Flow_1j1pnib</bpmn:outgoing>
         <bpmn:conditionalEventDefinition id="ConditionalEventDefinition_0q2ugha">
@@ -245,12 +245,12 @@
       <bpmn:sequenceFlow id="Flow_014wwms" sourceRef="gateway_actualization_stakeholder_reporter_is_assigned" targetRef="end_actualization_canceled">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'CANCEL'}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_1j1pnib" sourceRef="Event_06jr1ps" targetRef="external_task_actualization_verify_reporter_stakeholder_exists_task" />
+      <bpmn:sequenceFlow id="Flow_1j1pnib" sourceRef="actualization_wait_for_stakeholder_update" targetRef="external_task_actualization_verify_reporter_stakeholder_exists_task" />
       <bpmn:sequenceFlow id="Flow_11pcz23" sourceRef="external_task_actualization_verify_reporter_stakeholder_exists_task" targetRef="gateway_actualization_stakeholder_reporter_is_assigned" />
       <bpmn:sequenceFlow id="actualization_stakholder_is_assigend" name="yes" sourceRef="gateway_actualization_stakeholder_reporter_is_assigned" targetRef="external_task_actualization_update_display_phase">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${assignedToReporter == 'true' &amp;&amp; phaseAction != 'CANCEL'} </bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_1428uxt" name="No" sourceRef="gateway_actualization_stakeholder_reporter_is_assigned" targetRef="Event_06jr1ps" />
+      <bpmn:sequenceFlow id="Flow_1428uxt" name="No" sourceRef="gateway_actualization_stakeholder_reporter_is_assigned" targetRef="actualization_wait_for_stakeholder_update" />
       <bpmn:sequenceFlow id="Flow_0uir48n" sourceRef="external_task_actualization_update_display_phase" targetRef="external_task_actualization_update_errand_status_to_under_review" />
     </bpmn:subProcess>
     <bpmn:subProcess id="investigation_phase" name="Investigation">
@@ -927,7 +927,7 @@
           <dc:Bounds x="905" y="203" width="70" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0wqkjpc" bpmnElement="Event_06jr1ps">
+      <bpmndi:BPMNShape id="BPMNShape_0wqkjpc" bpmnElement="actualization_wait_for_stakeholder_update">
         <dc:Bounds x="892" y="362" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="881" y="408" width="63" height="27" />

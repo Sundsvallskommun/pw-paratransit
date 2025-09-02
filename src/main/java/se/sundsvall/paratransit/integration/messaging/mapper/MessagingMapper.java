@@ -31,13 +31,11 @@ public class MessagingMapper {
 		this.textProvider = textProvider;
 	}
 
-	public WebMessageRequest toWebMessageRequest(final RenderResponse renderResponse, final String partyId, final String externalCaseId, final String municipalityId, final boolean isApproval) {
-		final var message = isApproval
-			? textProvider.getApprovalTexts(municipalityId).getMessage()
-			: textProvider.getDenialTexts(municipalityId).getMessage();
+	public WebMessageRequest
+		toWebMessageRequest(final RenderResponse renderResponse, final String partyId, final String externalCaseId, final String municipalityId) {
 		return new WebMessageRequest()
 			.addAttachmentsItem(toWebMessageAttachment(renderResponse, municipalityId))
-			.message(message)
+			.message(textProvider.getDenialTexts(municipalityId).getMessage())
 			.oepInstance(EXTERNAL)
 			.party(new WebMessageParty()
 				.partyId(UUID.fromString(partyId))
@@ -60,22 +58,16 @@ public class MessagingMapper {
 			.mimeType(APPLICATION_PDF.getValue());
 	}
 
-	public LetterRequest toLetterRequest(final RenderResponse renderResponse, final String partyId, final String municipalityId, final boolean isApproval) {
-		final var htmlBody = isApproval
-			? textProvider.getApprovalTexts(municipalityId).getHtmlBody()
-			: textProvider.getDenialTexts(municipalityId).getHtmlBody();
-		final var subject = isApproval
-			? textProvider.getApprovalTexts(municipalityId).getSubject()
-			: textProvider.getDenialTexts(municipalityId).getSubject();
+	public LetterRequest toLetterRequest(final RenderResponse renderResponse, final String partyId, final String municipalityId) {
 
 		return new LetterRequest()
 			.addAttachmentsItem(toLetterAttachment(renderResponse, municipalityId))
-			.body(Base64.getEncoder().encodeToString(htmlBody.getBytes(defaultCharset())))
+			.body(Base64.getEncoder().encodeToString(textProvider.getDenialTexts(municipalityId).getHtmlBody().getBytes(defaultCharset())))
 			.contentType(TEXT_HTML)
 			.department(textProvider.getCommonTexts(municipalityId).getDepartment())
 			.party(new LetterParty().addPartyIdsItem(UUID.fromString(partyId)))
 			.sender(toLetterSender(municipalityId))
-			.subject(subject);
+			.subject(textProvider.getDenialTexts(municipalityId).getSubject());
 	}
 
 	public LetterRequest toLetterRequestSimplifiedService(final String partyId, final String municipalityId) {

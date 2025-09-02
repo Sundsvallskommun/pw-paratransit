@@ -11,11 +11,6 @@ public class TextProvider {
 		this.textProperties = textProperties;
 	}
 
-	public ApprovalTextProperties getApprovalTexts(String municipalityId) {
-
-		return textProperties.getApprovals().get(municipalityId);
-	}
-
 	public CommonTextProperties getCommonTexts(final String municipalityId) {
 
 		return textProperties.getCommons().get(municipalityId);
