@@ -45,21 +45,10 @@ public class MessagingService {
 		final var partyId = getStakeholder(errand, PERSON, ROLE_APPLICANT).getPersonId();
 
 		if (isNotEmpty(errand.getExternalCaseId())) {
-			final var messageResult = messagingClient.sendWebMessage(municipalityId, messagingMapper.toWebMessageRequest(pdf, partyId, errand.getExternalCaseId(), municipalityId, false));
+			final var messageResult = messagingClient.sendWebMessage(municipalityId, messagingMapper.toWebMessageRequest(pdf, partyId, errand.getExternalCaseId(), municipalityId));
 			return extractId(List.of(messageResult));
 		}
-		final var messageResult = messagingClient.sendLetter(municipalityId, messagingMapper.toLetterRequest(pdf, partyId, municipalityId, false));
-		return extractId(messageResult.getMessages());
-	}
-
-	public UUID sendDecisionMessage(final String municipalityId, final Errand errand, final RenderResponse pdf, final boolean isApproved) {
-		final var partyId = getStakeholder(errand, PERSON, ROLE_APPLICANT).getPersonId();
-
-		if (isNotEmpty(errand.getExternalCaseId())) {
-			final var messageResult = messagingClient.sendWebMessage(municipalityId, messagingMapper.toWebMessageRequest(pdf, partyId, errand.getExternalCaseId(), municipalityId, isApproved));
-			return extractId(List.of(messageResult));
-		}
-		final var messageResult = messagingClient.sendLetter(municipalityId, messagingMapper.toLetterRequest(pdf, partyId, municipalityId, isApproved));
+		final var messageResult = messagingClient.sendLetter(municipalityId, messagingMapper.toLetterRequest(pdf, partyId, municipalityId));
 		return extractId(messageResult.getMessages());
 	}
 

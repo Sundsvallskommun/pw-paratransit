@@ -8,18 +8,9 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "texts")
 public class TextProperties {
 
-	private Map<String, ApprovalTextProperties> approvals;
 	private Map<String, CommonTextProperties> commons;
 	private Map<String, DenialTextProperties> denials;
 	private Map<String, SimplifiedServiceTextProperties> simplifiedServices;
-
-	public Map<String, ApprovalTextProperties> getApprovals() {
-		return approvals;
-	}
-
-	public void setApprovals(Map<String, ApprovalTextProperties> approvals) {
-		this.approvals = approvals;
-	}
 
 	public Map<String, CommonTextProperties> getCommons() {
 		return commons;

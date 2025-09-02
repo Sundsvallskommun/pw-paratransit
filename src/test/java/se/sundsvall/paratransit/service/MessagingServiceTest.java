@@ -84,7 +84,7 @@ class MessagingServiceTest {
 		final var webMessageRequest = new WebMessageRequest();
 		final var messageResult = new MessageResult().messageId(UUID.randomUUID());
 
-		when(messagingMapperMock.toWebMessageRequest(any(), any(), any(), eq(MUNICIPALITY_ID), eq(false))).thenReturn(webMessageRequest);
+		when(messagingMapperMock.toWebMessageRequest(any(), any(), any(), eq(MUNICIPALITY_ID))).thenReturn(webMessageRequest);
 		when(messagingClientMock.sendWebMessage(eq(MUNICIPALITY_ID), any())).thenReturn(messageResult);
 
 		// Act
@@ -107,7 +107,7 @@ class MessagingServiceTest {
 		final var messageResult = new MessageResult().messageId(UUID.randomUUID());
 		final var messageBatchResult = new MessageBatchResult().addMessagesItem(messageResult);
 
-		when(messagingMapperMock.toLetterRequest(any(), any(), eq(MUNICIPALITY_ID), eq(false))).thenReturn(letterRequest);
+		when(messagingMapperMock.toLetterRequest(any(), any(), eq(MUNICIPALITY_ID))).thenReturn(letterRequest);
 		when(messagingClientMock.sendLetter(eq(MUNICIPALITY_ID), any())).thenReturn(messageBatchResult);
 
 		// Act
@@ -129,7 +129,7 @@ class MessagingServiceTest {
 		final var webMessageRequest = new WebMessageRequest();
 		final var messageResult = new MessageResult();
 
-		when(messagingMapperMock.toWebMessageRequest(any(), any(), any(), eq(MUNICIPALITY_ID), eq(false))).thenReturn(webMessageRequest);
+		when(messagingMapperMock.toWebMessageRequest(any(), any(), any(), eq(MUNICIPALITY_ID))).thenReturn(webMessageRequest);
 		when(messagingClientMock.sendWebMessage(eq(MUNICIPALITY_ID), any())).thenReturn(messageResult);
 
 		// Act
@@ -153,7 +153,7 @@ class MessagingServiceTest {
 		final var letterRequest = new LetterRequest();
 		final var messageBatchResult = new MessageBatchResult();
 
-		when(messagingMapperMock.toLetterRequest(any(), any(), eq(MUNICIPALITY_ID), eq(false))).thenReturn(letterRequest);
+		when(messagingMapperMock.toLetterRequest(any(), any(), eq(MUNICIPALITY_ID))).thenReturn(letterRequest);
 		when(messagingClientMock.sendLetter(eq(MUNICIPALITY_ID), any())).thenReturn(messageBatchResult);
 
 		// Act
@@ -236,29 +236,6 @@ class MessagingServiceTest {
 	}
 
 	@Test
-	void sendDecisionMessage() {
-
-		// Arrange
-		final var errand = createErrand(false);
-		final var renderResponse = new RenderResponse();
-		final var letterRequest = new LetterRequest();
-		final var messageResult = new MessageResult().messageId(UUID.randomUUID());
-		final var messageBatchResult = new MessageBatchResult().addMessagesItem(messageResult);
-
-		when(messagingMapperMock.toLetterRequest(any(), any(), eq(MUNICIPALITY_ID), eq(true))).thenReturn(letterRequest);
-		when(messagingClientMock.sendLetter(eq(MUNICIPALITY_ID), any())).thenReturn(messageBatchResult);
-
-		// Act
-		final var uuid = messagingService.sendDecisionMessage(MUNICIPALITY_ID, errand, renderResponse, true);
-
-		// Assert
-		assertThat(uuid).isEqualTo(messageResult.getMessageId());
-		verify(messagingClientMock).sendLetter(MUNICIPALITY_ID, letterRequest);
-		verifyNoMoreInteractions(messagingClientMock);
-		verifyNoInteractions(templatingClientMock);
-	}
-
-	@Test
 	void noMessageIdReturnedFromLetterResource() {
 
 		// Arrange
@@ -268,11 +245,11 @@ class MessagingServiceTest {
 		final var messageResult = new MessageResult();
 		final var messageBatchResult = new MessageBatchResult().addMessagesItem(messageResult);
 
-		when(messagingMapperMock.toLetterRequest(any(), any(), eq(MUNICIPALITY_ID), eq(true))).thenReturn(letterRequest);
+		when(messagingMapperMock.toLetterRequest(any(), any(), eq(MUNICIPALITY_ID))).thenReturn(letterRequest);
 		when(messagingClientMock.sendLetter(eq(MUNICIPALITY_ID), any())).thenReturn(messageBatchResult);
 
 		// Act
-		final var exception = assertThrows(ThrowableProblem.class, () -> messagingService.sendDecisionMessage(MUNICIPALITY_ID, errand, renderResponse, true));
+		final var exception = assertThrows(ThrowableProblem.class, () -> messagingService.sendMessageToNonCitizen(MUNICIPALITY_ID, errand, renderResponse));
 
 		// Assert
 		assertThat(exception.getStatus().getStatusCode()).isEqualTo(BAD_GATEWAY.getStatusCode());
