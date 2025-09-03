@@ -37,11 +37,12 @@ import java.time.Duration;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.annotation.DirtiesContext;
 import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
 import se.sundsvall.paratransit.Application;
 import se.sundsvall.paratransit.api.model.StartProcessResponse;
 
-
+@DirtiesContext
 @WireMockAppTestSuite(files = "classpath:/Wiremock/", classes = Application.class)
 class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 
