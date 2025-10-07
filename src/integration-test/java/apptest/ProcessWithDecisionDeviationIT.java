@@ -120,7 +120,7 @@ class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Check appeal", "external_task_check_appeal"))
 			.with(tuple("Gateway isAppeal", "gateway_is_appeal"))
 			.with(actualizationPathway())
-			.with(tuple("Gateway isCitizen", "gateway_is_citizen"))
+			.with(tuple("Is canceled in actualization", "gateway_actualization_canceled"))
 			.with(investigationPathway())
 			.with(tuple("Is canceled in investigation", "gateway_investigation_canceled"))
 			.with(tuple("Decision", "decision_phase"))

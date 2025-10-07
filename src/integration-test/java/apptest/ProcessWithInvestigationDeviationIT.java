@@ -124,7 +124,7 @@ class ProcessWithInvestigationDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Check appeal", "external_task_check_appeal"))
 			.with(tuple("Gateway isAppeal", "gateway_is_appeal"))
 			.with(actualizationPathway())
-			.with(tuple("Gateway isCitizen", "gateway_is_citizen"))
+			.with(tuple("Is canceled in actualization", "gateway_actualization_canceled"))
 			// Investigation with deviation
 			.with(tuple("Investigation", "investigation_phase"))
 			.with(tuple("Start investigation phase", "start_investigation_phase"))
@@ -195,7 +195,7 @@ class ProcessWithInvestigationDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Check appeal", "external_task_check_appeal"))
 			.with(tuple("Gateway isAppeal", "gateway_is_appeal"))
 			.with(actualizationPathway())
-			.with(tuple("Gateway isCitizen", "gateway_is_citizen"))
+			.with(tuple("Is canceled in actualization", "gateway_actualization_canceled"))
 			// Investigation with deviation
 			.with(tuple("Investigation", "investigation_phase"))
 			.with(tuple("Start investigation phase", "start_investigation_phase"))
