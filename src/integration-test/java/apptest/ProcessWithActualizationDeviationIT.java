@@ -5,11 +5,9 @@ import static apptest.mock.Actualization.mockActualizationUpdateDisplayPhase;
 import static apptest.mock.Actualization.mockActualizationUpdatePhase;
 import static apptest.mock.Actualization.mockActualizationUpdateStatus;
 import static apptest.mock.Actualization.mockActualizationVerifyReporterStakeholder;
-import static apptest.mock.Actualization.mockActualizationVerifyResident;
 import static apptest.mock.Canceled.mockCanceled;
 import static apptest.mock.CheckAppeal.mockCheckAppeal;
 import static apptest.mock.Decision.mockDecision;
-import static apptest.mock.Denial.mockDenial;
 import static apptest.mock.Execution.mockExecution;
 import static apptest.mock.FollowUp.mockFollowUp;
 import static apptest.mock.Investigation.mockInvestigation;
@@ -19,7 +17,6 @@ import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataPatch;
 import static apptest.verification.ProcessPathway.canceledPathway;
 import static apptest.verification.ProcessPathway.decisionPathway;
-import static apptest.verification.ProcessPathway.denialPathway;
 import static apptest.verification.ProcessPathway.executionPathway;
 import static apptest.verification.ProcessPathway.followUpPathway;
 import static apptest.verification.ProcessPathway.handlingPathway;
@@ -69,53 +66,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test001_createProcessForNonCitizen() throws JsonProcessingException, ClassNotFoundException {
-
-		final var caseId = "456";
-		var scenarioName = "test_actualization_001_createProcessForNonCitizen";
-
-		// Setup mocks
-		mockApiGatewayToken();
-		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
-		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
-		final var stateAfterVerifyResident = mockActualizationVerifyResident(caseId, scenarioName, stateAfterUpdatePhase, "other-municipality");
-		final var stateAfterDenial = mockDenial(caseId, scenarioName, stateAfterVerifyResident);
-		mockFollowUp(caseId, scenarioName, stateAfterDenial);
-
-		// Start process
-		final var startResponse = setupCall()
-			.withServicePath("/2281/SBK_PARKING_PERMIT/process/start/" + caseId)
-			.withHttpMethod(POST)
-			.withExpectedResponseStatus(ACCEPTED)
-			.sendRequest()
-			.andReturnBody(StartProcessResponse.class);
-
-		// Wait for process to finish
-		awaitProcessCompleted(startResponse.getProcessId(), DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
-
-		// Verify wiremock stubs
-		verifyAllStubs();
-
-		// Verify process pathway.
-		assertProcessPathway(startResponse.getProcessId(), false, Tuples.create()
-			.with(tuple("Start process", "start_process"))
-			.with(tuple("Check appeal", "external_task_check_appeal"))
-			.with(tuple("Gateway isAppeal", "gateway_is_appeal"))
-			// Actualization
-			.with(tuple("Actualization", "actualization_phase"))
-			.with(tuple("Update phase", "external_task_actualization_update_phase"))
-			.with(tuple("Start actualization phase", "start_actualization_phase"))
-			.with(tuple("Verify resident of municipality", "external_task_verify_resident_of_municipality_task"))
-			.with(tuple("Is citizen of municipality", "gateway_actualization_is_citizen_of_municipality"))
-			.with(tuple("End when not citizen of municipality", "end_actualization_not_citizen"))
-			.with(tuple("Gateway isCitizen", "gateway_is_citizen"))
-			.with(denialPathway())
-			.with(followUpPathway())
-			.with(tuple("End process", "end_process")));
-	}
-
-	@Test
-	void test002_createProcessForCancelInActualization() throws JsonProcessingException, ClassNotFoundException {
+	void test001_createProcessForCancelInActualization() throws JsonProcessingException, ClassNotFoundException {
 
 		final var caseId = "789";
 		var scenarioName = "test_actualization_002_createProcessForCancelInActualization";
@@ -124,8 +75,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		mockApiGatewayToken();
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
-		final var stateAfterVerifyResident = mockActualizationVerifyResident(caseId, scenarioName, stateAfterUpdatePhase, "2281");
-		final var stateAfterVerifyStakeholder = mockActualizationVerifyReporterStakeholder(caseId, scenarioName, stateAfterVerifyResident);
+		final var stateAfterVerifyStakeholder = mockActualizationVerifyReporterStakeholder(caseId, scenarioName, stateAfterUpdatePhase);
 		final var stateAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, stateAfterVerifyStakeholder);
 		final var stateAfterUpdateStatus = mockActualizationUpdateStatus(caseId, scenarioName, stateAfterUpdateDisplayPhase);
 
@@ -166,8 +116,6 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Actualization", "actualization_phase"))
 			.with(tuple("Update phase", "external_task_actualization_update_phase"))
 			.with(tuple("Start actualization phase", "start_actualization_phase"))
-			.with(tuple("Verify resident of municipality", "external_task_verify_resident_of_municipality_task"))
-			.with(tuple("Is citizen of municipality", "gateway_actualization_is_citizen_of_municipality"))
 			.with(tuple("Verify that reporter stakeholder exists", "external_task_actualization_verify_reporter_stakeholder_exists_task"))
 			.with(tuple("Is stakeholder with role REPORTER assigned", "gateway_actualization_stakeholder_reporter_is_assigned"))
 			.with(tuple("Update displayPhase", "external_task_actualization_update_display_phase"))
@@ -175,14 +123,14 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Check phase action", "external_task_actualization_check_phase_action_task"))
 			.with(tuple("Is phase action complete?", "gateway_actualization_is_phase_action_complete"))
 			.with(tuple("End when canceled", "end_actualization_canceled"))
-			.with(tuple("Gateway isCitizen", "gateway_is_citizen"))
+			.with(tuple("Is canceled in actualization", "gateway_actualization_canceled"))
 			// Canceled
 			.with(canceledPathway())
 			.with(tuple("End process", "end_process")));
 	}
 
 	@Test
-	void test003_createProcessForActualizationNotComplete() throws JsonProcessingException, ClassNotFoundException {
+	void test002_createProcessForActualizationNotComplete() throws JsonProcessingException, ClassNotFoundException {
 
 		final var caseId = "1011";
 		final var scenarioName = "test_actualization_003_createProcessForActualizationNotComplete";
@@ -191,8 +139,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		mockApiGatewayToken();
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
-		final var stateAfterVerifyResident = mockActualizationVerifyResident(caseId, scenarioName, stateAfterUpdatePhase, "2281");
-		final var stateAfterVerifyStakeholder = mockActualizationVerifyReporterStakeholder(caseId, scenarioName, stateAfterVerifyResident);
+		final var stateAfterVerifyStakeholder = mockActualizationVerifyReporterStakeholder(caseId, scenarioName, stateAfterUpdatePhase);
 		final var stateAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, stateAfterVerifyStakeholder);
 		final var stateAfterUpdateStatus = mockActualizationUpdateStatus(caseId, scenarioName, stateAfterUpdateDisplayPhase);
 
@@ -250,8 +197,6 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Actualization", "actualization_phase"))
 			.with(tuple("Start actualization phase", "start_actualization_phase"))
 			.with(tuple("Update phase", "external_task_actualization_update_phase"))
-			.with(tuple("Verify resident of municipality", "external_task_verify_resident_of_municipality_task"))
-			.with(tuple("Is citizen of municipality", "gateway_actualization_is_citizen_of_municipality"))
 			.with(tuple("Verify that reporter stakeholder exists", "external_task_actualization_verify_reporter_stakeholder_exists_task"))
 			.with(tuple("Is stakeholder with role REPORTER assigned", "gateway_actualization_stakeholder_reporter_is_assigned"))
 			.with(tuple("Update displayPhase", "external_task_actualization_update_display_phase"))
@@ -263,7 +208,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Check phase action", "external_task_actualization_check_phase_action_task"))
 			.with(tuple("Is phase action complete?", "gateway_actualization_is_phase_action_complete"))
 			.with(tuple("End actualization phase", "end_actualization_phase"))
-			.with(tuple("Gateway isCitizen", "gateway_is_citizen"))
+			.with(tuple("Is canceled in actualization", "gateway_actualization_canceled"))
 			.with(investigationPathway())
 			.with(tuple("Is canceled in investigation", "gateway_investigation_canceled"))
 			.with(decisionPathway())
@@ -275,7 +220,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test004_createProcessForCancelInActualizationWhenVerifyingReporter() throws JsonProcessingException, ClassNotFoundException {
+	void test003_createProcessForCancelInActualizationWhenVerifyingReporter() throws JsonProcessingException, ClassNotFoundException {
 
 		final var caseId = "1920";
 		var scenarioName = "test_actualization_004_createProcessForCancelInActualizationWhenVerifyingReporter";
@@ -284,8 +229,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		mockApiGatewayToken();
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
-		final var stateAfterVerifyResident = mockActualizationVerifyResident(caseId, scenarioName, stateAfterUpdatePhase, "2281");
-		final var stateAfterGetCancelInVerifyStakeholder = mockCaseDataGet(caseId, scenarioName, stateAfterVerifyResident,
+		final var stateAfterGetCancelInVerifyStakeholder = mockCaseDataGet(caseId, scenarioName, stateAfterUpdatePhase,
 			"actualization_verify-administrator-stakeholder--api-casedata-get-errand",
 			Map.of("decisionTypeParameter", "PROPOSED",
 				"phaseParameter", "Aktualisering",
@@ -322,19 +266,17 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Actualization", "actualization_phase"))
 			.with(tuple("Start actualization phase", "start_actualization_phase"))
 			.with(tuple("Update phase", "external_task_actualization_update_phase"))
-			.with(tuple("Verify resident of municipality", "external_task_verify_resident_of_municipality_task"))
-			.with(tuple("Is citizen of municipality", "gateway_actualization_is_citizen_of_municipality"))
 			.with(tuple("Verify that reporter stakeholder exists", "external_task_actualization_verify_reporter_stakeholder_exists_task"))
 			.with(tuple("Is stakeholder with role REPORTER assigned", "gateway_actualization_stakeholder_reporter_is_assigned"))
 			.with(tuple("End when canceled", "end_actualization_canceled"))
-			.with(tuple("Gateway isCitizen", "gateway_is_citizen"))
+			.with(tuple("Is canceled in actualization", "gateway_actualization_canceled"))
 			// Canceled
 			.with(canceledPathway())
 			.with(tuple("End process", "end_process")));
 	}
 
 	@Test
-	void test005_createProcessWaitingForStakeholderUpdateInActualization() throws JsonProcessingException, ClassNotFoundException {
+	void test004_createProcessWaitingForStakeholderUpdateInActualization() throws JsonProcessingException, ClassNotFoundException {
 
 		final var caseId = "2021";
 		final var scenarioName = "test_actualization_005_createProcessWaitingForStakeholderUpdateInActualization(";
@@ -343,8 +285,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		mockApiGatewayToken();
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
-		final var stateAfterVerifyResident = mockActualizationVerifyResident(caseId, scenarioName, stateAfterUpdatePhase, "2281");
-		final var stateAfterVerifyStakeholderNoReporter = mockCaseDataGet(caseId, scenarioName, stateAfterVerifyResident,
+		final var stateAfterVerifyStakeholderNoReporter = mockCaseDataGet(caseId, scenarioName, stateAfterUpdatePhase,
 			"actualization_verify-administrator-stakeholder---api-casedata-get-errand-no-administrator",
 			Map.of("decisionTypeParameter", "PROPOSED",
 				"phaseParameter", "Aktualisering",
@@ -402,8 +343,6 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Actualization", "actualization_phase"))
 			.with(tuple("Start actualization phase", "start_actualization_phase"))
 			.with(tuple("Update phase", "external_task_actualization_update_phase"))
-			.with(tuple("Verify resident of municipality", "external_task_verify_resident_of_municipality_task"))
-			.with(tuple("Is citizen of municipality", "gateway_actualization_is_citizen_of_municipality"))
 			.with(tuple("Verify that reporter stakeholder exists", "external_task_actualization_verify_reporter_stakeholder_exists_task"))
 			.with(tuple("Is stakeholder with role REPORTER assigned", "gateway_actualization_stakeholder_reporter_is_assigned"))
 			// Stakeholder Reporter is not assigned
@@ -416,7 +355,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Check phase action", "external_task_actualization_check_phase_action_task"))
 			.with(tuple("Is phase action complete?", "gateway_actualization_is_phase_action_complete"))
 			.with(tuple("End actualization phase", "end_actualization_phase"))
-			.with(tuple("Gateway isCitizen", "gateway_is_citizen"))
+			.with(tuple("Is canceled in actualization", "gateway_actualization_canceled"))
 			.with(investigationPathway())
 			.with(tuple("Is canceled in investigation", "gateway_investigation_canceled"))
 			.with(decisionPathway())

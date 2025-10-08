@@ -9,8 +9,6 @@ public class ProcessPathway {
 			.with(tuple("Actualization", "actualization_phase"))
 			.with(tuple("Start actualization phase", "start_actualization_phase"))
 			.with(tuple("Update phase", "external_task_actualization_update_phase"))
-			.with(tuple("Verify resident of municipality", "external_task_verify_resident_of_municipality_task"))
-			.with(tuple("Is citizen of municipality", "gateway_actualization_is_citizen_of_municipality"))
 			.with(tuple("Verify that reporter stakeholder exists", "external_task_actualization_verify_reporter_stakeholder_exists_task"))
 			.with(tuple("Is stakeholder with role REPORTER assigned", "gateway_actualization_stakeholder_reporter_is_assigned"))
 			.with(tuple("Update displayPhase", "external_task_actualization_update_display_phase"))
