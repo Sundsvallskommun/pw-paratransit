@@ -33,6 +33,7 @@ public class Constants {
 	public static final String CAMUNDA_VARIABLE_DISPLAY_PHASE = "displayPhase";
 	public static final String CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE = "timeToSendControlMessage";
 	public static final String CAMUNDA_VARIABLE_IS_APPEAL = "isAppeal";
+	public static final String CAMUNDA_VARIABLE_IS_DRAFT = "isDraft";
 
 	public static final String CASEDATA_KEY_PHASE_STATUS = "process.phaseStatus";
 	public static final String CASEDATA_KEY_PHASE_ACTION = "process.phaseAction";
@@ -61,6 +62,7 @@ public class Constants {
 	public static final String CASEDATA_STATUS_DECISION_EXECUTED = "Beslut verkställt";
 	public static final String CASEDATA_STATUS_CASE_DECIDED = "Beslutad";
 	public static final String CASEDATA_STATUS_CASE_FINALIZED = "Ärende avslutat";
+	public static final String CASEDATA_STATUS_DRAFT = "Utkast";
 
 	public static final String CATEGORY_BESLUT = "BESLUT";
 

@@ -6,6 +6,7 @@ import static se.sundsvall.paratransit.integration.casedata.configuration.CaseDa
 import generated.se.sundsvall.casedata.Attachment;
 import generated.se.sundsvall.casedata.Decision;
 import generated.se.sundsvall.casedata.Errand;
+import generated.se.sundsvall.casedata.ExtraParameter;
 import generated.se.sundsvall.casedata.MessageRequest;
 import generated.se.sundsvall.casedata.Note;
 import generated.se.sundsvall.casedata.PageErrand;
@@ -200,4 +201,17 @@ public interface CaseDataClient {
 		@PathVariable(name = "namespace") String namespace,
 		@PathVariable(name = "errandId") Long errandId,
 		@PathVariable(name = "noteId") Long noteId);
+
+	/**
+	 * Create and add note.
+	 *
+	 * @param  extraParameters                      list of extra parameters to add or update(if existing)
+	 * @throws org.zalando.problem.ThrowableProblem on error
+	 */
+	@PatchMapping(path = "/{municipalityId}/{namespace}/errands/{errandId}/extraparameters", consumes = APPLICATION_JSON_VALUE)
+	ResponseEntity<Void> updateExtraParameters(
+		@PathVariable(name = "municipalityId") String municipalityId,
+		@PathVariable(name = "namespace") String namespace,
+		@PathVariable(name = "errandId") Long errandId,
+		@RequestBody List<ExtraParameter> extraParameters);
 }
