@@ -81,6 +81,9 @@ class UpdateErrandPhaseTaskWorkerTest {
 	@Captor
 	private ArgumentCaptor<PatchErrand> patchErrandCaptor;
 
+	@Captor
+	private ArgumentCaptor<List<ExtraParameter>> patchExtraParametersCaptor;
+
 	@Test
 	void verifyAnnotations() {
 		assertThat(worker.getClass()).hasAnnotations(Component.class, ExternalTaskSubscription.class);
@@ -113,7 +116,6 @@ class UpdateErrandPhaseTaskWorkerTest {
 		when(caseDataClientMock.getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID)).thenReturn(errandMock);
 		when(errandMock.getId()).thenReturn(ERRAND_ID);
 		when(errandMock.getStatuses()).thenReturn(List.of(new generated.se.sundsvall.casedata.Status().statusType(status)));
-		when(errandMock.getExtraParameters()).thenReturn(phaseAction == null ? null : List.of(new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).values(List.of(phaseAction))));
 		when(errandMock.getExternalCaseId()).thenReturn(externalCaseId);
 
 		// Act
@@ -127,6 +129,7 @@ class UpdateErrandPhaseTaskWorkerTest {
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_NAMESPACE);
 		verify(caseDataClientMock).getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID);
 		verify(caseDataClientMock).patchErrand(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), patchErrandCaptor.capture());
+		verify(caseDataClientMock).updateExtraParameters(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), patchExtraParametersCaptor.capture());
 		verify(externalTaskServiceMock).complete(externalTaskMock, variables);
 		verifyNoInteractions(camundaClientMock, failureHandlerMock);
 
@@ -135,7 +138,8 @@ class UpdateErrandPhaseTaskWorkerTest {
 		assertThat(patchErrand.getPhase()).isEqualTo(CASEDATA_PHASE_DECISION);
 
 		final var phaseStatus = CASEDATA_STATUS_CASE_FINALIZED.equals(status) ? PHASE_STATUS_COMPLETED : PHASE_STATUS_ONGOING;
-		assertThat(patchErrand.getExtraParameters()).extracting(ExtraParameter::getKey, ExtraParameter::getValues).containsExactlyInAnyOrder(
+
+		assertThat(patchExtraParametersCaptor.getValue()).extracting(ExtraParameter::getKey, ExtraParameter::getValues).containsExactlyInAnyOrder(
 			tuple(CASEDATA_KEY_PHASE_ACTION, List.of(PHASE_ACTION_UNKNOWN)),
 			tuple(CASEDATA_KEY_DISPLAY_PHASE, List.of(CASEDATA_PHASE_DECISION)),
 			tuple(CASEDATA_KEY_PHASE_STATUS, List.of(phaseStatus)));

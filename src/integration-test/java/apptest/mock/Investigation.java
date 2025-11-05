@@ -1,6 +1,6 @@
 package apptest.mock;
 
-import static apptest.mock.api.CaseData.createPatchBody;
+import static apptest.mock.api.CaseData.createPatchErrandBody;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataPatch;
 import static apptest.mock.api.CaseData.mockCaseDataPatchStatus;
@@ -29,7 +29,8 @@ public class Investigation {
 
 		return mockCaseDataPatch(caseId, scenarioName, state,
 			"investigation_update-phase-task-worker---api-casedata-patch-errand",
-			equalToJson(createPatchBody("Utredning", PHASE_ACTION_UNKNOWN, "ONGOING", "Utredning")));
+			equalToJson(createPatchErrandBody("Utredning")));
+			//equalToJson(createPatchBody("Utredning", PHASE_ACTION_UNKNOWN, "ONGOING", "Utredning")));
 	}
 
 	public static String mockInvestigationUpdateStatus(String caseId, String scenarioName, String requiredScenarioState) {
@@ -74,6 +75,7 @@ public class Investigation {
 			newScenarioStatePatch = newScenarioStatePatch.concat(newScenarioStateSuffix);
 		}
 		return mockCaseDataPatch(caseId, scenarioName, state, newScenarioStatePatch,
-			equalToJson(createPatchBody("Utredning", PHASE_ACTION_COMPLETE, "COMPLETED", "Utredning")));
+			equalToJson(createPatchErrandBody("Utredning")));
+			//equalToJson(createPatchBody("Utredning", PHASE_ACTION_COMPLETE, "COMPLETED", "Utredning")));
 	}
 }

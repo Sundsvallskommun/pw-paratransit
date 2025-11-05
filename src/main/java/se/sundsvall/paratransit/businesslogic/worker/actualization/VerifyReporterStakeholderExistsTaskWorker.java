@@ -5,16 +5,19 @@ import static java.util.Optional.ofNullable;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_ASSIGNED_TO_REPORTER;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_STATUS;
+import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
+import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_STATUS;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
 import static se.sundsvall.paratransit.Constants.ROLE_REPORTER;
-import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toPatchErrand;
 
 import generated.se.sundsvall.casedata.Errand;
+import generated.se.sundsvall.casedata.ExtraParameter;
 import generated.se.sundsvall.casedata.Stakeholder;
 import java.util.HashMap;
+import java.util.List;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -51,12 +54,14 @@ public class VerifyReporterStakeholderExistsTaskWorker extends AbstractWorker {
 			if (isCancel(errand)) {
 				logInfo("Cancel has been requested for errand with id {}", errand.getId());
 
-				caseDataClient.patchErrand(municipalityId, namespace, errand.getId(), toPatchErrand(errand, errand.getPhase(), PHASE_STATUS_CANCELED, PHASE_ACTION_CANCEL));
+				caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), List.of(new ExtraParameter().key(CASEDATA_KEY_PHASE_STATUS).values(List.of(PHASE_STATUS_CANCELED)),
+					new ExtraParameter().key(CASEDATA_KEY_PHASE_ACTION).values(List.of(PHASE_ACTION_CANCEL))));
 				variables.put(CAMUNDA_VARIABLE_PHASE_ACTION, PHASE_ACTION_CANCEL);
 				variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_CANCELED);
 
 			} else if (!reporterIsAssigned) {
-				caseDataClient.patchErrand(municipalityId, namespace, errand.getId(), toPatchErrand(errand, errand.getPhase(), PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
+				caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), List.of(new ExtraParameter().key(CASEDATA_KEY_PHASE_STATUS).values(List.of(PHASE_STATUS_WAITING)),
+					new ExtraParameter().key(CASEDATA_KEY_PHASE_ACTION).values(List.of(PHASE_ACTION_UNKNOWN))));
 				variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_WAITING);
 			}
 

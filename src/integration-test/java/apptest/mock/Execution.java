@@ -1,6 +1,6 @@
 package apptest.mock;
 
-import static apptest.mock.api.CaseData.createPatchBody;
+import static apptest.mock.api.CaseData.createPatchErrandBody;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataPatch;
 import static apptest.mock.api.Messaging.mockMessagingWebMessagePost;
@@ -29,7 +29,8 @@ public class Execution {
 
 		return mockCaseDataPatch(caseId, scenarioName, state,
 			"execution_update-phase-task-worker---api-casedata-patch-errand",
-			equalToJson(createPatchBody("Verkställa", PHASE_ACTION_UNKNOWN, "ONGOING", "Verkställa")));
+			equalToJson(createPatchErrandBody("Verkställa")));
+			//equalToJson(createPatchBody("Verkställa", PHASE_ACTION_UNKNOWN, "ONGOING", "Verkställa")));
 	}
 
 	public static String mockSendSimplifiedService(final String caseId, final String scenarioName, String requiredScenarioState) {

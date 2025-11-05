@@ -42,6 +42,14 @@ public class CaseDataMapper {
 			.addExtraParametersItem((new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).values(displayPhase == null ? emptyList() : List.of(displayPhase))));
 	}
 
+	public static PatchErrand toPatchErrand(final Errand errand, final String phase) {
+		return new PatchErrand()
+			.externalCaseId(errand.getExternalCaseId())
+			.phase(phase)
+			.extraParameters(null)
+			.facilities(null);
+	}
+
 	public static PatchErrand toPatchErrand(final Errand errand, final String phase, final String phaseStatus, final String phaseAction) {
 		return new PatchErrand()
 			.externalCaseId(errand.getExternalCaseId())

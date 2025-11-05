@@ -1,6 +1,6 @@
 package apptest.mock;
 
-import static apptest.mock.api.CaseData.createPatchBody;
+import static apptest.mock.api.CaseData.createPatchErrandBody;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataNotesDelete;
 import static apptest.mock.api.CaseData.mockCaseDataNotesGet;
@@ -29,7 +29,8 @@ public class Canceled {
 
 		return mockCaseDataPatch(caseId, scenarioName, state,
 			"canceled_update-phase-task-worker---api-casedata-patch-errand",
-			equalToJson(createPatchBody("Canceled", "UNKNOWN", "ONGOING", "Avbruten")));
+			equalToJson(createPatchErrandBody("Canceled")));
+			//equalToJson(createPatchBody("Canceled", "UNKNOWN", "ONGOING", "Avbruten")));
 	}
 
 	public static String mockCanceledUpdateStatus(String caseId, String scenarioName, String requiredScenarioState) {
