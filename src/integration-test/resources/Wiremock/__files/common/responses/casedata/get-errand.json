@@ -123,6 +123,7 @@
 	"version": 2,
 	"createdBy": "UNKNOWN",
 	"namespace": "SBK_PARKING_PERMIT",
+	"status": "{{parameters.statusParameter}}",
 	"statuses": [
 		{
 			"dateTime": "2023-09-08T08:31:29.181Z",
