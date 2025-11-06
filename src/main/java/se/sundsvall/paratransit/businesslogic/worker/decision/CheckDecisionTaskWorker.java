@@ -18,7 +18,6 @@ import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
-import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toPatchErrand;
 import static se.sundsvall.paratransit.util.TimerUtil.getControlMessageTime;
 
 import generated.se.sundsvall.casedata.Decision;

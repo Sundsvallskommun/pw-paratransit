@@ -39,7 +39,7 @@ public class VerifyReporterStakeholderExistsTaskWorker extends AbstractWorker {
 	@Override
 	protected void executeBusinessLogic(final ExternalTask externalTask, final ExternalTaskService externalTaskService) {
 		try {
-			logInfo("Execute task for evaluating if stakeholder with role 'ADMINISTRATOR' is present.");
+			logInfo("Execute task for evaluating if stakeholder with role 'REPORTER' is present.");
 			clearUpdateAvailable(externalTask);
 
 			final String municipalityId = getMunicipalityId(externalTask);

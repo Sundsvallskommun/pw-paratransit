@@ -1,8 +1,9 @@
 package apptest.mock;
 
-import static apptest.mock.api.CaseData.createPatchBody;
+import static apptest.mock.api.CaseData.createPatchErrandBody;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataPatch;
+import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.mock.api.CaseData.mockCaseDataPatchStatus;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_COMPLETE;
@@ -60,14 +61,14 @@ public class Actualization {
 			Map.of("decisionTypeParameter", "FINAL",
 				"phaseParameter", "Aktualisering",
 				"phaseStatusParameter", "ONGOING",
-				"statusTypeParameter", "Ärende inkommit",
+				"statusParameter", "Ärende inkommit",
 				"phaseActionParameter", PHASE_ACTION_UNKNOWN,
 				"displayPhaseParameter", "Registrerad"));
 	}
 
 	public static String mockActualizationVerifyReporterStakeholder(final String caseId, final String scenarioName, final String requiredScenarioState) {
 		return mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
-			"actualization_verify-administrator-stakeholder---api-casedata-get-errand",
+			"actualization_verify-reporter-stakeholder---api-casedata-get-errand",
 			Map.of("decisionTypeParameter", "FINAL",
 				"phaseParameter", "Aktualisering",
 				"phaseStatusParameter", "ONGOING",
@@ -75,8 +76,6 @@ public class Actualization {
 				"displayPhaseParameter", "Registrerad"));
 	}
 
-	public static String mockActualizationUpdateDisplayPhase(final String caseId, final String scenarioName, final String requiredScenarioState) {
-		final var state = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
 	public static String mockActualizationUpdateDisplayPhase(String caseId, String scenarioName, String requiredScenarioState) {
 		final var stateAfterGetErrand = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
 			"actualization_update-display-phase---api-casedata-get-errand",

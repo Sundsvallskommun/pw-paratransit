@@ -243,19 +243,6 @@ public class CaseData {
 			.getNewScenarioState();
 	}
 
-	public static String mockCaseDataPatchExtraParameters(String caseId, String scenarioName, String requiredScenarioState, String newScenarioState, ContentPattern<?> bodyPattern) {
-		return stubFor(patch(urlEqualTo(String.format("/api-casedata/2281/SBK_PARKING_PERMIT/errands/%s/extraparameters", caseId)))
-			.inScenario(scenarioName)
-			.whenScenarioStateIs(requiredScenarioState)
-			.withHeader("Authorization", equalTo("Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"))
-			.withRequestBody(bodyPattern)
-			.willReturn(aResponse()
-				.withStatus(OK_200)
-				.withHeader("Content-Type", "*/*"))
-			.willSetStateTo(newScenarioState))
-			.getNewScenarioState();
-	}
-
 	public static String createPatchErrandBody(String phase) {
 		return String.format("""
 			{

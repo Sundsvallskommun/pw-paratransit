@@ -65,10 +65,10 @@ class ProcessWithoutDeviationIT extends AbstractCamundaAppTest {
 		mockApiGatewayToken();
 		mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		mockActualization(caseId, scenarioName);
-		mockInvestigation(caseId, scenarioName);
-		mockDecision(caseId, scenarioName);
-		mockExecution(caseId, scenarioName);
-		mockFollowUp(caseId, scenarioName);
+	//	mockInvestigation(caseId, scenarioName);
+	//	mockDecision(caseId, scenarioName);
+	//	mockExecution(caseId, scenarioName);
+	//	mockFollowUp(caseId, scenarioName);
 
 		// Start process
 		final var startResponse = setupCall()
