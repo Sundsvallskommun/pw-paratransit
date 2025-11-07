@@ -24,7 +24,6 @@ import static apptest.mock.FollowUp.mockFollowUpUpdateStatus;
 import static apptest.mock.Investigation.mockInvestigation;
 import static apptest.mock.api.ApiGateway.mockApiGatewayToken;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
-import static apptest.mock.api.CaseData.mockCaseDataPatch;
 import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.verification.ProcessPathway.actualizationPathway;
 import static apptest.verification.ProcessPathway.decisionPathway;
@@ -93,17 +92,17 @@ class ProcessWithFollowUpDeviationIT extends AbstractCamundaAppTest {
 			equalToJson("""
 				 [
 				    {
-				        "key":"process.displayPhase",
-				        "values":["Uppföljning"]
-				    },
-				    {
 				        "key":"process.phaseStatus",
 				        "values":["WAITING"]
 				    },
 				    {
 				        "key":"process.phaseAction",
 				        "values":["UNKNOWN"]
-					}
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Uppföljning"]
+				    }
 				]
 				"""));
 

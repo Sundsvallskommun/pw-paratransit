@@ -65,10 +65,10 @@ class ProcessWithoutDeviationIT extends AbstractCamundaAppTest {
 		mockApiGatewayToken();
 		mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		mockActualization(caseId, scenarioName);
-	//	mockInvestigation(caseId, scenarioName);
-	//	mockDecision(caseId, scenarioName);
-	//	mockExecution(caseId, scenarioName);
-	//	mockFollowUp(caseId, scenarioName);
+		mockInvestigation(caseId, scenarioName);
+		mockDecision(caseId, scenarioName);
+		mockExecution(caseId, scenarioName);
+		mockFollowUp(caseId, scenarioName);
 
 		// Start process
 		final var startResponse = setupCall()
@@ -79,7 +79,7 @@ class ProcessWithoutDeviationIT extends AbstractCamundaAppTest {
 			.andReturnBody(StartProcessResponse.class);
 
 		// Wait for process to finish
-		awaitProcessCompleted(startResponse.getProcessId(), 999);
+		awaitProcessCompleted(startResponse.getProcessId(), DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
 
 		// Verify wiremock stubs
 		verifyAllStubs();

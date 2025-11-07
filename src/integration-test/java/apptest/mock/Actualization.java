@@ -40,17 +40,17 @@ public class Actualization {
 			equalToJson("""
 				 [
 				    {
-				        "key":"process.displayPhase",
-				        "values":["Registrerad"]
-				    },
-				    {
 				        "key":"process.phaseStatus",
 				        "values":["ONGOING"]
 				    },
 				    {
 				        "key":"process.phaseAction",
 				        "values":["UNKNOWN"]
-					}
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Registrerad"]
+				    }
 				]
 				"""));
 	}
@@ -76,7 +76,7 @@ public class Actualization {
 				"displayPhaseParameter", "Registrerad"));
 	}
 
-	public static String mockActualizationUpdateDisplayPhase(String caseId, String scenarioName, String requiredScenarioState) {
+	public static String mockActualizationUpdateDisplayPhase(final String caseId, final String scenarioName, final String requiredScenarioState) {
 		final var stateAfterGetErrand = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
 			"actualization_update-display-phase---api-casedata-get-errand",
 			Map.of("decisionTypeParameter", "FINAL",
@@ -90,13 +90,9 @@ public class Actualization {
 			equalToJson(createPatchErrandBody("Aktualisering")));
 
 		return mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterPatchErrand,
-			"actualization_update-phase-task-worker---api-casedata-patch-extra-parameters",
+			"actualization_update-display-phase-task-worker---api-casedata-patch-extra-parameters",
 			equalToJson("""
 				 [
-				    {
-				        "key":"process.displayPhase",
-				        "values":["Granskning"]
-				    },
 				    {
 				        "key":"process.phaseStatus",
 				        "values":["ONGOING"]
@@ -104,7 +100,11 @@ public class Actualization {
 				    {
 				        "key":"process.phaseAction",
 				        "values":["UNKNOWN"]
-					}
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Granskning"]
+				    }
 				]
 				"""));
 	}
@@ -143,17 +143,17 @@ public class Actualization {
 			equalToJson("""
 				 [
 				    {
-				        "key":"process.displayPhase",
-				        "values":["Granskning"]
-				    },
-				    {
 				        "key":"process.phaseStatus",
 				        "values":["COMPLETED"]
 				    },
 				    {
 				        "key":"process.phaseAction",
 				        "values":["COMPLETE"]
-					}
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Granskning"]
+				    }
 				]
 				"""));
 	}

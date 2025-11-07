@@ -5,19 +5,15 @@ import static java.util.Optional.ofNullable;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_DISPLAY_PHASE;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
-import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_DISPLAY_PHASE;
-import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
-import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_STATUS;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_CASE_FINALIZED;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_ONGOING;
+import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toPatchErrand;
 
 import generated.se.sundsvall.casedata.Errand;
-import generated.se.sundsvall.casedata.ExtraParameter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
@@ -56,10 +52,7 @@ public class UpdateErrandPhaseTaskWorker extends AbstractWorker {
 
 					// Set phase action to unknown to errand in the beginning of the phase and in the end of process
 					caseDataClient.patchErrand(municipalityId, namespace, errand.getId(), toPatchErrand(errand, phaseValue));
-					caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), List.of(
-						new ExtraParameter().key(CASEDATA_KEY_DISPLAY_PHASE).values(List.of(newDisplayPhase)),
-						new ExtraParameter().key(CASEDATA_KEY_PHASE_STATUS).values(List.of(phaseStatus)),
-						new ExtraParameter().key(CASEDATA_KEY_PHASE_ACTION).values(List.of(PHASE_ACTION_UNKNOWN))));
+					caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(newDisplayPhase, phaseStatus, PHASE_ACTION_UNKNOWN));
 				},
 				() -> logInfo("Phase is not set"));
 

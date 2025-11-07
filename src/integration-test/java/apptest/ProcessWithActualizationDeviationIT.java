@@ -14,7 +14,6 @@ import static apptest.mock.FollowUp.mockFollowUp;
 import static apptest.mock.Investigation.mockInvestigation;
 import static apptest.mock.api.ApiGateway.mockApiGatewayToken;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
-import static apptest.mock.api.CaseData.mockCaseDataPatch;
 import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.verification.ProcessPathway.canceledPathway;
 import static apptest.verification.ProcessPathway.decisionPathway;
@@ -94,17 +93,17 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			equalToJson("""
 				 [
 				    {
-				        "key":"process.displayPhase",
-				        "values":["Granskning"]
-				    },
-				    {
 				        "key":"process.phaseStatus",
 				        "values":["CANCELED"]
 				    },
 				    {
 				        "key":"process.phaseAction",
 				        "values":["CANCEL"]
-					}
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Granskning"]
+				    }
 				]
 				"""));
 
@@ -172,13 +171,9 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 				"displayPhaseParameter", "Granskning"));
 
 		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterGetErrandNonComplete,
-			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters",
+			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters_non-complete",
 			equalToJson("""
 				 [
-				    {
-				        "key":"process.displayPhase",
-				        "values":["Granskning"]
-				    },
 				    {
 				        "key":"process.phaseStatus",
 				        "values":["WAITING"]
@@ -186,7 +181,11 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 				    {
 				        "key":"process.phaseAction",
 				        "values":["UNKNOWN"]
-					}
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Granskning"]
+				    }
 				]
 				"""));
 
@@ -280,10 +279,6 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			equalToJson("""
 				 [
 				    {
-				        "key":"process.displayPhase",
-				        "values":["Registrerad"]
-				    },
-				    {
 				        "key":"process.phaseStatus",
 				        "values":["CANCELED"]
 				    },
@@ -342,7 +337,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
 		final var stateAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, stateAfterUpdatePhase);
 		final var stateAfterVerifyStakeholderNoReporter = mockCaseDataGet(caseId, scenarioName, stateAfterVerifyStatus,
-			"actualization_verify-administrator-stakeholder---api-casedata-get-errand-no-administrator",
+			"actualization_verify-reporter-stakeholder---api-casedata-get-errand-no-administrator",
 			Map.of("decisionTypeParameter", "PROPOSED",
 				"phaseParameter", "Aktualisering",
 				"phaseStatusParameter", "ONGOING",
@@ -350,20 +345,16 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 				"displayPhaseParameter", "Registrerad"), "APPROVAL", "APPLICANT");
 
 		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterVerifyStakeholderNoReporter,
-			"actualization_verify-administrator-stakeholder---api-casedata-patch-extra-parameters",
+			"actualization_verify-reporter-stakeholder---api-casedata-patch-extra-parameters",
 			equalToJson("""
 				 [
 				    {
-				        "key":"process.displayPhase",
-				        "values":["Registrerad"]
-				    },
-				    {
 				        "key":"process.phaseStatus",
-				        "values":["CANCELED"]
+				        "values":["WAITING"]
 				    },
 				    {
 				        "key":"process.phaseAction",
-				        "values":["CANCEL"]
+				        "values":["UNKNOWN"]
 					}
 				]
 				"""));

@@ -11,7 +11,6 @@ import static apptest.mock.Investigation.mockInvestigationUpdatePhase;
 import static apptest.mock.Investigation.mockInvestigationUpdateStatus;
 import static apptest.mock.api.ApiGateway.mockApiGatewayToken;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
-import static apptest.mock.api.CaseData.mockCaseDataPatch;
 import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.verification.ProcessPathway.actualizationPathway;
 import static apptest.verification.ProcessPathway.canceledPathway;
@@ -85,13 +84,9 @@ class ProcessWithInvestigationDeviationIT extends AbstractCamundaAppTest {
 				"displayPhaseParameter", "Utredning"));
 
 		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterCheckPhaseNotCompletedGet,
-			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters",
+			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters-not-complete",
 			equalToJson("""
 				 [
-				    {
-				        "key":"process.displayPhase",
-				        "values":["Utredning"]
-				    },
 				    {
 				        "key":"process.phaseStatus",
 				        "values":["WAITING"]
@@ -99,7 +94,11 @@ class ProcessWithInvestigationDeviationIT extends AbstractCamundaAppTest {
 				    {
 				        "key":"process.phaseAction",
 				        "values":["UNKNOWN"]
-					}
+					},
+					{
+				        "key" : "process.displayPhase",
+				        "values" : [ "Utredning" ]
+				    }
 				]
 				"""));
 
@@ -186,13 +185,9 @@ class ProcessWithInvestigationDeviationIT extends AbstractCamundaAppTest {
 				"displayPhaseParameter", "Utredning"));
 
 		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterCheckPhaseCancel,
-			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters",
+			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters-cancel",
 			equalToJson("""
 				 [
-				    {
-				        "key":"process.displayPhase",
-				        "values":["Utredning"]
-				    },
 				    {
 				        "key":"process.phaseStatus",
 				        "values":["CANCELED"]
@@ -200,7 +195,11 @@ class ProcessWithInvestigationDeviationIT extends AbstractCamundaAppTest {
 				    {
 				        "key":"process.phaseAction",
 				        "values":["CANCEL"]
-					}
+					},
+					{
+				        "key" : "process.displayPhase",
+				        "values" : [ "Utredning" ]
+				    }
 				]
 				"""));
 

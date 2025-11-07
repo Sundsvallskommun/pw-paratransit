@@ -85,17 +85,17 @@ class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 			equalToJson("""
 				 [
 				    {
-				        "key":"process.displayPhase",
-				        "values":["Beslut"]
-				    },
-				    {
 				        "key":"process.phaseStatus",
 				        "values":["WAITING"]
 				    },
 				    {
 				        "key":"process.phaseAction",
 				        "values":["UNKNOWN"]
-					}
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Beslut"]
+				    }
 				]
 				"""));
 

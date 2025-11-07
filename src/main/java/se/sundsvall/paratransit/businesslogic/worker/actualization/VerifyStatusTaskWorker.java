@@ -4,18 +4,15 @@ import static java.util.Objects.isNull;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_DRAFT;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_STATUS;
-import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
-import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_STATUS;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_DRAFT;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
+import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 
 import generated.se.sundsvall.casedata.Errand;
-import generated.se.sundsvall.casedata.ExtraParameter;
 import java.util.HashMap;
-import java.util.List;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -50,15 +47,12 @@ public class VerifyStatusTaskWorker extends AbstractWorker {
 
 			if (isCancel(errand)) {
 				logInfo("Cancel has been requested for errand with id {}", errand.getId());
-				caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), List.of(
-					new ExtraParameter().key(CASEDATA_KEY_PHASE_STATUS).values(List.of(PHASE_STATUS_CANCELED)),
-					new ExtraParameter().key(CASEDATA_KEY_PHASE_ACTION).values(List.of(PHASE_ACTION_CANCEL))));
+				caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(PHASE_STATUS_CANCELED, PHASE_ACTION_CANCEL));
 				variables.put(CAMUNDA_VARIABLE_PHASE_ACTION, PHASE_ACTION_CANCEL);
 				variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_CANCELED);
 
 			} else if (isDraft) {
-				caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), List.of(new ExtraParameter().key(CASEDATA_KEY_PHASE_STATUS).values(List.of(PHASE_STATUS_WAITING)),
-					new ExtraParameter().key(CASEDATA_KEY_PHASE_ACTION).values(List.of(PHASE_ACTION_UNKNOWN))));
+				caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
 				variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_WAITING);
 			}
 

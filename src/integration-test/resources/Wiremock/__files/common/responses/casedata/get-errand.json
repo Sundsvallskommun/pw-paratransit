@@ -123,7 +123,11 @@
 	"version": 2,
 	"createdBy": "UNKNOWN",
 	"namespace": "SBK_PARKING_PERMIT",
-	"status": "{{parameters.statusParameter}}",
+	"status": {
+		"statusType": "{{parameters.statusParameter}}",
+		"description": "Ärende har kommit in från e-tjänsten.",
+		"created": "2023-01-01T12:00:00Z"
+	},
 	"statuses": [
 		{
 			"dateTime": "2023-09-08T08:31:29.181Z",

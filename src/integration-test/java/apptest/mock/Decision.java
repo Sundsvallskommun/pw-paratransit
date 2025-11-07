@@ -3,6 +3,7 @@ package apptest.mock;
 import static apptest.mock.api.CaseData.createPatchErrandBody;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataPatch;
+import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.mock.api.CaseData.mockCaseDataPatchStatus;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
@@ -11,15 +12,15 @@ import java.util.Map;
 
 public class Decision {
 
-	public static String mockDecision(String caseId, String scenarioName) {
-		var scenarioAfterUpdatePhase = mockDecisionUpdatePhase(caseId, scenarioName, "investigation_check-phase-action_task-worker---api-casedata-patch-errand");
+	public static String mockDecision(final String caseId, final String scenarioName) {
+		var scenarioAfterUpdatePhase = mockDecisionUpdatePhase(caseId, scenarioName, "investigation_check-phase-action_task-worker---api-casedata-patch-extra-parameters");
 		var scenarioAfterUpdateStatus = mockDecisionUpdateStatus(caseId, scenarioName, scenarioAfterUpdatePhase);
 		return mockDecisionCheckIfDecisionMade(caseId, scenarioName, scenarioAfterUpdateStatus);
 	}
 
-	public static String mockDecisionUpdatePhase(String caseId, String scenarioName, String requiredScenarioState) {
+	public static String mockDecisionUpdatePhase(final String caseId, final String scenarioName, final String requiredScenarioState) {
 
-		var state = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
+		final var state = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
 			"decision_update-phase-task-worker---api-casedata-patch-errand",
 			Map.of("decisionTypeParameter", "FINAL",
 				"phaseParameter", "Utredning",
@@ -27,14 +28,31 @@ public class Decision {
 				"phaseStatusParameter", "ONGOING",
 				"displayPhaseParameter", "Utredning"));
 
-		return mockCaseDataPatch(caseId, scenarioName, state,
+		final var stateAfterErrandPatch = mockCaseDataPatch(caseId, scenarioName, state,
 			"decision_update-phase-task-worker---api-casedata-patch-errand",
 			equalToJson(createPatchErrandBody("Beslut")));
-			//equalToJson(createPatchBody("Beslut", PHASE_ACTION_UNKNOWN, "ONGOING", "Beslut")));
+		return mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterErrandPatch,
+			"decision_update-phase-task-worker---api-casedata-patch-extra-parameters",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["ONGOING"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["UNKNOWN"]
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Beslut"]
+				    }
+				]
+				"""));
 	}
 
-	public static String mockDecisionUpdateStatus(String caseId, String scenarioName, String requiredScenarioState) {
-		var state = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
+	public static String mockDecisionUpdateStatus(final String caseId, final String scenarioName, final String requiredScenarioState) {
+		final var state = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
 			"decision_update-status-task-worker---api-casedata-get-errand",
 			Map.of("decisionTypeParameter", "FINAL",
 				"statusTypeParameter", "Ärende inkommit",
@@ -54,33 +72,12 @@ public class Decision {
 				"""));
 	}
 
-	public static String mockDecisionCheckIfDecisionMade(String caseId, String scenarioName, String requiredScenarioState) {
+	public static String mockDecisionCheckIfDecisionMade(final String caseId, final String scenarioName, final String requiredScenarioState) {
 		return mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
 			"check-decision-task-worker---api-casedata-get-errand",
 			Map.of("decisionTypeParameter", "FINAL",
 				"phaseParameter", "Beslut",
 				"displayPhaseParameter", "Beslut",
 				"statusTypeParameter", "Beslutad"));
-	}
-
-	public static String mockDecisionHandling(String municipalityId, String caseId, String scenarioName, String requiredScenarioState) {
-		var state = mockCaseDataGet(municipalityId, caseId, scenarioName, requiredScenarioState,
-			"decision_decision-handling-worker---api-casedata-get-errand",
-			Map.of("decisionTypeParameter", "FINAL",
-				"statusTypeParameter", "Ärende inkommit",
-				"phaseParameter", "Beslut",
-				"phaseStatusParameter", "ONGOING",
-				"phaseActionParameter", PHASE_ACTION_UNKNOWN,
-				"displayPhaseParameter", "Beslut"));
-
-		return mockCaseDataPatchStatus(caseId, scenarioName, state,
-			"decision_update-status-task-worker---api-casedata-patch-status",
-			equalToJson("""
-				  {
-				    "statusType": "Under beslut",
-				    "description": "Ärendet beslutas",
-				    "created": "${json-unit.any-string}"
-				  }
-				"""));
 	}
 }

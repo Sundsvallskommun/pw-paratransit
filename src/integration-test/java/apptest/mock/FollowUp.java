@@ -41,17 +41,17 @@ public class FollowUp {
 			equalToJson("""
 				 [
 				    {
-				        "key":"process.displayPhase",
-				        "values":["Uppföljning"]
-				    },
-				    {
 				        "key":"process.phaseStatus",
 				        "values":["COMPLETED"]
 				    },
 				    {
 				        "key":"process.phaseAction",
 				        "values":["COMPLETE"]
-					}
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Uppföljning"]
+				    }
 				]
 				"""));
 	}
@@ -76,17 +76,17 @@ public class FollowUp {
 			equalToJson("""
 				 [
 				    {
-				        "key":"process.displayPhase",
-				        "values":["Uppföljning"]
-				    },
-				    {
 				        "key":"process.phaseStatus",
 				        "values":["ONGOING"]
 				    },
 				    {
 				        "key":"process.phaseAction",
 				        "values":["UNKNOWN"]
-					}
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Uppföljning"]
+				    }
 				]
 				"""));
 	}
@@ -111,17 +111,17 @@ public class FollowUp {
 			equalToJson("""
 				 [
 				    {
-				        "key":"process.displayPhase",
-				        "values":["Uppföljning"]
-				    },
-				    {
 				        "key":"process.phaseStatus",
 				        "values":["COMPLETED"]
 				    },
 				    {
 				        "key":"process.phaseAction",
 				        "values":["UNKNOWN"]
-					}
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Uppföljning"]
+				    }
 				]
 				"""));
 	}

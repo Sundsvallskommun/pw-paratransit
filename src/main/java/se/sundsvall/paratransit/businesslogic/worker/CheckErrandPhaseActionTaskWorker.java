@@ -12,11 +12,10 @@ import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
+import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 
 import generated.se.sundsvall.casedata.Errand;
-import generated.se.sundsvall.casedata.ExtraParameter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
@@ -52,30 +51,25 @@ public class CheckErrandPhaseActionTaskWorker extends AbstractWorker {
 				.flatMap(extraParameters -> extraParameters.getValues().stream().findFirst())
 				.orElse(PHASE_ACTION_UNKNOWN);
 
-			final var displayPhaseExtraParameter = ofNullable(errand.getExtraParameters()).orElse(emptyList()).stream()
+			final var displayPhase = ofNullable(errand.getExtraParameters()).orElse(emptyList()).stream()
 				.filter(extraParameters -> CASEDATA_KEY_DISPLAY_PHASE.equals(extraParameters.getKey()))
 				.findFirst()
-				.orElse(new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE));
+				.flatMap(extraParameters -> extraParameters.getValues().stream().findFirst())
+				.orElse(CASEDATA_KEY_DISPLAY_PHASE);
 
 			switch (phaseAction) {
 				case PHASE_ACTION_COMPLETE -> {
 					logInfo("Phase action is complete. Setting phase status to {}", PHASE_STATUS_COMPLETED);
-					caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), List.of(displayPhaseExtraParameter,
-						new ExtraParameter().key(CASEDATA_KEY_PHASE_STATUS).values(List.of(PHASE_STATUS_COMPLETED)),
-						new ExtraParameter().key(CASEDATA_KEY_PHASE_ACTION).values(List.of(phaseAction))));
+					caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(displayPhase, PHASE_STATUS_COMPLETED, phaseAction));
 				}
 				case PHASE_ACTION_CANCEL -> {
 					logInfo("Phase action is cancel. Setting phase status to {}", PHASE_STATUS_CANCELED);
-					caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), List.of(displayPhaseExtraParameter,
-						new ExtraParameter().key(CASEDATA_KEY_PHASE_STATUS).values(List.of(PHASE_STATUS_CANCELED)),
-						new ExtraParameter().key(CASEDATA_KEY_PHASE_ACTION).values(List.of(phaseAction))));
+					caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(displayPhase, PHASE_STATUS_CANCELED, phaseAction));
 				}
 				default -> {
 					logInfo("Phase action is unknown. Setting phase status to {}", PHASE_STATUS_WAITING);
 					if (isPhaseStatusNotWaiting(errand)) {
-						caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), List.of(displayPhaseExtraParameter,
-							new ExtraParameter().key(CASEDATA_KEY_PHASE_STATUS).values(List.of(PHASE_STATUS_WAITING)),
-							new ExtraParameter().key(CASEDATA_KEY_PHASE_ACTION).values(List.of(phaseAction))));
+						caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(displayPhase, PHASE_STATUS_WAITING, phaseAction));
 					}
 				}
 			}

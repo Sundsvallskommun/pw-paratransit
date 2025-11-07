@@ -8,9 +8,6 @@ import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_APPROVED;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_STATUS;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE;
-import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_DISPLAY_PHASE;
-import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
-import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_STATUS;
 import static se.sundsvall.paratransit.Constants.CASEDATA_PHASE_DECISION;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_CASE_DECIDED;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_DECISION_EXECUTED;
@@ -18,13 +15,12 @@ import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
+import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 import static se.sundsvall.paratransit.util.TimerUtil.getControlMessageTime;
 
 import generated.se.sundsvall.casedata.Decision;
 import generated.se.sundsvall.casedata.Errand;
-import generated.se.sundsvall.casedata.ExtraParameter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
@@ -72,19 +68,13 @@ public class CheckDecisionTaskWorker extends AbstractWorker {
 					} else {
 						variables.put(CAMUNDA_VARIABLE_FINAL_DECISION, false);
 						variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_WAITING);
-						caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), List.of(
-							new ExtraParameter().key(CASEDATA_KEY_DISPLAY_PHASE).values(List.of(CASEDATA_PHASE_DECISION)),
-							new ExtraParameter().key(CASEDATA_KEY_PHASE_STATUS).values(List.of(PHASE_STATUS_WAITING)),
-							new ExtraParameter().key(CASEDATA_KEY_PHASE_ACTION).values(List.of(PHASE_ACTION_UNKNOWN))));
+						caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(CASEDATA_PHASE_DECISION, PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
 						logInfo("Decision is not made yet.");
 					}
 				}, () -> {
 					variables.put(CAMUNDA_VARIABLE_FINAL_DECISION, false);
 					variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_WAITING);
-					caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), List.of(
-						new ExtraParameter().key(CASEDATA_KEY_DISPLAY_PHASE).values(List.of(CASEDATA_PHASE_DECISION)),
-						new ExtraParameter().key(CASEDATA_KEY_PHASE_STATUS).values(List.of(PHASE_STATUS_WAITING)),
-						new ExtraParameter().key(CASEDATA_KEY_PHASE_ACTION).values(List.of(PHASE_ACTION_UNKNOWN))));
+					caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(CASEDATA_PHASE_DECISION, PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
 					logInfo("Decision is not made yet.");
 				});
 
