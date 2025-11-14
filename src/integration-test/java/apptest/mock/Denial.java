@@ -38,7 +38,6 @@ public class Denial {
 		return mockCaseDataPatch(caseId, scenarioName, state,
 			"automatic_denial_update-phase-task-worker---api-casedata-patch-errand",
 			equalToJson(createPatchErrandBody("Beslut")));
-		//	equalToJson(createPatchBody("Beslut", PHASE_ACTION_UNKNOWN, "ONGOING", "Beslut")));
 	}
 
 	public static String mockDenialAddDecision(final String caseId, final String scenarioName, final String requiredScenarioState) {
