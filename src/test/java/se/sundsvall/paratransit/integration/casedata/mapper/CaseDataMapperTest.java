@@ -7,6 +7,9 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
+import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_DISPLAY_PHASE;
+import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
+import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_STATUS;
 
 import generated.se.sundsvall.casedata.Attachment;
 import generated.se.sundsvall.casedata.Decision;
@@ -146,84 +149,20 @@ class CaseDataMapperTest {
 	}
 
 	@Test
-	void toPatchErrandWithNullAsParameters() {
-		final var bean = CaseDataMapper.toPatchErrand(new Errand(), null, null, null, null);
-
-		final var expectedExtraParameters = List.of(
-			new ExtraParameter("process.phaseStatus"),
-			new ExtraParameter("process.phaseAction"),
-			new ExtraParameter("process.displayPhase"));
-
-		assertThat(bean).isNotNull().hasAllNullFieldsOrPropertiesExcept("extraParameters", "facilities", "relatesTo", "labels")
-			.extracting(PatchErrand::getExtraParameters)
-			.isEqualTo(expectedExtraParameters);
-	}
-
-	@Test
 	void toPatchErrand() {
 		final var externalCaseId = "externalCaseId";
 		final var errand = new Errand().externalCaseId(externalCaseId);
 		final var phase = "phase";
-		final var phaseStatus = "phaseStatus";
-		final var phaseAction = "phaseAction";
 
-		final var bean = CaseDataMapper.toPatchErrand(
-			errand.addExtraParametersItem(new ExtraParameter("extra").addValuesItem("extraValue")), phase, phaseStatus, phaseAction);
+		final var bean = CaseDataMapper.toPatchErrand(errand, phase);
 
 		assertThat(bean).isNotNull()
-			.hasAllNullFieldsOrPropertiesExcept("externalCaseId", "phase", "extraParameters", "facilities", "relatesTo", "labels")
 			.extracting(
 				PatchErrand::getExternalCaseId,
-				PatchErrand::getPhase,
-				PatchErrand::getExtraParameters)
+				PatchErrand::getPhase)
 			.containsExactly(
 				externalCaseId,
-				phase,
-				List.of(
-					new ExtraParameter("extra").addValuesItem("extraValue"),
-					new ExtraParameter("process.phaseStatus").addValuesItem(phaseStatus),
-					new ExtraParameter("process.phaseAction").addValuesItem(phaseAction)));
-	}
-
-	@Test
-	void toPatchErrandWithDisplayPhase() {
-		final var externalCaseId = "externalCaseId";
-		final var errand = new Errand().externalCaseId(externalCaseId);
-		final var phase = "phase";
-		final var displayPhase = "displayPhase";
-		final var phaseStatus = "phaseStatus";
-		final var phaseAction = "phaseAction";
-
-		final var bean = CaseDataMapper.toPatchErrand(errand, phase, displayPhase, phaseStatus, phaseAction);
-		assertThat(bean).isNotNull()
-			.hasAllNullFieldsOrPropertiesExcept("externalCaseId", "phase", "extraParameters", "facilities", "relatesTo", "labels")
-			.extracting(
-				PatchErrand::getExternalCaseId,
-				PatchErrand::getPhase,
-				PatchErrand::getExtraParameters)
-			.containsExactly(
-				externalCaseId,
-				phase,
-				List.of(
-					new ExtraParameter("process.phaseStatus").addValuesItem(phaseStatus),
-					new ExtraParameter("process.phaseAction").addValuesItem(phaseAction),
-					new ExtraParameter("process.displayPhase").addValuesItem(displayPhase)));
-
-	}
-
-	@Test
-	void toPatchErrandWithPhaseAction() {
-		final var externalCaseId = "externalCaseId";
-		final var phaseAction = "phaseAction";
-
-		final var bean = CaseDataMapper.toPatchErrand(new Errand(), externalCaseId, phaseAction);
-
-		assertThat(bean)
-			.isNotNull()
-			.hasAllNullFieldsOrPropertiesExcept("externalCaseId", "extraParameters", "facilities", "relatesTo", "labels")
-			.satisfies(request -> {
-				assertThat(request.getExtraParameters()).containsExactly(new ExtraParameter("process.phaseAction").addValuesItem(phaseAction));
-			});
+				phase);
 	}
 
 	@Test
@@ -328,4 +267,43 @@ class CaseDataMapperTest {
 				List.of(role),
 				type);
 	}
+
+	@Test
+	void toExtraParameters() {
+		final var displayPhase = "displayPhase";
+		final var phaseStatus = "phaseStatus";
+		final var phaseAction = "phaseAction";
+		final var extraParameters = CaseDataMapper.toExtraParameters(displayPhase, phaseStatus, phaseAction);
+
+		assertThat(extraParameters).extracting(ExtraParameter::getKey, ExtraParameter::getValues).containsExactlyInAnyOrder(
+			org.assertj.core.api.Assertions.tuple(CASEDATA_KEY_DISPLAY_PHASE, List.of(displayPhase)),
+			org.assertj.core.api.Assertions.tuple(CASEDATA_KEY_PHASE_STATUS, List.of(phaseStatus)),
+			org.assertj.core.api.Assertions.tuple(CASEDATA_KEY_PHASE_ACTION, List.of(phaseAction)));
+	}
+
+	@Test
+	void toExtraParametersWhenNullValues() {
+		final var extraParameters = CaseDataMapper.toExtraParameters(null, null, null);
+
+		assertThat(extraParameters).isEmpty();
+	}
+
+	@Test
+	void toExtraParametersWithPhaseStatusAndPhaseAction() {
+		final var phaseStatus = "phaseStatus";
+		final var phaseAction = "phaseAction";
+		final var extraParameters = CaseDataMapper.toExtraParameters(phaseStatus, phaseAction);
+
+		assertThat(extraParameters).extracting(ExtraParameter::getKey, ExtraParameter::getValues).containsExactlyInAnyOrder(
+			org.assertj.core.api.Assertions.tuple(CASEDATA_KEY_PHASE_STATUS, List.of(phaseStatus)),
+			org.assertj.core.api.Assertions.tuple(CASEDATA_KEY_PHASE_ACTION, List.of(phaseAction)));
+	}
+
+	@Test
+	void toExtraParametersWithPhaseStatusAndPhaseActionWhenNullValues() {
+		final var extraParameters = CaseDataMapper.toExtraParameters(null, null);
+
+		assertThat(extraParameters).isEmpty();
+	}
+
 }

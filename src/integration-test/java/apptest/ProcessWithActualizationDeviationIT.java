@@ -13,9 +13,7 @@ import static apptest.mock.Execution.mockExecution;
 import static apptest.mock.FollowUp.mockFollowUp;
 import static apptest.mock.Investigation.mockInvestigation;
 import static apptest.mock.api.ApiGateway.mockApiGatewayToken;
-import static apptest.mock.api.CaseData.createPatchBody;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
-import static apptest.mock.api.CaseData.mockCaseDataPatch;
 import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.verification.ProcessPathway.canceledPathway;
 import static apptest.verification.ProcessPathway.decisionPathway;
@@ -90,11 +88,26 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 				"phaseActionParameter", "CANCEL",
 				"displayPhaseParameter", "Granskning"));
 
-		final var stateAfterPatchErrand = mockCaseDataPatch(caseId, scenarioName, stateAfterGetErrand,
-			"actualization_check-phase-action_task-worker---api-casedata-patch-errand",
-			equalToJson(createPatchBody("Aktualisering", "CANCEL", "CANCELED", "Granskning"), true, false));
+		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterGetErrand,
+			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["CANCELED"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["CANCEL"]
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Granskning"]
+				    }
+				]
+				"""));
 
-		mockCanceled(caseId, scenarioName, stateAfterPatchErrand);
+		mockCanceled(caseId, scenarioName, stateAfterPatchExtraParameters);
 
 		// Start process
 		final var startResponse = setupCall()
@@ -157,11 +170,26 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 				"phaseActionParameter", "UNKNOWN",
 				"displayPhaseParameter", "Granskning"));
 
-		final var stateAfterPatchNonComplete = mockCaseDataPatch(caseId, scenarioName, stateAfterGetErrandNonComplete,
-			"actualization_check-phase-action_task-worker---api-casedata-patch-errand-non-complete",
-			equalToJson(createPatchBody("Aktualisering", "UNKNOWN", "WAITING", "Granskning"), true, false));
+		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterGetErrandNonComplete,
+			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters_non-complete",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["WAITING"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["UNKNOWN"]
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Granskning"]
+				    }
+				]
+				"""));
 
-		mockActualizationCheckPhaseAction(caseId, scenarioName, stateAfterPatchNonComplete);
+		mockActualizationCheckPhaseAction(caseId, scenarioName, stateAfterPatchExtraParameters);
 
 		// Normal mock
 		mockInvestigation(caseId, scenarioName);
@@ -246,11 +274,22 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 				"phaseActionParameter", "CANCEL",
 				"displayPhaseParameter", "Registrerad"));
 
-		final var stateAfterPatchErrand = mockCaseDataPatch(caseId, scenarioName, stateAfterGetCancelInVerifyStakeholder,
-			"actualization_verify-reporter-stakeholder--api-casedata-patch-errand",
-			equalToJson(createPatchBody("Aktualisering", "CANCEL", "CANCELED", "Registrerad"), true, false));
+		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterGetCancelInVerifyStakeholder,
+			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["CANCELED"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["CANCEL"]
+					}
+				]
+				"""));
 
-		mockCanceled(caseId, scenarioName, stateAfterPatchErrand);
+		mockCanceled(caseId, scenarioName, stateAfterPatchExtraParameters);
 
 		// Start process
 		final var startResponse = setupCall()
@@ -298,18 +337,29 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
 		final var stateAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, stateAfterUpdatePhase);
 		final var stateAfterVerifyStakeholderNoReporter = mockCaseDataGet(caseId, scenarioName, stateAfterVerifyStatus,
-			"actualization_verify-administrator-stakeholder---api-casedata-get-errand-no-administrator",
+			"actualization_verify-reporter-stakeholder---api-casedata-get-errand-no-administrator",
 			Map.of("decisionTypeParameter", "PROPOSED",
 				"phaseParameter", "Aktualisering",
 				"phaseStatusParameter", "ONGOING",
 				"phaseActionParameter", "UNKNOWN",
 				"displayPhaseParameter", "Registrerad"), "APPROVAL", "APPLICANT");
 
-		final var stateAfterPatchNoReporter = mockCaseDataPatch(caseId, scenarioName, stateAfterVerifyStakeholderNoReporter,
-			"actualization_verify-reporter-stakeholder--api-casedata-patch-errand-no-reporter",
-			equalToJson(createPatchBody("Aktualisering", "UNKNOWN", "WAITING", "Registrerad"), true, false));
+		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterVerifyStakeholderNoReporter,
+			"actualization_verify-reporter-stakeholder---api-casedata-patch-extra-parameters",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["WAITING"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["UNKNOWN"]
+					}
+				]
+				"""));
 
-		final var stateAfterVerifyStakeholder = mockActualizationVerifyReporterStakeholder(caseId, scenarioName, stateAfterPatchNoReporter);
+		final var stateAfterVerifyStakeholder = mockActualizationVerifyReporterStakeholder(caseId, scenarioName, stateAfterPatchExtraParameters);
 		final var stateAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, stateAfterVerifyStakeholder);
 		final var stateAfterUpdateStatus = mockActualizationUpdateStatus(caseId, scenarioName, stateAfterUpdateDisplayPhase);
 

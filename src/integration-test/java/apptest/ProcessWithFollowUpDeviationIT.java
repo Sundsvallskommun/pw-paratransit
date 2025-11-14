@@ -23,9 +23,8 @@ import static apptest.mock.FollowUp.mockFollowUpUpdatePhaseAtStart;
 import static apptest.mock.FollowUp.mockFollowUpUpdateStatus;
 import static apptest.mock.Investigation.mockInvestigation;
 import static apptest.mock.api.ApiGateway.mockApiGatewayToken;
-import static apptest.mock.api.CaseData.createPatchBody;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
-import static apptest.mock.api.CaseData.mockCaseDataPatch;
+import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.verification.ProcessPathway.actualizationPathway;
 import static apptest.verification.ProcessPathway.decisionPathway;
 import static apptest.verification.ProcessPathway.executionPathway;
@@ -88,11 +87,26 @@ class ProcessWithFollowUpDeviationIT extends AbstractCamundaAppTest {
 				"phaseActionParameter", "UNKNOWN",
 				"displayPhaseParameter", "Uppföljning"));
 
-		final var stateAfterPatchNonComplete = mockCaseDataPatch(caseId, scenarioName, stateAfterGetErrandNonComplete,
-			"follow_up_check-phase-action_task-worker---api-casedata-patch-errand-non-complete",
-			equalToJson(createPatchBody("Uppföljning", "UNKNOWN", "WAITING", "Uppföljning"), true, false));
+		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterGetErrandNonComplete,
+			"follow_up_check-phase-action_task-worker---api-casedata-patch-extra-parameters",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["WAITING"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["UNKNOWN"]
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Uppföljning"]
+				    }
+				]
+				"""));
 
-		final var stateAfterCheckPhaseAction = mockFollowUpCheckPhaseAction(caseId, scenarioName, stateAfterPatchNonComplete);
+		final var stateAfterCheckPhaseAction = mockFollowUpCheckPhaseAction(caseId, scenarioName, stateAfterPatchExtraParameters);
 		final var stateAfterCleanup = mockFollowUpCleanUpNotes(caseId, scenarioName, stateAfterCheckPhaseAction);
 		final var stateAfterUpdateStatus = mockFollowUpUpdateStatus(caseId, scenarioName, stateAfterCleanup);
 		mockFollowUpUpdatePhaseAtEnd(caseId, scenarioName, stateAfterUpdateStatus);

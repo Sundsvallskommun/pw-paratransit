@@ -2,9 +2,7 @@ package se.sundsvall.paratransit.integration.casedata.mapper;
 
 import static java.time.OffsetDateTime.now;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
-import static java.util.function.Predicate.not;
 import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_DISPLAY_PHASE;
 import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_STATUS;
@@ -28,41 +26,17 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CaseDataMapper {
 
 	private CaseDataMapper() {}
 
-	public static PatchErrand toPatchErrand(final Errand errand, final String phase, final String displayPhase, final String phaseStatus, final String phaseAction) {
-		var patchErrand = toPatchErrand(errand, phase, phaseStatus, phaseAction);
-		return patchErrand.extraParameters(patchErrand.getExtraParameters().stream()
-			.filter(not(e -> CASEDATA_KEY_DISPLAY_PHASE.equals(e.getKey())))
-			.collect(Collectors.toCollection(ArrayList::new)))
-			.addExtraParametersItem((new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).values(displayPhase == null ? emptyList() : List.of(displayPhase))));
-	}
-
-	public static PatchErrand toPatchErrand(final Errand errand, final String phase, final String phaseStatus, final String phaseAction) {
+	public static PatchErrand toPatchErrand(final Errand errand, final String phase) {
 		return new PatchErrand()
 			.externalCaseId(errand.getExternalCaseId())
 			.phase(phase)
-			.facilities(null)
-			.extraParameters(ofNullable(errand.getExtraParameters()).orElse(emptyList()).stream()
-				.filter(not(e -> CASEDATA_KEY_PHASE_STATUS.equals(e.getKey())))
-				.filter(not(e -> CASEDATA_KEY_PHASE_ACTION.equals(e.getKey())))
-				.collect(Collectors.toCollection(ArrayList::new)))
-			.addExtraParametersItem(new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).values(phaseStatus == null ? emptyList() : List.of(phaseStatus)))
-			.addExtraParametersItem(new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).values(phaseAction == null ? emptyList() : List.of(phaseAction)));
-	}
-
-	public static PatchErrand toPatchErrand(final Errand errand, final String externalCaseId, final String phaseAction) {
-		return new PatchErrand()
-			.externalCaseId(externalCaseId)
-			.facilities(null)
-			.extraParameters(ofNullable(errand.getExtraParameters()).orElse(emptyList()).stream()
-				.filter(e -> !CASEDATA_KEY_PHASE_ACTION.equals(e.getKey()))
-				.collect(Collectors.toCollection(ArrayList::new)))
-			.addExtraParametersItem(new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).addValuesItem(phaseAction));
+			.extraParameters(null)
+			.facilities(null);
 	}
 
 	public static Stakeholder toStakeholder(final String role, final TypeEnum type, final String firstName, final String lastName) {
@@ -141,6 +115,25 @@ public class CaseDataMapper {
 			.statusType(statusType)
 			.created(getNow())
 			.description(description);
+	}
+
+	public static List<ExtraParameter> toExtraParameters(final String displayPhase, final String phaseStatus, final String phaseAction) {
+		final List<ExtraParameter> extraParameters = toExtraParameters(phaseStatus, phaseAction);
+		if (displayPhase != null) {
+			extraParameters.add(new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).values(List.of(displayPhase)));
+		}
+		return extraParameters;
+	}
+
+	public static List<ExtraParameter> toExtraParameters(final String phaseStatus, final String phaseAction) {
+		final List<ExtraParameter> extraParameters = new ArrayList<>();
+		if (phaseStatus != null) {
+			extraParameters.add(new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).values(List.of(phaseStatus)));
+		}
+		if (phaseAction != null) {
+			extraParameters.add(new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).values(List.of(phaseAction)));
+		}
+		return extraParameters;
 	}
 
 	private static OffsetDateTime getNow() {

@@ -10,9 +10,8 @@ import static apptest.mock.Investigation.mockInvestigationCheckPhaseAction;
 import static apptest.mock.Investigation.mockInvestigationUpdatePhase;
 import static apptest.mock.Investigation.mockInvestigationUpdateStatus;
 import static apptest.mock.api.ApiGateway.mockApiGatewayToken;
-import static apptest.mock.api.CaseData.createPatchBody;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
-import static apptest.mock.api.CaseData.mockCaseDataPatch;
+import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.verification.ProcessPathway.actualizationPathway;
 import static apptest.verification.ProcessPathway.canceledPathway;
 import static apptest.verification.ProcessPathway.decisionPathway;
@@ -83,11 +82,27 @@ class ProcessWithInvestigationDeviationIT extends AbstractCamundaAppTest {
 				"phaseStatusParameter", "ONGOING",
 				"phaseActionParameter", "UNKNOWN",
 				"displayPhaseParameter", "Utredning"));
-		final var stateAfterCheckPhaseNotCompletedPatch = mockCaseDataPatch(caseId, scenarioName, stateAfterCheckPhaseNotCompletedGet,
-			"investigation_check-phase-action_task-worker---api-casedata-patch-errand-willNotComplete",
-			equalToJson(createPatchBody("Utredning", "UNKNOWN", "WAITING", "Utredning")));
 
-		mockInvestigationCheckPhaseAction(caseId, scenarioName, stateAfterCheckPhaseNotCompletedPatch);
+		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterCheckPhaseNotCompletedGet,
+			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters-not-complete",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["WAITING"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["UNKNOWN"]
+					},
+					{
+				        "key" : "process.displayPhase",
+				        "values" : [ "Utredning" ]
+				    }
+				]
+				"""));
+
+		mockInvestigationCheckPhaseAction(caseId, scenarioName, stateAfterPatchExtraParameters);
 		// Normal mocks
 		mockDecision(caseId, scenarioName);
 		mockExecution(caseId, scenarioName);
@@ -169,11 +184,26 @@ class ProcessWithInvestigationDeviationIT extends AbstractCamundaAppTest {
 				"phaseActionParameter", "CANCEL",
 				"displayPhaseParameter", "Utredning"));
 
-		final var stateAfterPatch = mockCaseDataPatch(caseId, scenarioName, stateAfterCheckPhaseCancel,
-			"investigation_check-phase-action_task-worker---api-casedata-patch-errand",
-			equalToJson(createPatchBody("Utredning", "CANCEL", "CANCELED", "Utredning")));
+		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterCheckPhaseCancel,
+			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters-cancel",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["CANCELED"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["CANCEL"]
+					},
+					{
+				        "key" : "process.displayPhase",
+				        "values" : [ "Utredning" ]
+				    }
+				]
+				"""));
 
-		mockCanceled(caseId, scenarioName, stateAfterPatch);
+		mockCanceled(caseId, scenarioName, stateAfterPatchExtraParameters);
 
 		// Start process
 		final var startResponse = setupCall()

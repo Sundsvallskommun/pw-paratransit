@@ -15,7 +15,7 @@ import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
-import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toPatchErrand;
+import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 import static se.sundsvall.paratransit.util.TimerUtil.getControlMessageTime;
 
 import generated.se.sundsvall.casedata.Decision;
@@ -68,13 +68,13 @@ public class CheckDecisionTaskWorker extends AbstractWorker {
 					} else {
 						variables.put(CAMUNDA_VARIABLE_FINAL_DECISION, false);
 						variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_WAITING);
-						caseDataClient.patchErrand(municipalityId, errand.getNamespace(), errand.getId(), toPatchErrand(errand, CASEDATA_PHASE_DECISION, CASEDATA_PHASE_DECISION, PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
+						caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(CASEDATA_PHASE_DECISION, PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
 						logInfo("Decision is not made yet.");
 					}
 				}, () -> {
 					variables.put(CAMUNDA_VARIABLE_FINAL_DECISION, false);
 					variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_WAITING);
-					caseDataClient.patchErrand(municipalityId, errand.getNamespace(), errand.getId(), toPatchErrand(errand, CASEDATA_PHASE_DECISION, CASEDATA_PHASE_DECISION, PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
+					caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(CASEDATA_PHASE_DECISION, PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
 					logInfo("Decision is not made yet.");
 				});
 

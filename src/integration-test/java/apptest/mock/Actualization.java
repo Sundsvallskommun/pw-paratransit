@@ -1,8 +1,9 @@
 package apptest.mock;
 
-import static apptest.mock.api.CaseData.createPatchBody;
+import static apptest.mock.api.CaseData.createPatchErrandBody;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataPatch;
+import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.mock.api.CaseData.mockCaseDataPatchStatus;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_COMPLETE;
@@ -30,9 +31,28 @@ public class Actualization {
 				"displayPhaseParameter", "Aktualisering",
 				"phaseActionParameter", PHASE_ACTION_UNKNOWN));
 
-		return mockCaseDataPatch(caseId, scenarioName, state,
+		var stateAfterErrandPatch = mockCaseDataPatch(caseId, scenarioName, state,
 			"actualization_update-phase-task-worker---api-casedata-patch-errand",
-			equalToJson(createPatchBody("Aktualisering", PHASE_ACTION_UNKNOWN, "ONGOING", "Registrerad")));
+			equalToJson(createPatchErrandBody("Aktualisering")));
+
+		return mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterErrandPatch,
+		"actualization_update-phase-task-worker---api-casedata-patch-extra-parameters",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["ONGOING"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["UNKNOWN"]
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Registrerad"]
+				    }
+				]
+				"""));
 	}
 
 	public static String mockActualizationVerifyStatus(final String caseId, final String scenarioName, final String requiredScenarioState) {
@@ -41,14 +61,14 @@ public class Actualization {
 			Map.of("decisionTypeParameter", "FINAL",
 				"phaseParameter", "Aktualisering",
 				"phaseStatusParameter", "ONGOING",
-				"statusTypeParameter", "Ärende inkommit",
+				"statusParameter", "Ärende inkommit",
 				"phaseActionParameter", PHASE_ACTION_UNKNOWN,
 				"displayPhaseParameter", "Registrerad"));
 	}
 
 	public static String mockActualizationVerifyReporterStakeholder(final String caseId, final String scenarioName, final String requiredScenarioState) {
 		return mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
-			"actualization_verify-administrator-stakeholder---api-casedata-get-errand",
+			"actualization_verify-reporter-stakeholder---api-casedata-get-errand",
 			Map.of("decisionTypeParameter", "FINAL",
 				"phaseParameter", "Aktualisering",
 				"phaseStatusParameter", "ONGOING",
@@ -57,7 +77,7 @@ public class Actualization {
 	}
 
 	public static String mockActualizationUpdateDisplayPhase(final String caseId, final String scenarioName, final String requiredScenarioState) {
-		final var state = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
+		final var stateAfterGetErrand = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
 			"actualization_update-display-phase---api-casedata-get-errand",
 			Map.of("decisionTypeParameter", "FINAL",
 				"phaseParameter", "Aktualisering",
@@ -65,9 +85,28 @@ public class Actualization {
 				"phaseActionParameter", PHASE_ACTION_UNKNOWN,
 				"displayPhaseParameter", "Registrerad"));
 
-		return mockCaseDataPatch(caseId, scenarioName, state,
+		final var stateAfterPatchErrand = mockCaseDataPatch(caseId, scenarioName, stateAfterGetErrand,
 			"actualization_update-display-phase---api-casedata-patch-errand",
-			equalToJson(createPatchBody("Aktualisering", PHASE_ACTION_UNKNOWN, "ONGOING", "Granskning")));
+			equalToJson(createPatchErrandBody("Aktualisering")));
+
+		return mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterPatchErrand,
+			"actualization_update-display-phase-task-worker---api-casedata-patch-extra-parameters",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["ONGOING"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["UNKNOWN"]
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Granskning"]
+				    }
+				]
+				"""));
 	}
 
 	public static String mockActualizationUpdateStatus(final String caseId, final String scenarioName, final String requiredScenarioState) {
@@ -99,9 +138,24 @@ public class Actualization {
 				"phaseActionParameter", PHASE_ACTION_COMPLETE,
 				"displayPhaseParameter", "Granskning"));
 
-		return mockCaseDataPatch(caseId, scenarioName, state,
-			"actualization_check-phase-action_task-worker---api-casedata-patch-errand",
-			equalToJson(createPatchBody("Aktualisering", PHASE_ACTION_COMPLETE, "COMPLETED", "Granskning")));
+		return mockCaseDataPatchExtraParameters(caseId, scenarioName, state,
+			"actualization_check-phase-action-task-worker---api-casedata-patch-extra-parameters",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["COMPLETED"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["COMPLETE"]
+					},
+					{
+				        "key":"process.displayPhase",
+				        "values":["Granskning"]
+				    }
+				]
+				"""));
 	}
 
 }

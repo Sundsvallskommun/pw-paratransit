@@ -9,6 +9,7 @@ import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_CASE_FINALIZED;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_ONGOING;
+import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toPatchErrand;
 
 import generated.se.sundsvall.casedata.Errand;
@@ -50,7 +51,8 @@ public class UpdateErrandPhaseTaskWorker extends AbstractWorker {
 					final var phaseStatus = isErrandFinalized(errand) ? PHASE_STATUS_COMPLETED : PHASE_STATUS_ONGOING;
 
 					// Set phase action to unknown to errand in the beginning of the phase and in the end of process
-					caseDataClient.patchErrand(municipalityId, namespace, errand.getId(), toPatchErrand(errand, phaseValue, newDisplayPhase, phaseStatus, PHASE_ACTION_UNKNOWN));
+					caseDataClient.patchErrand(municipalityId, namespace, errand.getId(), toPatchErrand(errand, phaseValue));
+					caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(newDisplayPhase, phaseStatus, PHASE_ACTION_UNKNOWN));
 				},
 				() -> logInfo("Phase is not set"));
 

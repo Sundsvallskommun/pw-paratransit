@@ -10,7 +10,7 @@ import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
 import static se.sundsvall.paratransit.Constants.ROLE_REPORTER;
-import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toPatchErrand;
+import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 
 import generated.se.sundsvall.casedata.Errand;
 import generated.se.sundsvall.casedata.Stakeholder;
@@ -36,7 +36,7 @@ public class VerifyReporterStakeholderExistsTaskWorker extends AbstractWorker {
 	@Override
 	protected void executeBusinessLogic(final ExternalTask externalTask, final ExternalTaskService externalTaskService) {
 		try {
-			logInfo("Execute task for evaluating if stakeholder with role 'ADMINISTRATOR' is present.");
+			logInfo("Execute task for evaluating if stakeholder with role 'REPORTER' is present.");
 			clearUpdateAvailable(externalTask);
 
 			final String municipalityId = getMunicipalityId(externalTask);
@@ -51,12 +51,12 @@ public class VerifyReporterStakeholderExistsTaskWorker extends AbstractWorker {
 			if (isCancel(errand)) {
 				logInfo("Cancel has been requested for errand with id {}", errand.getId());
 
-				caseDataClient.patchErrand(municipalityId, namespace, errand.getId(), toPatchErrand(errand, errand.getPhase(), PHASE_STATUS_CANCELED, PHASE_ACTION_CANCEL));
+				caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(PHASE_STATUS_CANCELED, PHASE_ACTION_CANCEL));
 				variables.put(CAMUNDA_VARIABLE_PHASE_ACTION, PHASE_ACTION_CANCEL);
 				variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_CANCELED);
 
 			} else if (!reporterIsAssigned) {
-				caseDataClient.patchErrand(municipalityId, namespace, errand.getId(), toPatchErrand(errand, errand.getPhase(), PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
+				caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
 				variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_WAITING);
 			}
 

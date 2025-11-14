@@ -29,7 +29,6 @@ import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
 
 import generated.se.sundsvall.casedata.Errand;
 import generated.se.sundsvall.casedata.ExtraParameter;
-import generated.se.sundsvall.casedata.PatchErrand;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +83,7 @@ class CheckErrandPhaseActionTaskWorkerTest {
 	private CheckErrandPhaseActionTaskWorker worker;
 
 	@Captor
-	private ArgumentCaptor<PatchErrand> patchErrandCaptor;
+	private ArgumentCaptor<List<ExtraParameter>> patchExtraParametersCaptor;
 
 	@Test
 	void verifyAnnotations() {
@@ -113,8 +112,6 @@ class CheckErrandPhaseActionTaskWorkerTest {
 		when(caseDataClientMock.getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID)).thenReturn(errandMock);
 		when(errandMock.getId()).thenReturn(ERRAND_ID);
 		when(errandMock.getExtraParameters()).thenReturn(extraParameters);
-		when(errandMock.getExternalCaseId()).thenReturn(externalCaseId);
-		when(errandMock.getExternalCaseId()).thenReturn(externalCaseId);
 
 		// Act
 		worker.execute(externalTaskMock, externalTaskServiceMock);
@@ -126,12 +123,11 @@ class CheckErrandPhaseActionTaskWorkerTest {
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_NAMESPACE);
 		verify(camundaClientMock).setProcessInstanceVariable(processInstanceId, CAMUNDA_VARIABLE_UPDATE_AVAILABLE, FALSE);
 		verify(caseDataClientMock).getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID);
-		verify(caseDataClientMock).patchErrand(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), patchErrandCaptor.capture());
+		verify(caseDataClientMock).updateExtraParameters(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), patchExtraParametersCaptor.capture());
 		verify(externalTaskServiceMock).complete(externalTaskMock, variables);
 		verifyNoInteractions(failureHandlerMock);
 
-		assertThat(patchErrandCaptor.getValue().getExternalCaseId()).isEqualTo(externalCaseId);
-		assertThat(patchErrandCaptor.getValue().getExtraParameters()).extracting(ExtraParameter::getKey, ExtraParameter::getValues)
+		assertThat(patchExtraParametersCaptor.getValue()).extracting(ExtraParameter::getKey, ExtraParameter::getValues)
 			.containsExactlyInAnyOrder(
 				tuple(CASEDATA_KEY_PHASE_ACTION, List.of(PHASE_ACTION_UNKNOWN)),
 				tuple(CASEDATA_KEY_DISPLAY_PHASE, List.of(CASEDATA_PHASE_DECISION)),
@@ -179,7 +175,6 @@ class CheckErrandPhaseActionTaskWorkerTest {
 	@MethodSource("checkErrandPhaseActionTypeArguments")
 	void execute(String phaseAction, List<ExtraParameter> expectedExtraParameters) {
 		// Setup
-		final var externalCaseId = "externalCaseId";
 		final var processInstanceId = "processInstanceId";
 		final var extraParameters = new ArrayList<ExtraParameter>();
 		extraParameters.add(new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).addValuesItem(phaseAction));
@@ -197,8 +192,6 @@ class CheckErrandPhaseActionTaskWorkerTest {
 		when(caseDataClientMock.getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID)).thenReturn(errandMock);
 		when(errandMock.getId()).thenReturn(ERRAND_ID);
 		when(errandMock.getExtraParameters()).thenReturn(extraParameters);
-		when(errandMock.getExternalCaseId()).thenReturn(externalCaseId);
-		when(errandMock.getExternalCaseId()).thenReturn(externalCaseId);
 
 		// Act
 		worker.execute(externalTaskMock, externalTaskServiceMock);
@@ -210,12 +203,11 @@ class CheckErrandPhaseActionTaskWorkerTest {
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_NAMESPACE);
 		verify(camundaClientMock).setProcessInstanceVariable(processInstanceId, CAMUNDA_VARIABLE_UPDATE_AVAILABLE, FALSE);
 		verify(caseDataClientMock).getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID);
-		verify(caseDataClientMock).patchErrand(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), patchErrandCaptor.capture());
+		verify(caseDataClientMock).updateExtraParameters(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), patchExtraParametersCaptor.capture());
 		verify(externalTaskServiceMock).complete(externalTaskMock, variables);
 		verifyNoInteractions(failureHandlerMock);
 
-		assertThat(patchErrandCaptor.getValue().getExternalCaseId()).isEqualTo(externalCaseId);
-		assertThat(patchErrandCaptor.getValue().getExtraParameters()).hasSize(3).containsExactlyInAnyOrder(expectedExtraParameters.getFirst(), expectedExtraParameters.get(1), expectedExtraParameters.getLast());
+		assertThat(patchExtraParametersCaptor.getValue()).hasSize(3).containsExactlyInAnyOrder(expectedExtraParameters.getFirst(), expectedExtraParameters.get(1), expectedExtraParameters.getLast());
 	}
 
 	@Test
@@ -230,7 +222,7 @@ class CheckErrandPhaseActionTaskWorkerTest {
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_NAMESPACE)).thenReturn(NAMESPACE);
 		when(caseDataClientMock.getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID)).thenReturn(errandMock);
 		when(errandMock.getId()).thenReturn(ERRAND_ID);
-		when(caseDataClientMock.patchErrand(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), any())).thenThrow(problem);
+		when(caseDataClientMock.updateExtraParameters(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), any())).thenThrow(problem);
 
 		// Act
 		worker.execute(externalTaskMock, externalTaskServiceMock);
