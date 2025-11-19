@@ -16,8 +16,7 @@ public class Actualization {
 	public static String mockActualization(final String caseId, final String scenarioName) {
 		final var scenarioAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, "check_appeal_check-appeal-task-worker---api-casedata-get-errand");
 		final var scenarioAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, scenarioAfterUpdatePhase);
-		final var scenarioAfterVerifyReporter = mockActualizationVerifyReporterStakeholder(caseId, scenarioName, scenarioAfterVerifyStatus);
-		final var scenarioAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, scenarioAfterVerifyReporter);
+		final var scenarioAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, scenarioAfterVerifyStatus);
 		final var scenarioAfterUpdateStatus = mockActualizationUpdateStatus(caseId, scenarioName, scenarioAfterUpdateDisplayPhase);
 		return mockActualizationCheckPhaseAction(caseId, scenarioName, scenarioAfterUpdateStatus);
 	}
@@ -62,16 +61,6 @@ public class Actualization {
 				"phaseParameter", "Aktualisering",
 				"phaseStatusParameter", "ONGOING",
 				"statusParameter", "Ärende inkommit",
-				"phaseActionParameter", PHASE_ACTION_UNKNOWN,
-				"displayPhaseParameter", "Registrerad"));
-	}
-
-	public static String mockActualizationVerifyReporterStakeholder(final String caseId, final String scenarioName, final String requiredScenarioState) {
-		return mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
-			"actualization_verify-reporter-stakeholder---api-casedata-get-errand",
-			Map.of("decisionTypeParameter", "FINAL",
-				"phaseParameter", "Aktualisering",
-				"phaseStatusParameter", "ONGOING",
 				"phaseActionParameter", PHASE_ACTION_UNKNOWN,
 				"displayPhaseParameter", "Registrerad"));
 	}
