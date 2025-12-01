@@ -18,11 +18,11 @@ import java.util.Map;
 public class CaseData {
 
 	public static String mockCaseDataGet(String caseId, String scenarioName, String requiredScenarioState, String newScenarioState, Map<String, Object> transformParameters) {
-		return mockCaseDataGet(caseId, scenarioName, requiredScenarioState, newScenarioState, transformParameters, "APPROVAL", "REPORTER");
+		return mockCaseDataGet(caseId, scenarioName, requiredScenarioState, newScenarioState, transformParameters, "APPROVAL", "ADMINISTRATOR");
 	}
 
 	public static String mockCaseDataGet(String caseId, String scenarioName, String requiredScenarioState, String newScenarioState, Map<String, Object> transformParameters, String decisionOutcome) {
-		return mockCaseDataGet(caseId, scenarioName, requiredScenarioState, newScenarioState, transformParameters, decisionOutcome, "REPORTER");
+		return mockCaseDataGet(caseId, scenarioName, requiredScenarioState, newScenarioState, transformParameters, decisionOutcome, "ADMINISTRATOR");
 	}
 
 	public static String mockCaseDataGet(String caseId, String scenarioName, String requiredScenarioState, String newScenarioState, Map<String, Object> transformParameters, String decisionOutcome, String role) {
@@ -57,19 +57,6 @@ public class CaseData {
 				.withTransformerParameter("decisionOutcome", "APPROVAL")
 				.withTransformerParameter("role", "ADMINISTRATOR")
 				.withTransformerParameters(transformParameters))
-			.willSetStateTo(newScenarioState))
-			.getNewScenarioState();
-	}
-
-	public static String mockCaseDataGetAttachments(String caseId, String scenarioName, String requiredScenarioState, String newScenarioState) {
-		return stubFor(get(urlEqualTo(String.format("/api-casedata/2281/SBK_PARKING_PERMIT/errands/%s/attachments", caseId)))
-			.inScenario(scenarioName)
-			.whenScenarioStateIs(requiredScenarioState)
-			.withHeader("Authorization", equalTo("Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"))
-			.willReturn(aResponse()
-				.withStatus(OK_200)
-				.withHeader("Content-Type", "application/json")
-				.withBodyFile("common/responses/casedata/get-attachments.json"))
 			.willSetStateTo(newScenarioState))
 			.getNewScenarioState();
 	}
@@ -190,20 +177,6 @@ public class CaseData {
 				.withStatus(OK_200)
 				.withHeader("Content-Type", "application/json")
 				.withBodyFile("common/responses/casedata/get-notes.json"))
-			.willSetStateTo(newScenarioState))
-			.getNewScenarioState();
-	}
-
-	public static String mockCaseDataAddNotePatch(String caseId, String scenarioName, String requiredScenarioState, String newScenarioState, ContentPattern<?> bodyPattern) {
-		return stubFor(patch(urlEqualTo(String.format("/api-casedata/2281/SBK_PARKING_PERMIT/errands/%s/notes", caseId)))
-			.inScenario(scenarioName)
-			.whenScenarioStateIs(requiredScenarioState)
-			.withHeader("Authorization", equalTo("Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"))
-			.withRequestBody(bodyPattern)
-			.willReturn(aResponse()
-				.withStatus(NO_CONTENT_204)
-				.withHeader("Content-Type", "*/*")
-				.withHeader("Location", String.format("/api-casedata/2281/SBK_PARKING_PERMIT/errands/%s/notes/", caseId) + "2"))
 			.willSetStateTo(newScenarioState))
 			.getNewScenarioState();
 	}

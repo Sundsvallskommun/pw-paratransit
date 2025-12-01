@@ -16,7 +16,8 @@ public class Actualization {
 	public static String mockActualization(final String caseId, final String scenarioName) {
 		final var scenarioAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, "check_appeal_check-appeal-task-worker---api-casedata-get-errand");
 		final var scenarioAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, scenarioAfterUpdatePhase);
-		final var scenarioAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, scenarioAfterVerifyStatus);
+		final var scenarioAfterVerifyStakeholders = mockActualizationVerifyStakeholders(caseId, scenarioName, scenarioAfterVerifyStatus);
+		final var scenarioAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, scenarioAfterVerifyStakeholders);
 		final var scenarioAfterUpdateStatus = mockActualizationUpdateStatus(caseId, scenarioName, scenarioAfterUpdateDisplayPhase);
 		return mockActualizationCheckPhaseAction(caseId, scenarioName, scenarioAfterUpdateStatus);
 	}
@@ -64,6 +65,17 @@ public class Actualization {
 				"phaseActionParameter", PHASE_ACTION_UNKNOWN,
 				"displayPhaseParameter", "Registrerad"));
 	}
+
+	public static String mockActualizationVerifyStakeholders(String caseId, String scenarioName, String requiredScenarioState) {
+		return mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
+			"actualization_verify-stakeholders---api-casedata-get-errand",
+			Map.of("decisionTypeParameter", "FINAL",
+				"phaseParameter", "Aktualisering",
+				"phaseStatusParameter", "ONGOING",
+				"phaseActionParameter", PHASE_ACTION_UNKNOWN,
+				"displayPhaseParameter", "Registrerad"));
+	}
+
 
 	public static String mockActualizationUpdateDisplayPhase(final String caseId, final String scenarioName, final String requiredScenarioState) {
 		final var stateAfterGetErrand = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,

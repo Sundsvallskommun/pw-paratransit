@@ -17,8 +17,7 @@ public class Constants {
 	public static final VariableValueDto TRUE = new VariableValueDto().type(ValueType.BOOLEAN.getName()).value(true);
 	public static final VariableValueDto FALSE = new VariableValueDto().type(ValueType.BOOLEAN.getName()).value(false);
 
-	public static final String CAMUNDA_VARIABLE_APPLICANT_NOT_RESIDENT_OF_MUNICIPALITY = "applicantNotResidentOfMunicipality";
-	public static final String CAMUNDA_VARIABLE_ASSIGNED_TO_REPORTER = "assignedToReporter";
+	public static final String CAMUNDA_VARIABLE_HAS_ADMINISTRATOR_AND_APPLICANT = "hasAdministratorAndApplicant";
 	public static final String CAMUNDA_VARIABLE_CASE_NUMBER = "caseNumber";
 	public static final String CAMUNDA_VARIABLE_REQUEST_ID = "requestId";
 	public static final String CAMUNDA_VARIABLE_MUNICIPALITY_ID = "municipalityId";
@@ -68,6 +67,7 @@ public class Constants {
 
 	public static final String ROLE_APPLICANT = "APPLICANT";
 	public static final String ROLE_REPORTER = "REPORTER";
+	public static final String ROLE_ADMINISTRATOR = "ADMINISTRATOR";
 
 	public static final String CASE_TYPE_APPEAL = "APPEAL";
 	public static final String CASE_TYPE_PARATRANSIT = "PARATRANSIT";
