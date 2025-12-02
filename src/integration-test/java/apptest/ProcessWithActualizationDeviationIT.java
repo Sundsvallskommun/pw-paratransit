@@ -432,7 +432,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 	void test005_createProcessForCancelInVerifyStakeholders() throws JsonProcessingException, ClassNotFoundException {
 
 		final var caseId = "101";
-		var scenarioName = "test_actualization_005_createProcessForCancelInVerifyStakeholders";
+		final var scenarioName = "test_actualization_005_createProcessForCancelInVerifyStakeholders";
 
 		// Setup mocks
 		mockApiGatewayToken();
