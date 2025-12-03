@@ -4,6 +4,7 @@ import static apptest.mock.Actualization.mockActualizationCheckPhaseAction;
 import static apptest.mock.Actualization.mockActualizationUpdateDisplayPhase;
 import static apptest.mock.Actualization.mockActualizationUpdatePhase;
 import static apptest.mock.Actualization.mockActualizationUpdateStatus;
+import static apptest.mock.Actualization.mockActualizationVerifyStakeholders;
 import static apptest.mock.Actualization.mockActualizationVerifyStatus;
 import static apptest.mock.Canceled.mockCanceled;
 import static apptest.mock.CheckAppeal.mockCheckAppeal;
@@ -75,7 +76,8 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
 		final var stateAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, stateAfterUpdatePhase);
-		final var stateAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, stateAfterVerifyStatus);
+		final var stateAfterVerifyStakeholders = mockActualizationVerifyStakeholders(caseId, scenarioName, stateAfterVerifyStatus);
+		final var stateAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, stateAfterVerifyStakeholders);
 		final var stateAfterUpdateStatus = mockActualizationUpdateStatus(caseId, scenarioName, stateAfterUpdateDisplayPhase);
 
 		final var stateAfterGetErrand = mockCaseDataGet(caseId, scenarioName, stateAfterUpdateStatus,
@@ -128,10 +130,12 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Gateway isAppeal", "gateway_is_appeal"))
 			// Actualization
 			.with(tuple("Actualization", "actualization_phase"))
+			.with(tuple("Start actualization phase", "start_actualization_phase"))
 			.with(tuple("Update phase", "external_task_actualization_update_phase"))
 			.with(tuple("Verify status", "external_task_actualization_verify_status"))
 			.with(tuple("Wait if status is 'Utkast'", "gateway_actualization_verify_status"))
-			.with(tuple("Start actualization phase", "start_actualization_phase"))
+			.with(tuple("Verify that administrator and applicant stakeholders exists", "external_task_actualization_verify_administrator_stakeholder_exists_task"))
+			.with(tuple("Has ADMINISTRATOR and APPLICANT", "gateway_actualization_has_stakeholders_administrator_and_applicant"))
 			.with(tuple("Update displayPhase", "external_task_actualization_update_display_phase"))
 			.with(tuple("Update errand status", "external_task_actualization_update_errand_status_to_under_review"))
 			.with(tuple("Check phase action", "external_task_actualization_check_phase_action_task"))
@@ -154,7 +158,8 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
 		final var stateAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, stateAfterUpdatePhase);
-		final var stateAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, stateAfterVerifyStatus);
+		final var stateAfterVerifyStakeholders = mockActualizationVerifyStakeholders(caseId, scenarioName, stateAfterVerifyStatus);
+		final var stateAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, stateAfterVerifyStakeholders);
 		final var stateAfterUpdateStatus = mockActualizationUpdateStatus(caseId, scenarioName, stateAfterUpdateDisplayPhase);
 
 		final var stateAfterGetErrandNonComplete = mockCaseDataGet(caseId, scenarioName, stateAfterUpdateStatus,
@@ -228,6 +233,8 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Update phase", "external_task_actualization_update_phase"))
 			.with(tuple("Verify status", "external_task_actualization_verify_status"))
 			.with(tuple("Wait if status is 'Utkast'", "gateway_actualization_verify_status"))
+			.with(tuple("Verify that administrator and applicant stakeholders exists", "external_task_actualization_verify_administrator_stakeholder_exists_task"))
+			.with(tuple("Has ADMINISTRATOR and APPLICANT", "gateway_actualization_has_stakeholders_administrator_and_applicant"))
 			.with(tuple("Update displayPhase", "external_task_actualization_update_display_phase"))
 			.with(tuple("Update errand status", "external_task_actualization_update_errand_status_to_under_review"))
 			.with(tuple("Check phase action", "external_task_actualization_check_phase_action_task"))
@@ -327,7 +334,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
 		final var stateAfterVerifyStatusDraft = mockCaseDataGet(caseId, scenarioName, stateAfterUpdatePhase,
-			"actualization_verify-status_task_worker---api-casedata-get-errand-no-administrator",
+			"actualization_verify-status_task_worker---api-casedata-get-errand-draft",
 			Map.of("decisionTypeParameter", "PROPOSED",
 				"phaseParameter", "Aktualisering",
 				"phaseStatusParameter", "ONGOING",
@@ -350,7 +357,8 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 				]
 				"""));
 		final var stateAfterChangedStatus = mockActualizationVerifyStatus(caseId, scenarioName, stateAfterPatchExtraParameters);
-		final var stateAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, stateAfterChangedStatus);
+		final var stateAfterVerifyStakeholders = mockActualizationVerifyStakeholders(caseId, scenarioName, stateAfterChangedStatus);
+		final var stateAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, stateAfterVerifyStakeholders);
 		final var stateAfterUpdateStatus = mockActualizationUpdateStatus(caseId, scenarioName, stateAfterUpdateDisplayPhase);
 
 		mockActualizationCheckPhaseAction(caseId, scenarioName, stateAfterUpdateStatus);
@@ -402,6 +410,8 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			// Status update
 			.with(tuple("Verify status", "external_task_actualization_verify_status"))
 			.with(tuple("Wait if status is 'Utkast'", "gateway_actualization_verify_status"))
+			.with(tuple("Verify that administrator and applicant stakeholders exists", "external_task_actualization_verify_administrator_stakeholder_exists_task"))
+			.with(tuple("Has ADMINISTRATOR and APPLICANT", "gateway_actualization_has_stakeholders_administrator_and_applicant"))
 			.with(tuple("Update displayPhase", "external_task_actualization_update_display_phase"))
 			.with(tuple("Update errand status", "external_task_actualization_update_errand_status_to_under_review"))
 			.with(tuple("Check phase action", "external_task_actualization_check_phase_action_task"))
@@ -417,4 +427,182 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.with(followUpPathway())
 			.with(tuple("End process", "end_process")));
 	}
+
+	@Test
+	void test005_createProcessForCancelInVerifyStakeholders() throws JsonProcessingException, ClassNotFoundException {
+
+		final var caseId = "101";
+		final var scenarioName = "test_actualization_005_createProcessForCancelInVerifyStakeholders";
+
+		// Setup mocks
+		mockApiGatewayToken();
+		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
+		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
+		final var stateAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, stateAfterUpdatePhase);
+
+		final var stateAfterGetErrand = mockCaseDataGet(caseId, scenarioName, stateAfterVerifyStatus,
+			"actualization_verify_stakeholders_task-worker---api-casedata-get-errand",
+			Map.of("decisionTypeParameter", "PROPOSED",
+				"phaseParameter", "Aktualisering",
+				"phaseStatusParameter", "ONGOING",
+				"phaseActionParameter", "CANCEL",
+				"displayPhaseParameter", "Granskning"));
+
+		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterGetErrand,
+			"actualization_verify_stakeholders_task-worker---api-casedata-patch-errand-extra-parameters",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["CANCELED"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["CANCEL"]
+					}
+				]
+				"""));
+
+		mockCanceled(caseId, scenarioName, stateAfterPatchExtraParameters);
+
+		// Start process
+		final var startResponse = setupCall()
+			.withServicePath("/2281/SBK_PARKING_PERMIT/process/start/" + caseId)
+			.withHttpMethod(POST)
+			.withExpectedResponseStatus(ACCEPTED)
+			.sendRequest()
+			.andReturnBody(StartProcessResponse.class);
+
+		// Wait for process to finish
+		awaitProcessCompleted(startResponse.getProcessId(), DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
+
+		// Verify wiremock stubs
+		verifyAllStubs();
+
+		// Verify process pathway.
+		assertProcessPathway(startResponse.getProcessId(), false, Tuples.create()
+			.with(tuple("Start process", "start_process"))
+			.with(tuple("Check appeal", "external_task_check_appeal"))
+			.with(tuple("Gateway isAppeal", "gateway_is_appeal"))
+			// Actualization
+			.with(tuple("Actualization", "actualization_phase"))
+			.with(tuple("Start actualization phase", "start_actualization_phase"))
+			.with(tuple("Update phase", "external_task_actualization_update_phase"))
+			.with(tuple("Verify status", "external_task_actualization_verify_status"))
+			.with(tuple("Wait if status is 'Utkast'", "gateway_actualization_verify_status"))
+			.with(tuple("Verify that administrator and applicant stakeholders exists", "external_task_actualization_verify_administrator_stakeholder_exists_task"))
+			.with(tuple("Has ADMINISTRATOR and APPLICANT", "gateway_actualization_has_stakeholders_administrator_and_applicant"))
+			.with(tuple("End when canceled", "end_actualization_canceled"))
+			.with(tuple("Is canceled in actualization", "gateway_actualization_canceled"))
+			// Canceled
+			.with(canceledPathway())
+			.with(tuple("End process", "end_process")));
+	}
+
+	@Test
+	void test006_createProcessWaitingForStakeholdersUpdateInActualization() throws JsonProcessingException, ClassNotFoundException {
+
+		final var caseId = "112";
+		final var scenarioName = "test_actualization_006_createProcessWaitingForStakeholdersUpdateInActualization";
+
+		// Setup mocks
+		mockApiGatewayToken();
+		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
+		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
+		final var stateAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, stateAfterUpdatePhase);
+		final var stateAfterVerifyStatusDraft = mockCaseDataGet(caseId, scenarioName, stateAfterVerifyStatus,
+			"actualization_verify-stakeholders_task_worker---api-casedata-get-errand-no-administrator",
+			Map.of("decisionTypeParameter", "PROPOSED",
+				"phaseParameter", "Aktualisering",
+				"phaseStatusParameter", "ONGOING",
+				"phaseActionParameter", "UNKNOWN",
+				"statusParameter", "Utkast",
+				"displayPhaseParameter", "Registrerad"), "APPROVAL", "REPORTER");
+
+		final var stateAfterPatchExtraParameters = mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterVerifyStatusDraft,
+			"actualization_verify_stakeholders_task-worker---api-casedata-patch-errand-extra-parameters",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["WAITING"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["UNKNOWN"]
+					}
+				]
+				"""));
+		final var stateAfterVerifyStakeholders = mockActualizationVerifyStakeholders(caseId, scenarioName, stateAfterPatchExtraParameters);
+		final var stateAfterUpdateDisplayPhase = mockActualizationUpdateDisplayPhase(caseId, scenarioName, stateAfterVerifyStakeholders);
+		final var stateAfterUpdateStatus = mockActualizationUpdateStatus(caseId, scenarioName, stateAfterUpdateDisplayPhase);
+
+		mockActualizationCheckPhaseAction(caseId, scenarioName, stateAfterUpdateStatus);
+
+		// Normal mock
+		mockInvestigation(caseId, scenarioName);
+		mockDecision(caseId, scenarioName);
+		mockExecution(caseId, scenarioName);
+		mockFollowUp(caseId, scenarioName);
+
+		// Start process
+		final var startResponse = setupCall()
+			.withServicePath("/2281/SBK_PARKING_PERMIT/process/start/" + caseId)
+			.withHttpMethod(POST)
+			.withExpectedResponseStatus(ACCEPTED)
+			.sendRequest()
+			.andReturnBody(StartProcessResponse.class);
+
+		// Wait for process to be waiting for update of errand
+		awaitProcessState("actualization_wait_for_stakeholder_update", DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
+
+		// Update process
+		setupCall()
+			.withServicePath("/2281/SBK_PARKING_PERMIT/process/update/" + startResponse.getProcessId())
+			.withHttpMethod(POST)
+			.withExpectedResponseStatus(ACCEPTED)
+			.withExpectedResponseBodyIsNull()
+			.sendRequest();
+
+		// Wait for process to finish
+		awaitProcessCompleted(startResponse.getProcessId(), DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
+
+		// Verify wiremock stubs
+		verifyAllStubs();
+
+		// Verify process pathway.
+		assertProcessPathway(startResponse.getProcessId(), true, Tuples.create()
+			.with(tuple("Start process", "start_process"))
+			.with(tuple("Check appeal", "external_task_check_appeal"))
+			.with(tuple("Gateway isAppeal", "gateway_is_appeal"))
+			// Actualization
+			.with(tuple("Actualization", "actualization_phase"))
+			.with(tuple("Start actualization phase", "start_actualization_phase"))
+			.with(tuple("Update phase", "external_task_actualization_update_phase"))
+			.with(tuple("Verify status", "external_task_actualization_verify_status"))
+			.with(tuple("Wait if status is 'Utkast'", "gateway_actualization_verify_status"))
+			.with(tuple("Verify that administrator and applicant stakeholders exists", "external_task_actualization_verify_administrator_stakeholder_exists_task"))
+			.with(tuple("Has ADMINISTRATOR and APPLICANT", "gateway_actualization_has_stakeholders_administrator_and_applicant"))
+			// Stakeholders are not 'ADMINISTRATOR' and 'APPLICANT'
+			.with(tuple("Wait for case update", "actualization_wait_for_stakeholder_update"))
+			// Stakeholders update
+			.with(tuple("Verify that administrator and applicant stakeholders exists", "external_task_actualization_verify_administrator_stakeholder_exists_task"))
+			.with(tuple("Has ADMINISTRATOR and APPLICANT", "gateway_actualization_has_stakeholders_administrator_and_applicant"))
+			.with(tuple("Update displayPhase", "external_task_actualization_update_display_phase"))
+			.with(tuple("Update errand status", "external_task_actualization_update_errand_status_to_under_review"))
+			.with(tuple("Check phase action", "external_task_actualization_check_phase_action_task"))
+			.with(tuple("Is phase action complete?", "gateway_actualization_is_phase_action_complete"))
+			.with(tuple("End actualization phase", "end_actualization_phase"))
+			.with(tuple("Is canceled in actualization", "gateway_actualization_canceled"))
+			.with(investigationPathway())
+			.with(tuple("Is canceled in investigation", "gateway_investigation_canceled"))
+			.with(decisionPathway())
+			.with(tuple("Is canceled in decision or not approved", "gateway_decision_canceled"))
+			.with(handlingPathway())
+			.with(executionPathway())
+			.with(followUpPathway())
+			.with(tuple("End process", "end_process")));
+	}
+
+
 }

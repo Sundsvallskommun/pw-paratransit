@@ -10,6 +10,8 @@ public class ProcessPathway {
 			.with(tuple("Start actualization phase", "start_actualization_phase"))
 			.with(tuple("Update phase", "external_task_actualization_update_phase"))
 			.with(tuple("Verify status", "external_task_actualization_verify_status"))
+			.with(tuple("Verify that administrator and applicant stakeholders exists", "external_task_actualization_verify_administrator_stakeholder_exists_task"))
+			.with(tuple("Has ADMINISTRATOR and APPLICANT", "gateway_actualization_has_stakeholders_administrator_and_applicant"))
 			.with(tuple("Wait if status is 'Utkast'", "gateway_actualization_verify_status"))
 			.with(tuple("Update displayPhase", "external_task_actualization_update_display_phase"))
 			.with(tuple("Update errand status", "external_task_actualization_update_errand_status_to_under_review"))
@@ -79,19 +81,5 @@ public class ProcessPathway {
 			.with(tuple("Update errand status", "external_task_canceled_update_errand_status"))
 			.with(tuple("Clean up notes", "external_task_canceled_clean_up_notes"))
 			.with(tuple("End canceled phase", "end_canceled_phase"));
-	}
-
-	public static Tuples denialPathway() {
-		return Tuples.create()
-			.with(tuple("Start automatic denial phase", "start_automatic_denial_phase"))
-			.with(tuple("Update phase on errand", "external_task_update_errand_phase"))
-			.with(tuple("Add decision for denial to errand", "external_task_add_denial_decision"))
-			.with(tuple("Update errand status", "external_task_update_errand_status"))
-			.with(tuple("Send denial decision to applicant", "external_task_send_denial_decision"))
-			.with(tuple("Add message to errand", "external_task_add_message"))
-			.with(tuple("Wait to send message", "timer_denial_wait_to_send_message"))
-			.with(tuple("Send simplified service message", "external_task_send_simplified_service"))
-			.with(tuple("End automatic denial phase", "end_automatic_denial_phase"))
-			.with(tuple("Automatic denial", "subprocess_automatic_denial"));
 	}
 }
