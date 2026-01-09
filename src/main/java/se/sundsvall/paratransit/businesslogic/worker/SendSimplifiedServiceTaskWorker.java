@@ -34,9 +34,10 @@ public class SendSimplifiedServiceTaskWorker extends AbstractWorker {
 			final var errand = getErrand(municipalityId, namespace, caseNumber);
 			logInfo("Executing delivery of simplified service message to applicant for errand with id {}", errand.getId());
 
-			final var messageId = messagingService.sendMessageSimplifiedService(municipalityId, errand).toString();
+			final var messageId = messagingService.sendMessageSimplifiedService(municipalityId, errand);
 
-			externalTaskService.complete(externalTask, Map.of(CAMUNDA_VARIABLE_MESSAGE_ID, messageId));
+			messageId.ifPresentOrElse(id -> externalTaskService.complete(externalTask, Map.of(CAMUNDA_VARIABLE_MESSAGE_ID, id.toString())),
+				() -> externalTaskService.complete(externalTask));
 		} catch (final Exception exception) {
 			logException(externalTask, exception);
 			failureHandler.handleException(externalTaskService, externalTask, exception.getMessage());

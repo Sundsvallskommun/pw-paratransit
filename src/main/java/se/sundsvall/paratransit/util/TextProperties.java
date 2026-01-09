@@ -8,25 +8,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "texts")
 public class TextProperties {
 
-	private Map<String, CommonTextProperties> commons;
-	private Map<String, DenialTextProperties> denials;
 	private Map<String, SimplifiedServiceTextProperties> simplifiedServices;
-
-	public Map<String, CommonTextProperties> getCommons() {
-		return commons;
-	}
-
-	public void setCommons(final Map<String, CommonTextProperties> commons) {
-		this.commons = commons;
-	}
-
-	public Map<String, DenialTextProperties> getDenials() {
-		return denials;
-	}
-
-	public void setDenials(final Map<String, DenialTextProperties> denials) {
-		this.denials = denials;
-	}
 
 	public Map<String, SimplifiedServiceTextProperties> getSimplifiedServices() {
 		return simplifiedServices;
