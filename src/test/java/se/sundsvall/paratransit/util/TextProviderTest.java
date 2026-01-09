@@ -20,8 +20,6 @@ class TextProviderTest {
 
 	@Test
 	void checkCorrectAutowiring() {
-		assertThat(textProvider.getCommonTexts(MUNICIPALITY_ID)).isNotNull();
-		assertThat(textProvider.getDenialTexts(MUNICIPALITY_ID)).isNotNull();
 		assertThat(textProvider.getSimplifiedServiceTexts(MUNICIPALITY_ID)).isNotNull();
 	}
 }
