@@ -54,8 +54,6 @@ public class ProcessPathway {
 			.with(tuple("Execution", "call_activity_execution"))
 			.with(tuple("Start execution phase", "start_execution_phase"))
 			.with(tuple("Update phase", "external_task_execution_update_phase"))
-			//Added delay to send control message to make it happen after the asset is created
-			.with(tuple("Wait to send message", "timer_wait_to_send_message"))
 			.with(tuple("Send simplified service message", "external_task_execution_send_message_task"))
 			.with(tuple("End execution phase", "end_execution_phase"));
 	}

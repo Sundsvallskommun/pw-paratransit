@@ -52,8 +52,3 @@ config:
     token-uri: ${config.common.token-uri}
     client-id: ${config.common.client-id}
     client-secret: ${config.common.client-secret}
-
-texts:
-  simplified-services:
-    2281:
-      delay: "PT5S"

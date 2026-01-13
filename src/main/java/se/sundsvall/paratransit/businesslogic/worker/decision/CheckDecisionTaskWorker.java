@@ -7,7 +7,6 @@ import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_FINAL_DECISION
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_APPROVED;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_STATUS;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE;
 import static se.sundsvall.paratransit.Constants.CASEDATA_PHASE_DECISION;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_CASE_DECIDED;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_DECISION_EXECUTED;
@@ -16,7 +15,6 @@ import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
 import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
-import static se.sundsvall.paratransit.util.TimerUtil.getControlMessageTime;
 
 import generated.se.sundsvall.casedata.Decision;
 import generated.se.sundsvall.casedata.Errand;
@@ -30,17 +28,13 @@ import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.businesslogic.worker.AbstractWorker;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
-import se.sundsvall.paratransit.util.TextProvider;
 
 @Component
 @ExternalTaskSubscription("CheckDecisionTask")
 public class CheckDecisionTaskWorker extends AbstractWorker {
 
-	private final TextProvider textProvider;
-
-	CheckDecisionTaskWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler, final TextProvider textProvider) {
+	CheckDecisionTaskWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
 		super(camundaClient, caseDataClient, failureHandler);
-		this.textProvider = textProvider;
 
 	}
 
@@ -64,7 +58,6 @@ public class CheckDecisionTaskWorker extends AbstractWorker {
 					if (isFinalDecision(errand)) {
 						variables.put(CAMUNDA_VARIABLE_FINAL_DECISION, true);
 						logInfo("Decision is made.");
-						variables.put(CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE, getControlMessageTime(getFinalDecision(errand), textProvider.getSimplifiedServiceTexts(municipalityId).getDelay()));
 					} else {
 						variables.put(CAMUNDA_VARIABLE_FINAL_DECISION, false);
 						variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_WAITING);
@@ -106,12 +99,5 @@ public class CheckDecisionTaskWorker extends AbstractWorker {
 		}
 		return errand.getDecisions().stream()
 			.anyMatch(decision -> FINAL.equals(decision.getDecisionType()));
-	}
-
-	private Decision getFinalDecision(final Errand errand) {
-		return errand.getDecisions().stream()
-			.filter(decision -> FINAL.equals(decision.getDecisionType()))
-			.findFirst()
-			.orElse(null);
 	}
 }

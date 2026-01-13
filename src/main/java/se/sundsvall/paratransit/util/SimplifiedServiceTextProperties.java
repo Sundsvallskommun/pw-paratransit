@@ -3,7 +3,6 @@ package se.sundsvall.paratransit.util;
 public class SimplifiedServiceTextProperties {
 
 	private String message;
-	private String delay;
 
 	public String getMessage() {
 		return message;
@@ -13,11 +12,4 @@ public class SimplifiedServiceTextProperties {
 		this.message = message;
 	}
 
-	public String getDelay() {
-		return delay;
-	}
-
-	public void setDelay(final String delay) {
-		this.delay = delay;
-	}
 }

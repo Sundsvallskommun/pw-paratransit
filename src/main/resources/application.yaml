@@ -126,7 +126,6 @@ resilience4j.circuitbreaker:
 texts:
   simplified-services:
     2281:
-      delay: "P1D"
       message: |-
         Kontrollmeddelande för förenklad delgivning
         

@@ -305,19 +305,11 @@
         <bpmn:incoming>Flow_1ob3w5g</bpmn:incoming>
         <bpmn:outgoing>Flow_0vndsx4</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:sequenceFlow id="Flow_0vndsx4" sourceRef="external_task_execution_update_phase" targetRef="timer_wait_to_send_message" />
-      <bpmn:intermediateCatchEvent id="timer_wait_to_send_message" name="Wait to send message">
-        <bpmn:incoming>Flow_0vndsx4</bpmn:incoming>
-        <bpmn:outgoing>Flow_0b1q9s6</bpmn:outgoing>
-        <bpmn:timerEventDefinition id="TimerEventDefinition_0mcn1n7">
-          <bpmn:timeDate xsi:type="bpmn:tFormalExpression">${timeToSendControlMessage}</bpmn:timeDate>
-        </bpmn:timerEventDefinition>
-      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="Flow_0vndsx4" sourceRef="external_task_execution_update_phase" targetRef="external_task_execution_send_message_task" />
       <bpmn:serviceTask id="external_task_execution_send_message_task" name="Send simplified service message" camunda:type="external" camunda:topic="SendSimplifiedServiceTask">
-        <bpmn:incoming>Flow_0b1q9s6</bpmn:incoming>
+        <bpmn:incoming>Flow_0vndsx4</bpmn:incoming>
         <bpmn:outgoing>Flow_17bd4hz</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:sequenceFlow id="Flow_0b1q9s6" sourceRef="timer_wait_to_send_message" targetRef="external_task_execution_send_message_task" />
       <bpmn:sequenceFlow id="Flow_17bd4hz" sourceRef="external_task_execution_send_message_task" targetRef="end_execution_phase" />
     </bpmn:subProcess>
     <bpmn:subProcess id="call_activity_follow_up" name="Follow up">
@@ -1020,25 +1012,19 @@
           <dc:Bounds x="156" y="145" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0e6gbas" bpmnElement="end_execution_phase">
-        <dc:Bounds x="882" y="102" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="865" y="145" width="70" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_19skgpv" bpmnElement="external_task_execution_update_phase">
         <dc:Bounds x="310" y="80" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_16606o6_di" bpmnElement="timer_wait_to_send_message">
-        <dc:Bounds x="512" y="102" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="503" y="145" width="60" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0a1eujx_di" bpmnElement="external_task_execution_send_message_task">
-        <dc:Bounds x="670" y="80" width="100" height="80" />
+        <dc:Bounds x="570" y="80" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0e6gbas" bpmnElement="end_execution_phase">
+        <dc:Bounds x="812" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="795" y="145" width="70" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1ob3w5g_di" bpmnElement="Flow_1ob3w5g">
         <di:waypoint x="208" y="120" />
@@ -1046,15 +1032,11 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0vndsx4_di" bpmnElement="Flow_0vndsx4">
         <di:waypoint x="410" y="120" />
-        <di:waypoint x="512" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0b1q9s6_di" bpmnElement="Flow_0b1q9s6">
-        <di:waypoint x="548" y="120" />
-        <di:waypoint x="670" y="120" />
+        <di:waypoint x="570" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_17bd4hz_di" bpmnElement="Flow_17bd4hz">
-        <di:waypoint x="770" y="120" />
-        <di:waypoint x="882" y="120" />
+        <di:waypoint x="670" y="120" />
+        <di:waypoint x="812" y="120" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
