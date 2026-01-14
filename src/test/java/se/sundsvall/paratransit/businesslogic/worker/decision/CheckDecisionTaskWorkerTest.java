@@ -22,7 +22,6 @@ import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_STATUS;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_REQUEST_ID;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_UPDATE_AVAILABLE;
 import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_DISPLAY_PHASE;
 import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
@@ -41,14 +40,12 @@ import generated.se.sundsvall.casedata.Decision.DecisionOutcomeEnum;
 import generated.se.sundsvall.casedata.Errand;
 import generated.se.sundsvall.casedata.ExtraParameter;
 import generated.se.sundsvall.casedata.Status;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.camunda.bpm.client.exception.EngineException;
 import org.camunda.bpm.client.exception.RestException;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -120,8 +117,6 @@ class CheckDecisionTaskWorkerTest {
 		when(errandMock.getDecisions()).thenReturn(List.of(createFinalDecision(APPROVAL)));
 		when(errandMock.getExtraParameters()).thenReturn(List.of(new ExtraParameter(KEY_PHASE_ACTION).addValuesItem("COMPLETE")));
 		when(errandMock.getStatuses()).thenReturn(List.of(status));
-		when(textProviderMock.getSimplifiedServiceTexts(MUNICIPALITY_ID)).thenReturn(simplifiedServiceTextPropertiesMock);
-		when(simplifiedServiceTextPropertiesMock.getDelay()).thenReturn("P1D");
 
 		// Act
 		worker.execute(externalTaskMock, externalTaskServiceMock);
@@ -130,8 +125,6 @@ class CheckDecisionTaskWorkerTest {
 		verify(externalTaskServiceMock).complete(any(ExternalTask.class), mapCaptor.capture());
 		assertThat(mapCaptor.getValue()).containsEntry(CAMUNDA_VARIABLE_FINAL_DECISION, true)
 			.containsEntry(CAMUNDA_VARIABLE_IS_APPROVED, true);
-		assertThat(mapCaptor.getValue().get(CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE)).isInstanceOf(Date.class);
-		assertThat(((Date) mapCaptor.getValue().get(CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE))).isCloseTo(DateTime.now().plusDays(1).toDate(), 1000);
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_REQUEST_ID);
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_CASE_NUMBER);
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID);
@@ -162,8 +155,6 @@ class CheckDecisionTaskWorkerTest {
 		when(caseDataClientMock.getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID)).thenReturn(errandMock);
 		when(errandMock.getDecisions()).thenReturn(List.of(createFinalDecision(REJECTION)));
 		when(errandMock.getExtraParameters()).thenReturn(List.of(new ExtraParameter(KEY_PHASE_ACTION).addValuesItem("COMPLETE")));
-		when(textProviderMock.getSimplifiedServiceTexts(MUNICIPALITY_ID)).thenReturn(simplifiedServiceTextPropertiesMock);
-		when(simplifiedServiceTextPropertiesMock.getDelay()).thenReturn("P1D");
 
 		// Act
 		worker.execute(externalTaskMock, externalTaskServiceMock);
@@ -172,8 +163,6 @@ class CheckDecisionTaskWorkerTest {
 		verify(externalTaskServiceMock).complete(any(ExternalTask.class), mapCaptor.capture());
 		assertThat(mapCaptor.getValue()).containsEntry(CAMUNDA_VARIABLE_FINAL_DECISION, true)
 			.containsEntry(CAMUNDA_VARIABLE_IS_APPROVED, false);
-		assertThat(mapCaptor.getValue().get(CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE)).isInstanceOf(Date.class);
-		assertThat(((Date) mapCaptor.getValue().get(CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE))).isCloseTo(DateTime.now().plusDays(1).toDate(), 1000);
 
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_REQUEST_ID);
 		verify(externalTaskMock).getVariable(CAMUNDA_VARIABLE_CASE_NUMBER);

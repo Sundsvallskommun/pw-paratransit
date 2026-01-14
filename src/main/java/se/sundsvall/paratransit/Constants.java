@@ -30,7 +30,6 @@ public class Constants {
 	public static final String CAMUNDA_VARIABLE_PHASE_STATUS = "phaseStatus";
 	public static final String CAMUNDA_VARIABLE_PHASE_ACTION = "phaseAction";
 	public static final String CAMUNDA_VARIABLE_DISPLAY_PHASE = "displayPhase";
-	public static final String CAMUNDA_VARIABLE_TIME_TO_SEND_CONTROL_MESSAGE = "timeToSendControlMessage";
 	public static final String CAMUNDA_VARIABLE_IS_APPEAL = "isAppeal";
 	public static final String CAMUNDA_VARIABLE_IS_DRAFT = "isDraft";
 

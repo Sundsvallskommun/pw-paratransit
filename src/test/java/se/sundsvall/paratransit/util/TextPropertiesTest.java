@@ -30,6 +30,5 @@ class TextPropertiesTest {
 	@Test
 	void simplifiedServiceTexts() {
 		assertThat(textProperties.getSimplifiedServices().get(MUNICIPALITY_ID).getMessage()).isEqualTo(SIMPLIFIED_MESSAGE);
-		assertThat(textProperties.getSimplifiedServices().get(MUNICIPALITY_ID).getDelay()).isEqualTo("P1D");
 	}
 }
