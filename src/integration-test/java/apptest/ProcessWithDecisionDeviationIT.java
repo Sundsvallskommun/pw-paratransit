@@ -4,7 +4,8 @@ import static apptest.mock.Actualization.mockActualization;
 import static apptest.mock.CheckAppeal.mockCheckAppeal;
 import static apptest.mock.Decision.mockDecisionCheckIfDecisionMade;
 import static apptest.mock.Decision.mockDecisionUpdatePhase;
-import static apptest.mock.Decision.mockDecisionUpdateStatus;
+import static apptest.mock.Decision.mockDecisionUpdateStatusDeciding;
+import static apptest.mock.Decision.mockDecisionUpdateStatusExecuted;
 import static apptest.mock.Execution.mockExecution;
 import static apptest.mock.FollowUp.mockFollowUp;
 import static apptest.mock.Investigation.mockInvestigation;
@@ -73,7 +74,7 @@ class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 		final var stateAfterInvestigation = mockInvestigation(caseId, scenarioName);
 		// Mock deviation
 		final var stateAfterUpdatePhase = mockDecisionUpdatePhase(caseId, scenarioName, stateAfterInvestigation);
-		final var stateAfterUpdateStatus = mockDecisionUpdateStatus(caseId, scenarioName, stateAfterUpdatePhase);
+		final var stateAfterUpdateStatus = mockDecisionUpdateStatusDeciding(caseId, scenarioName, stateAfterUpdatePhase);
 		final var stateAfterCheckDecisionNonFinalGet = mockCaseDataGet(caseId, scenarioName, stateAfterUpdateStatus,
 			"check-decision-task-worker-not-final---api-casedata-get-errand",
 			Map.of("decisionTypeParameter", "PROPOSED",
@@ -99,7 +100,8 @@ class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 				]
 				"""));
 
-		mockDecisionCheckIfDecisionMade(caseId, scenarioName, stateAfterPatchExtraParameters);
+		final var stateAfterCheckDecision = mockDecisionCheckIfDecisionMade(caseId, scenarioName, stateAfterPatchExtraParameters);
+		mockDecisionUpdateStatusExecuted(caseId, scenarioName, stateAfterCheckDecision);
 		// Normal mock
 		mockExecution(caseId, scenarioName);
 		mockFollowUp(caseId, scenarioName);
@@ -143,6 +145,7 @@ class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 			.with(tuple("Update phase on errand", "external_task_decision_update_phase"))
 			.with(tuple("Update errand status", "external_task_decision_update_errand_status"))
 			.with(tuple("Check if decision is made", "external_task_check_decision_task"))
+			.with(tuple("Update errand status", "external_task_decision_update_errand_status_executed"))
 			.with(tuple("Gateway is decision final", "gateway_is_decision_final"))
 			// Decision not final
 			.with(tuple("Is caseUpdateAvailable", "decision_is_case_update_available"))

@@ -39,6 +39,7 @@ public class ProcessPathway {
 			.with(tuple("Update errand status", "external_task_decision_update_errand_status"))
 			.with(tuple("Check if decision is made", "external_task_check_decision_task"))
 			.with(tuple("Gateway is decision final", "gateway_is_decision_final"))
+			.with(tuple("Update errand status", "external_task_decision_update_errand_status_executed"))
 			.with(tuple("End decision phase", "end_decision_phase"));
 	}
 
