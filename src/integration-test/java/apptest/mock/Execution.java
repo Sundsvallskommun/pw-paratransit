@@ -13,7 +13,7 @@ public class Execution {
 
 	public static String mockExecution(final String caseId, final String scenarioName) {
 
-		final var stateAfterUpdatePhase = mockExecutionUpdatePhase(caseId, scenarioName, "check-decision-task-worker---api-casedata-get-errand");
+		final var stateAfterUpdatePhase = mockExecutionUpdatePhase(caseId, scenarioName, "decision_update-status-task-worker---api-casedata-patch-status-executed");
 		return mockSendSimplifiedService(caseId, scenarioName, stateAfterUpdatePhase);
 	}
 
