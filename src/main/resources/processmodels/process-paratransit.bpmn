@@ -33,6 +33,7 @@
         <bpmn:incoming>check_decision</bpmn:incoming>
         <bpmn:outgoing>no_final_decision</bpmn:outgoing>
         <bpmn:outgoing>Flow_1kyfw5g</bpmn:outgoing>
+        <bpmn:outgoing>Flow_12za4o3</bpmn:outgoing>
       </bpmn:exclusiveGateway>
       <bpmn:intermediateCatchEvent id="decision_is_case_update_available" name="Is caseUpdateAvailable">
         <bpmn:incoming>no_final_decision</bpmn:incoming>
@@ -71,7 +72,7 @@
       </bpmn:serviceTask>
       <bpmn:sequenceFlow id="Flow_0q6qxpu" sourceRef="external_task_decision_update_errand_status" targetRef="external_task_check_decision_task" />
       <bpmn:sequenceFlow id="Flow_1kyfw5g" sourceRef="gateway_is_decision_final" targetRef="external_task_decision_update_errand_status_executed">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${finalDecision}</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${finalDecision &amp;&amp; phaseAction != 'CANCEL'}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:serviceTask id="external_task_decision_update_errand_status_executed" name="Update errand status" camunda:type="external" camunda:topic="UpdateErrandStatusTask">
         <bpmn:extensionElements>
@@ -84,6 +85,12 @@
         <bpmn:outgoing>Flow_0h26pf6</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:sequenceFlow id="Flow_0h26pf6" sourceRef="external_task_decision_update_errand_status_executed" targetRef="end_decision_phase" />
+      <bpmn:endEvent id="end_decision_canceled" name="End when canceled">
+        <bpmn:incoming>Flow_12za4o3</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_12za4o3" name="Cancel" sourceRef="gateway_is_decision_final" targetRef="end_decision_canceled">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'CANCEL'}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
     </bpmn:subProcess>
     <bpmn:subProcess id="actualization_phase" name="Actualization">
       <bpmn:incoming>Flow_1pf2pgk</bpmn:incoming>
@@ -145,7 +152,7 @@
       </bpmn:serviceTask>
       <bpmn:sequenceFlow id="Flow_11tem89" sourceRef="start_actualization_phase" targetRef="external_task_actualization_update_phase" />
       <bpmn:sequenceFlow id="actualization_phase_action_is_complete" name="Yes" sourceRef="gateway_actualization_is_phase_action_complete" targetRef="end_actualization_phase">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'COMPLETE' || phaseAction == 'AUTOMATIC'}</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'COMPLETE'}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="phase_action_is_not_complete" name="No" sourceRef="gateway_actualization_is_phase_action_complete" targetRef="actualization_is_case_update_available" />
       <bpmn:sequenceFlow id="Flow_1265mg8" sourceRef="actualization_is_case_update_available" targetRef="external_task_actualization_check_phase_action_task" />
@@ -243,7 +250,7 @@
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'CANCEL'}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_00l0hzv" name="Yes" sourceRef="gateway_investigation_is_phase_action_complete" targetRef="end_investigation_phase">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'COMPLETE' || phaseAction == 'AUTOMATIC'}</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'COMPLETE'}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_1efl7vk" name="No" sourceRef="gateway_investigation_is_phase_action_complete" targetRef="investigation_phase_action_is_update_available" />
       <bpmn:intermediateCatchEvent id="investigation_phase_action_is_update_available" name="Wait for update">
@@ -372,7 +379,7 @@
       <bpmn:sequenceFlow id="Flow_0ykvekf" sourceRef="external_task_followup_check_phase_action" targetRef="gateway_followup_is_phase_action_complete" />
       <bpmn:sequenceFlow id="Flow_05cikbj" name="no" sourceRef="gateway_followup_is_phase_action_complete" targetRef="followup_is_case_update_available" />
       <bpmn:sequenceFlow id="Flow_1i36ltw" name="yes" sourceRef="gateway_followup_is_phase_action_complete" targetRef="external_task_follow_up_clean_up_notes">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'COMPLETE' || phaseAction == 'AUTOMATIC'}</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phaseAction == 'COMPLETE'}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:serviceTask id="external_task_follow_up_update_phase_action" name="Update phase action" camunda:type="external" camunda:topic="UpdateErrandPhaseTask">
         <bpmn:documentation>Set phase to followup</bpmn:documentation>
@@ -526,7 +533,7 @@
       <bpmndi:BPMNShape id="Gateway_0y0fji0_di" bpmnElement="gateway_decision_canceled" isMarkerVisible="true">
         <dc:Bounds x="1165" y="255" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1153" y="315" width="73" height="40" />
+          <dc:Bounds x="1154" y="315" width="73" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_11s4wgj_di" bpmnElement="canceled_phase">
@@ -648,10 +655,16 @@
           <dc:Bounds x="167" y="195" width="67" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1lwu8c8_di" bpmnElement="end_decision_phase">
+        <dc:Bounds x="1112" y="152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2140" y="195" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_19jrglz" bpmnElement="gateway_is_decision_final" isMarkerVisible="true">
         <dc:Bounds x="805" y="145" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="798" y="100" width="65" height="27" />
+          <dc:Bounds x="747" y="116" width="65" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0otizl3" bpmnElement="decision_is_case_update_available">
@@ -674,10 +687,10 @@
       <bpmndi:BPMNShape id="BPMNShape_1vxalkh" bpmnElement="external_task_decision_update_errand_status_executed">
         <dc:Bounds x="930" y="130" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1lwu8c8_di" bpmnElement="end_decision_phase">
-        <dc:Bounds x="1112" y="152" width="36" height="36" />
+      <bpmndi:BPMNShape id="BPMNShape_0shuf1w" bpmnElement="end_decision_canceled">
+        <dc:Bounds x="1112" y="52" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2140" y="195" width="63" height="27" />
+          <dc:Bounds x="2149" y="95" width="49" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0ywwh6g_di" bpmnElement="update_phase">
@@ -719,6 +732,14 @@
       <bpmndi:BPMNEdge id="Flow_0h26pf6_di" bpmnElement="Flow_0h26pf6">
         <di:waypoint x="1030" y="170" />
         <di:waypoint x="1112" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12za4o3_di" bpmnElement="Flow_12za4o3">
+        <di:waypoint x="830" y="145" />
+        <di:waypoint x="830" y="70" />
+        <di:waypoint x="1112" y="70" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="842" y="102" width="35" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
