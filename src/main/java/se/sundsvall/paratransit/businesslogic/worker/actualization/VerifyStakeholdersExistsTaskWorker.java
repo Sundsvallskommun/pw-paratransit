@@ -1,18 +1,5 @@
 package se.sundsvall.paratransit.businesslogic.worker.actualization;
 
-import static java.util.Collections.emptyList;
-import static java.util.Optional.ofNullable;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_HAS_ADMINISTRATOR_AND_APPLICANT;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_STATUS;
-import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
-import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
-import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
-import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
-import static se.sundsvall.paratransit.Constants.ROLE_ADMINISTRATOR;
-import static se.sundsvall.paratransit.Constants.ROLE_APPLICANT;
-import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
-
 import generated.se.sundsvall.casedata.Errand;
 import generated.se.sundsvall.casedata.Stakeholder;
 import java.util.HashMap;
@@ -25,6 +12,19 @@ import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.businesslogic.worker.AbstractWorker;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_HAS_ADMINISTRATOR_AND_APPLICANT;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_STATUS;
+import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
+import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
+import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
+import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
+import static se.sundsvall.paratransit.Constants.ROLE_ADMINISTRATOR;
+import static se.sundsvall.paratransit.Constants.ROLE_APPLICANT;
+import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 
 @Component
 @ExternalTaskSubscription("VerifyStakeholdersExists")

@@ -1,8 +1,5 @@
 package se.sundsvall.paratransit.businesslogic.worker.followup;
 
-import static generated.se.sundsvall.casedata.NoteType.INTERNAL;
-import static java.util.Collections.emptyList;
-
 import java.util.Optional;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
@@ -12,6 +9,9 @@ import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.businesslogic.worker.AbstractWorker;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+
+import static generated.se.sundsvall.casedata.NoteType.INTERNAL;
+import static java.util.Collections.emptyList;
 
 @Component
 @ExternalTaskSubscription("CleanUpNotesTask")

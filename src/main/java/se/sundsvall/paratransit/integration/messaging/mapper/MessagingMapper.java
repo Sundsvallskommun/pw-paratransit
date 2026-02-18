@@ -1,14 +1,14 @@
 package se.sundsvall.paratransit.integration.messaging.mapper;
 
-import static generated.se.sundsvall.messaging.WebMessageRequest.OepInstanceEnum.EXTERNAL;
-import static se.sundsvall.paratransit.Constants.MESSAGING_KEY_FLOW_INSTANCE_ID;
-
 import generated.se.sundsvall.messaging.ExternalReference;
 import generated.se.sundsvall.messaging.WebMessageParty;
 import generated.se.sundsvall.messaging.WebMessageRequest;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import se.sundsvall.paratransit.util.TextProvider;
+
+import static generated.se.sundsvall.messaging.WebMessageRequest.OepInstanceEnum.EXTERNAL;
+import static se.sundsvall.paratransit.Constants.MESSAGING_KEY_FLOW_INSTANCE_ID;
 
 @Service
 public class MessagingMapper {

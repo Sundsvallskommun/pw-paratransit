@@ -1,7 +1,5 @@
 package se.sundsvall.paratransit.businesslogic.worker;
 
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MESSAGE_ID;
-
 import java.util.Map;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
@@ -11,6 +9,8 @@ import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 import se.sundsvall.paratransit.service.MessagingService;
+
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MESSAGE_ID;
 
 @Component
 @ExternalTaskSubscription("SendSimplifiedServiceTask")

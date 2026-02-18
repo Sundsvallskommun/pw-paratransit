@@ -1,19 +1,5 @@
 package se.sundsvall.paratransit.businesslogic.worker;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_APPEAL;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_REQUEST_ID;
-import static se.sundsvall.paratransit.Constants.CASE_TYPE_APPEAL;
-import static se.sundsvall.paratransit.Constants.CASE_TYPE_PARATRANSIT;
-
 import generated.se.sundsvall.casedata.Errand;
 import java.util.HashMap;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
@@ -29,6 +15,20 @@ import org.zalando.problem.Problem;
 import org.zalando.problem.Status;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_APPEAL;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_REQUEST_ID;
+import static se.sundsvall.paratransit.Constants.CASE_TYPE_APPEAL;
+import static se.sundsvall.paratransit.Constants.CASE_TYPE_PARATRANSIT;
 
 @ExtendWith(MockitoExtension.class)
 class CheckAppealTaskWorkerTest {

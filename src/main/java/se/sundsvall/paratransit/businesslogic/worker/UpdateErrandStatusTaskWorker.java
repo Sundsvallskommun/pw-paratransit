@@ -1,7 +1,5 @@
 package se.sundsvall.paratransit.businesslogic.worker;
 
-import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toStatus;
-
 import java.util.Optional;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
@@ -10,6 +8,8 @@ import org.springframework.stereotype.Component;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+
+import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toStatus;
 
 @Component
 @ExternalTaskSubscription("UpdateErrandStatusTask")

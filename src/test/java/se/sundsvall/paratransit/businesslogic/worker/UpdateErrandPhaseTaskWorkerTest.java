@@ -1,28 +1,5 @@
 package se.sundsvall.paratransit.businesslogic.worker;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_REQUEST_ID;
-import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_DISPLAY_PHASE;
-import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
-import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_STATUS;
-import static se.sundsvall.paratransit.Constants.CASEDATA_PHASE_DECISION;
-import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_CASE_FINALIZED;
-import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
-import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
-import static se.sundsvall.paratransit.Constants.PHASE_STATUS_ONGOING;
-
 import generated.se.sundsvall.casedata.Errand;
 import generated.se.sundsvall.casedata.ExtraParameter;
 import generated.se.sundsvall.casedata.PatchErrand;
@@ -48,6 +25,29 @@ import org.zalando.problem.Status;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_REQUEST_ID;
+import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_DISPLAY_PHASE;
+import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
+import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_STATUS;
+import static se.sundsvall.paratransit.Constants.CASEDATA_PHASE_DECISION;
+import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_CASE_FINALIZED;
+import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
+import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
+import static se.sundsvall.paratransit.Constants.PHASE_STATUS_ONGOING;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateErrandPhaseTaskWorkerTest {

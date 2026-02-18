@@ -1,5 +1,19 @@
 package se.sundsvall.paratransit.businesslogic.worker.decision;
 
+import generated.se.sundsvall.casedata.Decision;
+import generated.se.sundsvall.casedata.Errand;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
+import org.camunda.bpm.client.task.ExternalTask;
+import org.camunda.bpm.client.task.ExternalTaskService;
+import org.springframework.stereotype.Component;
+import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
+import se.sundsvall.paratransit.businesslogic.worker.AbstractWorker;
+import se.sundsvall.paratransit.integration.camunda.CamundaClient;
+import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+
 import static generated.se.sundsvall.casedata.Decision.DecisionOutcomeEnum.APPROVAL;
 import static generated.se.sundsvall.casedata.Decision.DecisionTypeEnum.FINAL;
 import static java.util.Collections.emptyList;
@@ -15,20 +29,6 @@ import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
 import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
-
-import generated.se.sundsvall.casedata.Decision;
-import generated.se.sundsvall.casedata.Errand;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
-import org.camunda.bpm.client.task.ExternalTask;
-import org.camunda.bpm.client.task.ExternalTaskService;
-import org.springframework.stereotype.Component;
-import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
-import se.sundsvall.paratransit.businesslogic.worker.AbstractWorker;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
-import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 
 @Component
 @ExternalTaskSubscription("CheckDecisionTask")

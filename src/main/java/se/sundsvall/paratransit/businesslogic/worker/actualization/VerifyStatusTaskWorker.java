@@ -1,16 +1,5 @@
 package se.sundsvall.paratransit.businesslogic.worker.actualization;
 
-import static java.util.Objects.isNull;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_DRAFT;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_STATUS;
-import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_DRAFT;
-import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
-import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
-import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
-import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
-import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
-
 import generated.se.sundsvall.casedata.Errand;
 import java.util.HashMap;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
@@ -21,6 +10,17 @@ import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.businesslogic.worker.AbstractWorker;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+
+import static java.util.Objects.isNull;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_DRAFT;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
+import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_STATUS;
+import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_DRAFT;
+import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
+import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
+import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
+import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
+import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 
 @Component
 @ExternalTaskSubscription("VerifyStatus")

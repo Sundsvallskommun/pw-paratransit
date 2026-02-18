@@ -1,12 +1,5 @@
 package se.sundsvall.paratransit.integration.messaging.mapper;
 
-import static generated.se.sundsvall.messaging.WebMessageRequest.OepInstanceEnum.EXTERNAL;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static se.sundsvall.paratransit.Constants.MESSAGING_KEY_FLOW_INSTANCE_ID;
-
 import generated.se.sundsvall.messaging.ExternalReference;
 import generated.se.sundsvall.messaging.WebMessageParty;
 import java.util.List;
@@ -18,6 +11,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.paratransit.util.SimplifiedServiceTextProperties;
 import se.sundsvall.paratransit.util.TextProvider;
+
+import static generated.se.sundsvall.messaging.WebMessageRequest.OepInstanceEnum.EXTERNAL;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static se.sundsvall.paratransit.Constants.MESSAGING_KEY_FLOW_INSTANCE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class MessagingMapperTest {
