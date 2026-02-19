@@ -1,5 +1,29 @@
 package se.sundsvall.paratransit.businesslogic.worker.decision;
 
+import generated.se.sundsvall.casedata.Decision;
+import generated.se.sundsvall.casedata.Decision.DecisionOutcomeEnum;
+import generated.se.sundsvall.casedata.Errand;
+import generated.se.sundsvall.casedata.ExtraParameter;
+import generated.se.sundsvall.casedata.Status;
+import java.util.List;
+import java.util.Map;
+import org.camunda.bpm.client.exception.EngineException;
+import org.camunda.bpm.client.exception.RestException;
+import org.camunda.bpm.client.task.ExternalTask;
+import org.camunda.bpm.client.task.ExternalTaskService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
+import se.sundsvall.paratransit.integration.camunda.CamundaClient;
+import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+import se.sundsvall.paratransit.util.SimplifiedServiceTextProperties;
+import se.sundsvall.paratransit.util.TextProvider;
+
 import static generated.se.sundsvall.casedata.Decision.DecisionOutcomeEnum.APPROVAL;
 import static generated.se.sundsvall.casedata.Decision.DecisionOutcomeEnum.REJECTION;
 import static generated.se.sundsvall.casedata.Decision.DecisionTypeEnum.FINAL;
@@ -34,30 +58,6 @@ import static se.sundsvall.paratransit.Constants.FALSE;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
-
-import generated.se.sundsvall.casedata.Decision;
-import generated.se.sundsvall.casedata.Decision.DecisionOutcomeEnum;
-import generated.se.sundsvall.casedata.Errand;
-import generated.se.sundsvall.casedata.ExtraParameter;
-import generated.se.sundsvall.casedata.Status;
-import java.util.List;
-import java.util.Map;
-import org.camunda.bpm.client.exception.EngineException;
-import org.camunda.bpm.client.exception.RestException;
-import org.camunda.bpm.client.task.ExternalTask;
-import org.camunda.bpm.client.task.ExternalTaskService;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
-import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
-import se.sundsvall.paratransit.util.SimplifiedServiceTextProperties;
-import se.sundsvall.paratransit.util.TextProvider;
 
 @ExtendWith(MockitoExtension.class)
 class CheckDecisionTaskWorkerTest {

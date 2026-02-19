@@ -1,5 +1,16 @@
 package se.sundsvall.paratransit.businesslogic.worker;
 
+import generated.se.sundsvall.casedata.Errand;
+import java.util.HashMap;
+import java.util.Optional;
+import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
+import org.camunda.bpm.client.task.ExternalTask;
+import org.camunda.bpm.client.task.ExternalTaskService;
+import org.springframework.stereotype.Component;
+import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
+import se.sundsvall.paratransit.integration.camunda.CamundaClient;
+import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_DISPLAY_PHASE;
@@ -11,17 +22,6 @@ import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_ONGOING;
 import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toPatchErrand;
-
-import generated.se.sundsvall.casedata.Errand;
-import java.util.HashMap;
-import java.util.Optional;
-import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
-import org.camunda.bpm.client.task.ExternalTask;
-import org.camunda.bpm.client.task.ExternalTaskService;
-import org.springframework.stereotype.Component;
-import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
-import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 
 @Component
 @ExternalTaskSubscription("UpdateErrandPhaseTask")

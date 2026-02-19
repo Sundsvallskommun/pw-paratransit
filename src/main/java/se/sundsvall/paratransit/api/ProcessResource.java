@@ -1,13 +1,5 @@
 package se.sundsvall.paratransit.api;
 
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.ALL_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
-import static org.springframework.http.ResponseEntity.accepted;
-import static se.sundsvall.paratransit.Constants.NAMESPACE_REGEXP;
-import static se.sundsvall.paratransit.Constants.NAMESPACE_VALIDATION_MESSAGE;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,6 +20,14 @@ import se.sundsvall.dept44.common.validators.annotation.ValidMunicipalityId;
 import se.sundsvall.dept44.common.validators.annotation.ValidUuid;
 import se.sundsvall.paratransit.api.model.StartProcessResponse;
 import se.sundsvall.paratransit.service.ProcessService;
+
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.ALL_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
+import static org.springframework.http.ResponseEntity.accepted;
+import static se.sundsvall.paratransit.Constants.NAMESPACE_REGEXP;
+import static se.sundsvall.paratransit.Constants.NAMESPACE_VALIDATION_MESSAGE;
 
 @RestController
 @RequestMapping("/{municipalityId}/{namespace}/process")

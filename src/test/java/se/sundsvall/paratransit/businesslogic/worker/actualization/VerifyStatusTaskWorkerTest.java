@@ -1,5 +1,26 @@
 package se.sundsvall.paratransit.businesslogic.worker.actualization;
 
+import generated.se.sundsvall.casedata.Errand;
+import generated.se.sundsvall.casedata.ExtraParameter;
+import generated.se.sundsvall.casedata.Status;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import org.camunda.bpm.client.task.ExternalTask;
+import org.camunda.bpm.client.task.ExternalTaskService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.zalando.problem.Problem;
+import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
+import se.sundsvall.paratransit.integration.camunda.CamundaClient;
+import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -29,27 +50,6 @@ import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
-
-import generated.se.sundsvall.casedata.Errand;
-import generated.se.sundsvall.casedata.ExtraParameter;
-import generated.se.sundsvall.casedata.Status;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import org.camunda.bpm.client.task.ExternalTask;
-import org.camunda.bpm.client.task.ExternalTaskService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.zalando.problem.Problem;
-import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
-import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 
 @ExtendWith(MockitoExtension.class)
 class VerifyStatusTaskWorkerTest {
