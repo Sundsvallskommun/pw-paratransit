@@ -20,8 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.stereotype.Component;
-import org.zalando.problem.Problem;
-import org.zalando.problem.Status;
+import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
@@ -35,6 +34,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
@@ -84,6 +84,26 @@ class CheckErrandPhaseActionTaskWorkerTest {
 
 	@Captor
 	private ArgumentCaptor<List<ExtraParameter>> patchExtraParametersCaptor;
+
+	private static Stream<Arguments> checkErrandPhaseActionTypeArguments() {
+		return Stream.of(
+			Arguments.of("phaseAction", List.of(
+				new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).addValuesItem("phaseAction"),
+				new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).addValuesItem(PHASE_STATUS_WAITING),
+				new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).addValuesItem(CASEDATA_PHASE_DECISION))),
+			Arguments.of(PHASE_ACTION_CANCEL, List.of(
+				new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).addValuesItem(PHASE_ACTION_CANCEL),
+				new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).addValuesItem(PHASE_STATUS_CANCELED),
+				new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).addValuesItem(CASEDATA_PHASE_DECISION))),
+			Arguments.of(PHASE_ACTION_CANCEL, List.of(
+				new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).addValuesItem(PHASE_ACTION_CANCEL),
+				new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).addValuesItem(PHASE_STATUS_CANCELED),
+				new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).addValuesItem(CASEDATA_PHASE_DECISION))),
+			Arguments.of(PHASE_ACTION_COMPLETE, List.of(
+				new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).addValuesItem(PHASE_ACTION_COMPLETE),
+				new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).addValuesItem(PHASE_STATUS_COMPLETED),
+				new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).addValuesItem(CASEDATA_PHASE_DECISION))));
+	}
 
 	@Test
 	void verifyAnnotations() {
@@ -173,7 +193,7 @@ class CheckErrandPhaseActionTaskWorkerTest {
 
 	@ParameterizedTest
 	@MethodSource("checkErrandPhaseActionTypeArguments")
-	void execute(String phaseAction, List<ExtraParameter> expectedExtraParameters) {
+	void execute(final String phaseAction, final List<ExtraParameter> expectedExtraParameters) {
 		// Setup
 		final var processInstanceId = "processInstanceId";
 		final var extraParameters = new ArrayList<ExtraParameter>();
@@ -213,7 +233,7 @@ class CheckErrandPhaseActionTaskWorkerTest {
 	@Test
 	void executeThrowsException() {
 		// Setup
-		final var problem = Problem.valueOf(Status.I_AM_A_TEAPOT, "Big and stout");
+		final var problem = Problem.valueOf(INTERNAL_SERVER_ERROR, "Big and stout");
 
 		// Mock to simulate exception upon patching errand with new phase
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_REQUEST_ID)).thenReturn(REQUEST_ID);
@@ -236,25 +256,5 @@ class CheckErrandPhaseActionTaskWorkerTest {
 		verify(failureHandlerMock).handleException(externalTaskServiceMock, externalTaskMock, problem.getMessage());
 		verify(externalTaskMock).getId();
 		verify(externalTaskMock).getBusinessKey();
-	}
-
-	private static Stream<Arguments> checkErrandPhaseActionTypeArguments() {
-		return Stream.of(
-			Arguments.of("phaseAction", List.of(
-				new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).addValuesItem("phaseAction"),
-				new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).addValuesItem(PHASE_STATUS_WAITING),
-				new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).addValuesItem(CASEDATA_PHASE_DECISION))),
-			Arguments.of(PHASE_ACTION_CANCEL, List.of(
-				new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).addValuesItem(PHASE_ACTION_CANCEL),
-				new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).addValuesItem(PHASE_STATUS_CANCELED),
-				new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).addValuesItem(CASEDATA_PHASE_DECISION))),
-			Arguments.of(PHASE_ACTION_CANCEL, List.of(
-				new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).addValuesItem(PHASE_ACTION_CANCEL),
-				new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).addValuesItem(PHASE_STATUS_CANCELED),
-				new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).addValuesItem(CASEDATA_PHASE_DECISION))),
-			Arguments.of(PHASE_ACTION_COMPLETE, List.of(
-				new ExtraParameter(CASEDATA_KEY_PHASE_ACTION).addValuesItem(PHASE_ACTION_COMPLETE),
-				new ExtraParameter(CASEDATA_KEY_PHASE_STATUS).addValuesItem(PHASE_STATUS_COMPLETED),
-				new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).addValuesItem(CASEDATA_PHASE_DECISION))));
 	}
 }

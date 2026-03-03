@@ -16,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.zalando.problem.Status;
 import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 
@@ -32,6 +31,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @ExtendWith(MockitoExtension.class)
 class ProcessServiceTest {
@@ -64,7 +64,7 @@ class ProcessServiceTest {
 		when(camundaClientMock.startProcessWithTenant(any(), any(), any())).thenReturn(processInstance);
 
 		// Mock static RequestId to enable spy and to verify that static method is being called
-		try (MockedStatic<RequestId> requestIdMock = mockStatic(RequestId.class)) {
+		try (final MockedStatic<RequestId> requestIdMock = mockStatic(RequestId.class)) {
 			requestIdMock.when(RequestId::get).thenReturn(logId);
 
 			// Act
@@ -98,7 +98,7 @@ class ProcessServiceTest {
 		when(camundaClientMock.getProcessInstance(any())).thenReturn(Optional.of(new ProcessInstanceDto()));
 
 		// Mock static RequestId to enable spy and to verify that static method is being called
-		try (MockedStatic<RequestId> requestIdMock = mockStatic(RequestId.class)) {
+		try (final MockedStatic<RequestId> requestIdMock = mockStatic(RequestId.class)) {
 			requestIdMock.when(RequestId::get).thenReturn(logId);
 
 			// Act
@@ -131,11 +131,11 @@ class ProcessServiceTest {
 		when(camundaClientMock.getProcessInstance(any())).thenReturn(empty());
 
 		// Act
-		final var result = assertThrows(org.zalando.problem.ThrowableProblem.class, () -> processService.updateProcess(municipalityId, namespace, uuid));
+		final var result = assertThrows(se.sundsvall.dept44.problem.ThrowableProblem.class, () -> processService.updateProcess(municipalityId, namespace, uuid));
 
 		// Assert
 		assertThat(result)
-			.hasFieldOrPropertyWithValue("status", Status.NOT_FOUND)
+			.hasFieldOrPropertyWithValue("status", NOT_FOUND)
 			.hasFieldOrPropertyWithValue("detail", "Process instance with ID '%s' does not exist!".formatted(uuid));
 
 		// Assert

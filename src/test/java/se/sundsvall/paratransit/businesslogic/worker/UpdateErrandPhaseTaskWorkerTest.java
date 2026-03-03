@@ -20,8 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.stereotype.Component;
-import org.zalando.problem.Problem;
-import org.zalando.problem.Status;
+import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
@@ -34,6 +33,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
@@ -84,12 +84,6 @@ class UpdateErrandPhaseTaskWorkerTest {
 	@Captor
 	private ArgumentCaptor<List<ExtraParameter>> patchExtraParametersCaptor;
 
-	@Test
-	void verifyAnnotations() {
-		assertThat(worker.getClass()).hasAnnotations(Component.class, ExternalTaskSubscription.class);
-		assertThat(worker.getClass().getAnnotation(ExternalTaskSubscription.class).value()).isEqualTo("UpdateErrandPhaseTask");
-	}
-
 	private static Stream<Arguments> executePermutations() {
 		return Stream.of(
 			Arguments.of(CASEDATA_STATUS_CASE_FINALIZED, null),
@@ -98,9 +92,15 @@ class UpdateErrandPhaseTaskWorkerTest {
 			Arguments.of("OTHER_STATUS", PHASE_ACTION_UNKNOWN));
 	}
 
+	@Test
+	void verifyAnnotations() {
+		assertThat(worker.getClass()).hasAnnotations(Component.class, ExternalTaskSubscription.class);
+		assertThat(worker.getClass().getAnnotation(ExternalTaskSubscription.class).value()).isEqualTo("UpdateErrandPhaseTask");
+	}
+
 	@ParameterizedTest
 	@MethodSource("executePermutations")
-	void execute(String status, String phaseAction) {
+	void execute(final String status, final String phaseAction) {
 		// Setup
 		final var externalCaseId = "externalCaseId";
 		// Sets phase action to unknown in UpdateErrandPhaseTaskWorker because it is the beginning of the phase
@@ -148,7 +148,7 @@ class UpdateErrandPhaseTaskWorkerTest {
 	@Test
 	void executeThrowsException() {
 		// Setup
-		final var problem = Problem.valueOf(Status.I_AM_A_TEAPOT, "Big and stout");
+		final var problem = Problem.valueOf(BAD_GATEWAY, "Big and stout");
 
 		// Mock to simulate exception upon patching errand with new phase
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_REQUEST_ID)).thenReturn(REQUEST_ID);

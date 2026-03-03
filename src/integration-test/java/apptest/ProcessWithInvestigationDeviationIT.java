@@ -1,5 +1,15 @@
 package apptest;
 
+import apptest.verification.Tuples;
+import java.time.Duration;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.annotation.DirtiesContext;
+import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
+import se.sundsvall.paratransit.Application;
+import se.sundsvall.paratransit.api.model.StartProcessResponse;
+
 import static apptest.mock.Actualization.mockActualization;
 import static apptest.mock.Canceled.mockCanceled;
 import static apptest.mock.CheckAppeal.mockCheckAppeal;
@@ -32,17 +42,6 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static se.sundsvall.paratransit.Constants.CASE_TYPE_PARATRANSIT;
 
-import apptest.verification.Tuples;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import java.time.Duration;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.annotation.DirtiesContext;
-import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
-import se.sundsvall.paratransit.Application;
-import se.sundsvall.paratransit.api.model.StartProcessResponse;
-
 @DirtiesContext
 @WireMockAppTestSuite(files = "classpath:/Wiremock/", classes = Application.class)
 class ProcessWithInvestigationDeviationIT extends AbstractCamundaAppTest {
@@ -63,7 +62,7 @@ class ProcessWithInvestigationDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test_investigation_001_createProcessForPhaseActionNotComplete() throws JsonProcessingException, ClassNotFoundException {
+	void test_investigation_001_createProcessForPhaseActionNotComplete() throws ClassNotFoundException {
 
 		final var caseId = "1213";
 		final var scenarioName = "test_investigation_002_createProcessForPhaseActionNotComplete";
@@ -162,10 +161,10 @@ class ProcessWithInvestigationDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test_investigation_002_createProcessForCancelInInvestigation() throws JsonProcessingException, ClassNotFoundException {
+	void test_investigation_002_createProcessForCancelInInvestigation() throws ClassNotFoundException {
 
 		final var caseId = "1314";
-		var scenarioName = "test_investigation_003_createProcessForCancelInInvestigation";
+		final var scenarioName = "test_investigation_003_createProcessForCancelInInvestigation";
 
 		// Setup mocks
 		mockApiGatewayToken();

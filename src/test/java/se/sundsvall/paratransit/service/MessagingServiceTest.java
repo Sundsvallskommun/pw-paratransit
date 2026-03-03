@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.zalando.problem.ThrowableProblem;
+import se.sundsvall.dept44.problem.ThrowableProblem;
 import se.sundsvall.paratransit.integration.messaging.MessagingClient;
 import se.sundsvall.paratransit.integration.messaging.mapper.MessagingMapper;
 
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.zalando.problem.Status.BAD_GATEWAY;
+import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static se.sundsvall.paratransit.Constants.ROLE_APPLICANT;
 import static se.sundsvall.paratransit.Constants.ROLE_REPORTER;
 
@@ -42,6 +42,19 @@ class MessagingServiceTest {
 
 	@InjectMocks
 	private MessagingService messagingService;
+
+	private static Errand createErrand(final boolean withExternalCaseId) {
+		return new Errand()
+			.externalCaseId(withExternalCaseId ? "1234" : null)
+			.stakeholders(List.of(createStakeholder(ROLE_APPLICANT), createStakeholder(ROLE_REPORTER)));
+	}
+
+	public static Stakeholder createStakeholder(final String role) {
+		return new Stakeholder()
+			.type(PERSON)
+			.personId("d7af5f83-166a-468b-ab86-da8ca30ea97c")
+			.roles(List.of(role));
+	}
 
 	@Test
 	void sendMessageSimplifiedServiceWithExternalCaseIdPresent() {
@@ -93,24 +106,11 @@ class MessagingServiceTest {
 		final var exception = assertThrows(ThrowableProblem.class, () -> messagingService.sendMessageSimplifiedService(MUNICIPALITY_ID, errand));
 
 		// Assert
-		assertThat(exception.getStatus().getStatusCode()).isEqualTo(BAD_GATEWAY.getStatusCode());
+		assertThat(exception.getStatus().value()).isEqualTo(BAD_GATEWAY.value());
 		assertThat(exception.getStatus().getReasonPhrase()).isEqualTo(BAD_GATEWAY.getReasonPhrase());
 		assertThat(exception.getMessage()).isEqualTo("Bad Gateway: No message id received from messaging service");
 		verify(messagingMapperMock).toWebMessageRequestSimplifiedService(any(), any(), eq(MUNICIPALITY_ID));
 		verify(messagingClientMock).sendWebMessage(MUNICIPALITY_ID, webMessageRequest);
 		verifyNoMoreInteractions(messagingClientMock, messagingMapperMock);
-	}
-
-	private static Errand createErrand(boolean withExternalCaseId) {
-		return new Errand()
-			.externalCaseId(withExternalCaseId ? "1234" : null)
-			.stakeholders(List.of(createStakeholder(ROLE_APPLICANT), createStakeholder(ROLE_REPORTER)));
-	}
-
-	public static Stakeholder createStakeholder(String role) {
-		return new Stakeholder()
-			.type(PERSON)
-			.personId("d7af5f83-166a-468b-ab86-da8ca30ea97c")
-			.roles(List.of(role));
 	}
 }

@@ -1,5 +1,15 @@
 package apptest;
 
+import apptest.verification.Tuples;
+import java.time.Duration;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.annotation.DirtiesContext;
+import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
+import se.sundsvall.paratransit.Application;
+import se.sundsvall.paratransit.api.model.StartProcessResponse;
+
 import static apptest.mock.Actualization.mockActualizationCheckPhaseAction;
 import static apptest.mock.Actualization.mockActualizationUpdateDisplayPhase;
 import static apptest.mock.Actualization.mockActualizationUpdatePhase;
@@ -35,17 +45,6 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static se.sundsvall.paratransit.Constants.CASE_TYPE_PARATRANSIT;
 
-import apptest.verification.Tuples;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import java.time.Duration;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.annotation.DirtiesContext;
-import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
-import se.sundsvall.paratransit.Application;
-import se.sundsvall.paratransit.api.model.StartProcessResponse;
-
 @DirtiesContext
 @WireMockAppTestSuite(files = "classpath:/Wiremock/", classes = Application.class)
 class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
@@ -66,10 +65,10 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test001_createProcessForCancelInActualization() throws JsonProcessingException, ClassNotFoundException {
+	void test001_createProcessForCancelInActualization() throws ClassNotFoundException {
 
 		final var caseId = "789";
-		var scenarioName = "test_actualization_001_createProcessForCancelInActualization";
+		final var scenarioName = "test_actualization_001_createProcessForCancelInActualization";
 
 		// Setup mocks
 		mockApiGatewayToken();
@@ -117,13 +116,13 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.sendRequest()
 			.andReturnBody(StartProcessResponse.class);
 
-		// Wait for process to finish
+		// Wait for the process to finish
 		awaitProcessCompleted(startResponse.getProcessId(), DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
 
 		// Verify wiremock stubs
 		verifyAllStubs();
 
-		// Verify process pathway.
+		// Verify the process pathway.
 		assertProcessPathway(startResponse.getProcessId(), false, Tuples.create()
 			.with(tuple("Start process", "start_process"))
 			.with(tuple("Check appeal", "external_task_check_appeal"))
@@ -148,7 +147,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test002_createProcessForActualizationNotComplete() throws JsonProcessingException, ClassNotFoundException {
+	void test002_createProcessForActualizationNotComplete() throws ClassNotFoundException {
 
 		final var caseId = "1011";
 		final var scenarioName = "test_actualization_002_createProcessForActualizationNotComplete";
@@ -191,7 +190,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 
 		mockActualizationCheckPhaseAction(caseId, scenarioName, stateAfterPatchExtraParameters);
 
-		// Normal mock
+		// A normal state mock
 		mockInvestigation(caseId, scenarioName);
 		mockDecision(caseId, scenarioName);
 		mockExecution(caseId, scenarioName);
@@ -205,7 +204,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.sendRequest()
 			.andReturnBody(StartProcessResponse.class);
 
-		// Wait for process to be waiting for update of errand
+		// Wait for the process to be waiting for update of the errand
 		awaitProcessState("actualization_is_case_update_available", DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
 
 		// Update process
@@ -216,13 +215,13 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.withExpectedResponseBodyIsNull()
 			.sendRequest();
 
-		// Wait for process to finish
+		// Wait for the process to finish
 		awaitProcessCompleted(startResponse.getProcessId(), DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
 
 		// Verify wiremock stubs
 		verifyAllStubs();
 
-		// Verify process pathway.
+		// Verify the process pathway.
 		assertProcessPathway(startResponse.getProcessId(), true, Tuples.create()
 			.with(tuple("Start process", "start_process"))
 			.with(tuple("Check appeal", "external_task_check_appeal"))
@@ -256,10 +255,10 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test003_createProcessForCancelInVerifyStatus() throws JsonProcessingException, ClassNotFoundException {
+	void test003_createProcessForCancelInVerifyStatus() throws ClassNotFoundException {
 
 		final var caseId = "789";
-		var scenarioName = "test_actualization_003_createProcessForCancelInVerifyStatus";
+		final var scenarioName = "test_actualization_003_createProcessForCancelInVerifyStatus";
 
 		// Setup mocks
 		mockApiGatewayToken();
@@ -299,13 +298,13 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.sendRequest()
 			.andReturnBody(StartProcessResponse.class);
 
-		// Wait for process to finish
+		// Wait for the process to finish
 		awaitProcessCompleted(startResponse.getProcessId(), DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
 
 		// Verify wiremock stubs
 		verifyAllStubs();
 
-		// Verify process pathway.
+		// Verify the process pathway.
 		assertProcessPathway(startResponse.getProcessId(), false, Tuples.create()
 			.with(tuple("Start process", "start_process"))
 			.with(tuple("Check appeal", "external_task_check_appeal"))
@@ -324,7 +323,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test004_createProcessWaitingForStatusUpdateInActualization() throws JsonProcessingException, ClassNotFoundException {
+	void test004_createProcessWaitingForStatusUpdateInActualization() throws ClassNotFoundException {
 
 		final var caseId = "2021";
 		final var scenarioName = "test_actualization_test004_createProcessWaitingForStatusUpdateInActualization";
@@ -363,7 +362,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 
 		mockActualizationCheckPhaseAction(caseId, scenarioName, stateAfterUpdateStatus);
 
-		// Normal mock
+		// A normal state mock
 		mockInvestigation(caseId, scenarioName);
 		mockDecision(caseId, scenarioName);
 		mockExecution(caseId, scenarioName);
@@ -377,7 +376,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.sendRequest()
 			.andReturnBody(StartProcessResponse.class);
 
-		// Wait for process to be waiting for update of errand
+		// Wait for the process to be waiting for update of an errand
 		awaitProcessState("actualization_wait_for_status_update", DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
 
 		// Update process
@@ -388,13 +387,13 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.withExpectedResponseBodyIsNull()
 			.sendRequest();
 
-		// Wait for process to finish
+		// Wait for the process to finish
 		awaitProcessCompleted(startResponse.getProcessId(), DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
 
 		// Verify wiremock stubs
 		verifyAllStubs();
 
-		// Verify process pathway.
+		// Verify the process pathway.
 		assertProcessPathway(startResponse.getProcessId(), true, Tuples.create()
 			.with(tuple("Start process", "start_process"))
 			.with(tuple("Check appeal", "external_task_check_appeal"))
@@ -429,7 +428,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test005_createProcessForCancelInVerifyStakeholders() throws JsonProcessingException, ClassNotFoundException {
+	void test005_createProcessForCancelInVerifyStakeholders() throws ClassNotFoundException {
 
 		final var caseId = "101";
 		final var scenarioName = "test_actualization_005_createProcessForCancelInVerifyStakeholders";
@@ -473,13 +472,13 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.sendRequest()
 			.andReturnBody(StartProcessResponse.class);
 
-		// Wait for process to finish
+		// Wait for the process to finish
 		awaitProcessCompleted(startResponse.getProcessId(), DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
 
 		// Verify wiremock stubs
 		verifyAllStubs();
 
-		// Verify process pathway.
+		// Verify the process pathway.
 		assertProcessPathway(startResponse.getProcessId(), false, Tuples.create()
 			.with(tuple("Start process", "start_process"))
 			.with(tuple("Check appeal", "external_task_check_appeal"))
@@ -500,7 +499,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test006_createProcessWaitingForStakeholdersUpdateInActualization() throws JsonProcessingException, ClassNotFoundException {
+	void test006_createProcessWaitingForStakeholdersUpdateInActualization() throws ClassNotFoundException {
 
 		final var caseId = "112";
 		final var scenarioName = "test_actualization_006_createProcessWaitingForStakeholdersUpdateInActualization";
@@ -539,7 +538,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 
 		mockActualizationCheckPhaseAction(caseId, scenarioName, stateAfterUpdateStatus);
 
-		// Normal mock
+		// A normal state mock
 		mockInvestigation(caseId, scenarioName);
 		mockDecision(caseId, scenarioName);
 		mockExecution(caseId, scenarioName);
@@ -553,7 +552,7 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.sendRequest()
 			.andReturnBody(StartProcessResponse.class);
 
-		// Wait for process to be waiting for update of errand
+		// Wait for the process to be waiting for update of the errand
 		awaitProcessState("actualization_wait_for_stakeholder_update", DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
 
 		// Update process
@@ -564,13 +563,13 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.withExpectedResponseBodyIsNull()
 			.sendRequest();
 
-		// Wait for process to finish
+		// Wait for the process to finish
 		awaitProcessCompleted(startResponse.getProcessId(), DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
 
 		// Verify wiremock stubs
 		verifyAllStubs();
 
-		// Verify process pathway.
+		// Verify the process pathway.
 		assertProcessPathway(startResponse.getProcessId(), true, Tuples.create()
 			.with(tuple("Start process", "start_process"))
 			.with(tuple("Check appeal", "external_task_check_appeal"))
@@ -603,6 +602,5 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 			.with(followUpPathway())
 			.with(tuple("End process", "end_process")));
 	}
-
 
 }

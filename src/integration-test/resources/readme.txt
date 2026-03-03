@@ -1,5 +1,5 @@
 Since the IT-tests are using Wiremock-scenarios and there are a lot of integrations in the process
-these guidelines and conventions are used in order to make the setup more comprehensible:
+these guidelines and conventions are used to make the setup more comprehensible:
 
 ****************************
 * Mapping files
