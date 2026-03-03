@@ -1,14 +1,12 @@
 package apptest;
 
 import apptest.verification.Tuples;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.time.Duration;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
-
-import java.time.Duration;
-import java.util.Map;
 import se.sundsvall.paratransit.Application;
 import se.sundsvall.paratransit.api.model.StartProcessResponse;
 
@@ -64,7 +62,7 @@ class ProcessWithFollowUpDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test001_createProcessForFollowUpNotComplete() throws JsonProcessingException, ClassNotFoundException {
+	void test001_createProcessForFollowUpNotComplete() throws ClassNotFoundException {
 
 		final var caseId = "1011";
 		final var scenarioName = "test_actualization_001_createProcessForFollowUpNotComplete";

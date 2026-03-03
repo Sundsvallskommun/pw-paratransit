@@ -1,5 +1,14 @@
 package apptest;
 
+import apptest.verification.Tuples;
+import java.time.Duration;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.annotation.DirtiesContext;
+import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
+import se.sundsvall.paratransit.Application;
+import se.sundsvall.paratransit.api.model.StartProcessResponse;
+
 import static apptest.mock.Actualization.mockActualization;
 import static apptest.mock.CheckAppeal.mockCheckAppeal;
 import static apptest.mock.Decision.mockDecision;
@@ -26,16 +35,6 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static se.sundsvall.paratransit.Constants.CASE_TYPE_PARATRANSIT;
 
-import apptest.verification.Tuples;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import java.time.Duration;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.annotation.DirtiesContext;
-import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
-import se.sundsvall.paratransit.Application;
-import se.sundsvall.paratransit.api.model.StartProcessResponse;
-
 @DirtiesContext
 @WireMockAppTestSuite(files = "classpath:/Wiremock/", classes = Application.class)
 class ProcessWithoutDeviationIT extends AbstractCamundaAppTest {
@@ -56,10 +55,10 @@ class ProcessWithoutDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test001_createProcessForCitizen() throws JsonProcessingException, ClassNotFoundException {
+	void test001_createProcessForCitizen() throws ClassNotFoundException {
 
 		final var caseId = "123";
-		var scenarioName = "test001_createProcessForCitizen";
+		final var scenarioName = "test001_createProcessForCitizen";
 
 		// Setup mocks
 		mockApiGatewayToken();
@@ -78,13 +77,13 @@ class ProcessWithoutDeviationIT extends AbstractCamundaAppTest {
 			.sendRequest()
 			.andReturnBody(StartProcessResponse.class);
 
-		// Wait for process to finish
+		// Wait for the process to finish
 		awaitProcessCompleted(startResponse.getProcessId(), DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS);
 
 		// Verify wiremock stubs
 		verifyAllStubs();
 
-		// Verify process pathway.
+		// Verify the process pathway.
 		assertProcessPathway(startResponse.getProcessId(), true, Tuples.create()
 			.with(tuple("Start process", "start_process"))
 			.with(tuple("Check appeal", "external_task_check_appeal"))

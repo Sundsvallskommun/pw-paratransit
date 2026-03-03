@@ -16,7 +16,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.zalando.problem.Problem;
+import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
@@ -32,6 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_DRAFT;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
@@ -198,7 +199,7 @@ class VerifyStatusTaskWorkerTest {
 	@Test
 	void executeThrowsException() {
 		// Arrange
-		final var problem = Problem.valueOf(org.zalando.problem.Status.I_AM_A_TEAPOT, "Big and stout");
+		final var problem = Problem.valueOf(BAD_GATEWAY, "Big and stout");
 
 		when(errandMock.getStatus()).thenReturn(new Status().statusType(CASEDATA_STATUS_DRAFT));
 		when(errandMock.getExtraParameters()).thenReturn(List.of(new ExtraParameter(CASEDATA_KEY_DISPLAY_PHASE).addValuesItem(DISPLAY_PHASE),

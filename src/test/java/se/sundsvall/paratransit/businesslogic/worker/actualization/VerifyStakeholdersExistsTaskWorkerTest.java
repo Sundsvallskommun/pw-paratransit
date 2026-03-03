@@ -19,8 +19,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.zalando.problem.Problem;
-import org.zalando.problem.Status;
+import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
@@ -36,6 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_HAS_ADMINISTRATOR_AND_APPLICANT;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
@@ -90,6 +90,15 @@ class VerifyStakeholdersExistsTaskWorkerTest {
 	@Captor
 	private ArgumentCaptor<Map<String, Object>> variablesCaptor;
 
+	static Stream<List<Stakeholder>> stakeholderLists() {
+		return Stream.of(
+			List.of(new Stakeholder().roles(List.of("ADMINISTRATOR")),
+				new Stakeholder().roles(List.of("USER"))),
+			List.of(new Stakeholder().roles(List.of("APPLICANT", "ADMINISTRATOR"))),
+			List.of(new Stakeholder().roles(List.of("USER"))),
+			List.of(new Stakeholder().roles(emptyList())));
+	}
+
 	@BeforeEach
 	void commonMocking() {
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_REQUEST_ID)).thenReturn(REQUEST_ID);
@@ -129,7 +138,7 @@ class VerifyStakeholdersExistsTaskWorkerTest {
 
 	@ParameterizedTest
 	@MethodSource("stakeholderLists")
-	void executeWhenErrandHasNotApplicantAndAdministrator(List<Stakeholder> stakeholders) {
+	void executeWhenErrandHasNotApplicantAndAdministrator(final List<Stakeholder> stakeholders) {
 		when(errandMock.getStakeholders()).thenReturn(stakeholders);
 		when(errandMock.getId()).thenReturn(ERRAND_ID);
 		// Act
@@ -195,7 +204,7 @@ class VerifyStakeholdersExistsTaskWorkerTest {
 	@Test
 	void executeThrowsException() {
 		// Arrange
-		final var problem = Problem.valueOf(Status.I_AM_A_TEAPOT, "Big and stout");
+		final var problem = Problem.valueOf(INTERNAL_SERVER_ERROR, "Big and stout");
 		when(errandMock.getStakeholders()).thenReturn(List.of(
 			new Stakeholder().roles(List.of("APPLICANT")),
 			new Stakeholder().roles(List.of("ADMINISTRATOR"))));
@@ -227,14 +236,5 @@ class VerifyStakeholdersExistsTaskWorkerTest {
 		verify(failureHandlerMock).handleException(externalTaskServiceMock, externalTaskMock, problem.getMessage());
 		verifyNoMoreInteractions(camundaClientMock, caseDataClientMock, errandMock, externalTaskMock, externalTaskServiceMock);
 		verifyNoMoreInteractions(externalTaskServiceMock, camundaClientMock, caseDataClientMock);
-	}
-
-	static Stream<List<Stakeholder>> stakeholderLists() {
-		return Stream.of(
-			List.of(new Stakeholder().roles(List.of("ADMINISTRATOR")),
-				new Stakeholder().roles(List.of("USER"))),
-			List.of(new Stakeholder().roles(List.of("APPLICANT", "ADMINISTRATOR"))),
-			List.of(new Stakeholder().roles(List.of("USER"))),
-			List.of(new Stakeholder().roles(emptyList())));
 	}
 }

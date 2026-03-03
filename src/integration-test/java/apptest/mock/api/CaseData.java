@@ -13,6 +13,7 @@ import static wiremock.org.eclipse.jetty.http.HttpStatus.NO_CONTENT_204;
 import static wiremock.org.eclipse.jetty.http.HttpStatus.OK_200;
 
 import com.github.tomakehurst.wiremock.matching.ContentPattern;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CaseData {
@@ -35,10 +36,7 @@ public class CaseData {
 				.withHeader("Content-Type", "application/json")
 				.withBodyFile("common/responses/casedata/get-errand.json")
 				.withTransformers("response-template")
-				.withTransformerParameter("caseId", caseId)
-				.withTransformerParameter("decisionOutcome", decisionOutcome)
-				.withTransformerParameter("role", role)
-				.withTransformerParameters(transformParameters))
+				.withTransformerParameters(mergeParams(transformParameters, caseId, decisionOutcome, role)))
 			.willSetStateTo(newScenarioState))
 			.getNewScenarioState();
 	}
@@ -53,10 +51,7 @@ public class CaseData {
 				.withHeader("Content-Type", "application/json")
 				.withBodyFile("common/responses/casedata/get-errand.json")
 				.withTransformers("response-template")
-				.withTransformerParameter("caseId", caseId)
-				.withTransformerParameter("decisionOutcome", "APPROVAL")
-				.withTransformerParameter("role", "ADMINISTRATOR")
-				.withTransformerParameters(transformParameters))
+				.withTransformerParameters(mergeParams(transformParameters, caseId, "APPROVAL", "ADMINISTRATOR")))
 			.willSetStateTo(newScenarioState))
 			.getNewScenarioState();
 	}
@@ -237,5 +232,13 @@ public class CaseData {
 				.withHeader("Content-Type", "*/*"))
 			.willSetStateTo(newScenarioState))
 			.getNewScenarioState();
+	}
+
+	private static Map<String, Object> mergeParams(Map<String, Object> transformParameters, String caseId, String decisionOutcome, String role) {
+		final var merged = new HashMap<>(transformParameters);
+		merged.put("caseId", caseId);
+		merged.put("decisionOutcome", decisionOutcome);
+		merged.put("role", role);
+		return merged;
 	}
 }

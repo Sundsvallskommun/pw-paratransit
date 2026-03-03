@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.stereotype.Component;
-import org.zalando.problem.Problem;
+import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
@@ -28,6 +28,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
@@ -109,9 +110,9 @@ class UpdateErrandStatusTaskWorkerTest {
 		// Setup
 		final var status = "testStatus";
 		final var statusDescription = "testStatusDescription";
-		final var problem = Problem.valueOf(org.zalando.problem.Status.I_AM_A_TEAPOT, "Big and stout");
+		final var problem = Problem.valueOf(INTERNAL_SERVER_ERROR, "Big and stout");
 
-		// Mock to simulate exception upon updating errand with new status
+		// Mock to simulate exception upon updating an errand with new status
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_REQUEST_ID)).thenReturn(REQUEST_ID);
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_CASE_NUMBER)).thenReturn(ERRAND_ID);
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID)).thenReturn(MUNICIPALITY_ID);

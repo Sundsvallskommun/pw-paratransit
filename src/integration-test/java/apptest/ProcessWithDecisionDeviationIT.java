@@ -1,5 +1,17 @@
 package apptest;
 
+import apptest.verification.Tuples;
+import java.time.Duration;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.test.annotation.DirtiesContext;
+import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
+import se.sundsvall.paratransit.Application;
+import se.sundsvall.paratransit.api.model.StartProcessResponse;
+
 import static apptest.mock.Actualization.mockActualization;
 import static apptest.mock.Canceled.mockCanceled;
 import static apptest.mock.CheckAppeal.mockCheckAppeal;
@@ -33,19 +45,6 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static se.sundsvall.paratransit.Constants.CASE_TYPE_PARATRANSIT;
 
-import apptest.verification.Tuples;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import java.time.Duration;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.test.annotation.DirtiesContext;
-import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
-import se.sundsvall.paratransit.Application;
-import se.sundsvall.paratransit.api.model.StartProcessResponse;
-
 @DirtiesContext
 @WireMockAppTestSuite(files = "classpath:/Wiremock/", classes = Application.class)
 class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
@@ -66,7 +65,7 @@ class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test_decision_001_createProcessForDecisionNotFinalToFinal() throws JsonProcessingException, ClassNotFoundException {
+	void test_decision_001_createProcessForDecisionNotFinalToFinal() throws ClassNotFoundException {
 
 		final var caseId = "789";
 		final var scenarioName = "test_decision_001_createProcessForDecisionNotFinalToFinal";
@@ -165,8 +164,8 @@ class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {"FINAL", "PROPOSED"})
-	void test_decision_002_createProcessForCancelWhenWaitForDecision(String decisionType) throws JsonProcessingException, ClassNotFoundException {
+	@ValueSource(strings = { "FINAL", "PROPOSED" })
+	void test_decision_002_createProcessForCancelWhenWaitForDecision(final String decisionType) throws ClassNotFoundException {
 
 		final var caseId = "910";
 		final var scenarioName = "test_decision_002_createProcessForCancelWhenWaitForDecision_" + decisionType;
@@ -226,7 +225,7 @@ class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 	}
 
 	@Test
-	void test_decision_003_createProcessForNotApproved() throws JsonProcessingException, ClassNotFoundException {
+	void test_decision_003_createProcessForNotApproved() throws ClassNotFoundException {
 
 		final var caseId = "111";
 		final var scenarioName = "test_decision_003_createProcessForNotApproved";

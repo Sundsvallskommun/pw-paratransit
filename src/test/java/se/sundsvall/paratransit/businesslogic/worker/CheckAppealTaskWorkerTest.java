@@ -11,8 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.stereotype.Component;
-import org.zalando.problem.Problem;
-import org.zalando.problem.Status;
+import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 
@@ -22,6 +21,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_APPEAL;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
@@ -123,7 +123,7 @@ class CheckAppealTaskWorkerTest {
 	@Test
 	void executeThrowsException() {
 		// Setup
-		final var problem = Problem.valueOf(Status.I_AM_A_TEAPOT, "Big and stout");
+		final var problem = Problem.valueOf(INTERNAL_SERVER_ERROR, "Big and stout");
 
 		// Mock to simulate exception upon patching errand with new phase
 		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_REQUEST_ID)).thenReturn(REQUEST_ID);
