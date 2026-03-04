@@ -109,7 +109,8 @@
 								<useBeanValidation>false</useBeanValidation>
 								<useSwaggerAnnotations>false</useSwaggerAnnotations>
 								<interfaceOnly>true</interfaceOnly>
-								<useSpringBoot3>true</useSpringBoot3>
+								<useSpringBoot4>true</useSpringBoot4>
+								<useJackson3>true</useJackson3>
 							</configOptions>
 						</configuration>
 					</execution>
@@ -133,7 +134,8 @@
 								<useBeanValidation>false</useBeanValidation>
 								<useSwaggerAnnotations>false</useSwaggerAnnotations>
 								<interfaceOnly>true</interfaceOnly>
-								<useSpringBoot3>true</useSpringBoot3>
+								<useSpringBoot4>true</useSpringBoot4>
+								<useJackson3>true</useJackson3>
 							</configOptions>
 						</configuration>
 					</execution>
@@ -158,7 +160,8 @@
 								<useBeanValidation>false</useBeanValidation>
 								<useSwaggerAnnotations>false</useSwaggerAnnotations>
 								<interfaceOnly>true</interfaceOnly>
-								<useSpringBoot3>true</useSpringBoot3>
+								<useSpringBoot4>true</useSpringBoot4>
+								<useJackson3>true</useJackson3>
 							</configOptions>
 						</configuration>
 					</execution>
@@ -182,7 +185,8 @@
 								<useBeanValidation>false</useBeanValidation>
 								<useSwaggerAnnotations>false</useSwaggerAnnotations>
 								<interfaceOnly>true</interfaceOnly>
-								<useSpringBoot3>true</useSpringBoot3>
+								<useSpringBoot4>true</useSpringBoot4>
+								<useJackson3>true</useJackson3>
 							</configOptions>
 						</configuration>
 					</execution>
@@ -206,7 +210,8 @@
 								<useBeanValidation>false</useBeanValidation>
 								<useSwaggerAnnotations>false</useSwaggerAnnotations>
 								<interfaceOnly>true</interfaceOnly>
-								<useSpringBoot3>true</useSpringBoot3>
+								<useSpringBoot4>true</useSpringBoot4>
+								<useJackson3>true</useJackson3>
 							</configOptions>
 						</configuration>
 					</execution>
@@ -230,7 +235,8 @@
 								<useBeanValidation>false</useBeanValidation>
 								<useSwaggerAnnotations>false</useSwaggerAnnotations>
 								<interfaceOnly>true</interfaceOnly>
-								<useSpringBoot3>true</useSpringBoot3>
+								<useSpringBoot4>true</useSpringBoot4>
+								<useJackson3>true</useJackson3>
 							</configOptions>
 						</configuration>
 					</execution>
