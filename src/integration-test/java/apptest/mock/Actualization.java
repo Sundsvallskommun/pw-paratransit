@@ -8,6 +8,7 @@ import static apptest.mock.api.CaseData.mockCaseDataPatchStatus;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_COMPLETE;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
+import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
 
 import java.util.Map;
 
@@ -67,13 +68,28 @@ public class Actualization {
 	}
 
 	public static String mockActualizationVerifyStakeholders(String caseId, String scenarioName, String requiredScenarioState) {
-		return mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
+		final var stateAfterGetErrand = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
 			"actualization_verify-stakeholders---api-casedata-get-errand",
 			Map.of("decisionTypeParameter", "FINAL",
 				"phaseParameter", "Aktualisering",
 				"phaseStatusParameter", "ONGOING",
-				"phaseActionParameter", PHASE_ACTION_UNKNOWN,
+				"phaseActionParameter", PHASE_ACTION_COMPLETE,
 				"displayPhaseParameter", "Registrerad"));
+
+		return mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterGetErrand,
+			"actualization_verify-stakeholders-task-worker---api-casedata-patch-extra-parameters",
+			equalToJson("""
+				 [
+				    {
+				        "key":"process.phaseStatus",
+				        "values":["%s"]
+				    },
+				    {
+				        "key":"process.phaseAction",
+				        "values":["%s"]
+					}
+				]
+				""".formatted(PHASE_STATUS_COMPLETED, PHASE_ACTION_COMPLETE)));
 	}
 
 

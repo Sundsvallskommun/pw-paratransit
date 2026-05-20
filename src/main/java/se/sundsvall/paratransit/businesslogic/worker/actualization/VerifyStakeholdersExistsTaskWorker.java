@@ -1,9 +1,12 @@
 package se.sundsvall.paratransit.businesslogic.worker.actualization;
 
 import generated.se.sundsvall.casedata.Errand;
+import generated.se.sundsvall.casedata.ExtraParameter;
 import generated.se.sundsvall.casedata.Stakeholder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
+import org.apache.commons.collections4.CollectionUtils;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -18,9 +21,12 @@ import static java.util.Optional.ofNullable;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_HAS_ADMINISTRATOR_AND_APPLICANT;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_STATUS;
+import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
+import static se.sundsvall.paratransit.Constants.PHASE_ACTION_COMPLETE;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
+import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
 import static se.sundsvall.paratransit.Constants.ROLE_ADMINISTRATOR;
 import static se.sundsvall.paratransit.Constants.ROLE_APPLICANT;
@@ -56,7 +62,12 @@ public class VerifyStakeholdersExistsTaskWorker extends AbstractWorker {
 				variables.put(CAMUNDA_VARIABLE_PHASE_ACTION, PHASE_ACTION_CANCEL);
 				variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_CANCELED);
 
-			} else if (!hasAdministratorAndApplicant) {
+			} else if (hasAdministratorAndApplicant && PHASE_ACTION_COMPLETE.equals(getPhaseAction(errand))) {
+				logInfo("Errand with id {} is assigned to an administrator, has an applicant and complete action has been requested, setting phase status to completed", errand.getId());
+				caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(PHASE_STATUS_COMPLETED, PHASE_ACTION_COMPLETE));
+				variables.put(CAMUNDA_VARIABLE_PHASE_ACTION, PHASE_ACTION_COMPLETE);
+
+			} else {
 				caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
 				variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_WAITING);
 			}
@@ -78,5 +89,15 @@ public class VerifyStakeholdersExistsTaskWorker extends AbstractWorker {
 			.filter(Objects::nonNull)
 			.anyMatch(roles -> roles.contains(ROLE_APPLICANT) && !roles.contains(ROLE_ADMINISTRATOR));
 		return hasAdministrator && hasApplicant;
+	}
+
+	protected String getPhaseAction(final Errand errand) {
+		return ofNullable(errand.getExtraParameters()).orElse(emptyList()).stream()
+			.filter(extraParameters -> CASEDATA_KEY_PHASE_ACTION.equals(extraParameters.getKey()))
+			.findFirst()
+			.map(ExtraParameter::getValues)
+			.filter(CollectionUtils::isNotEmpty)
+			.map(List::getFirst)
+			.orElse(PHASE_ACTION_UNKNOWN);
 	}
 }
