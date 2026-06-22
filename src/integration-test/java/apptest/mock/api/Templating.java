@@ -15,7 +15,7 @@ public class Templating {
 			.inScenario(scenarioName)
 			.whenScenarioStateIs(requiredScenarioState)
 			.withRequestBody(bodyPattern)
-			.withHeader("Authorization", equalTo("Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"))
+			.withHeader("Authorization", equalTo("Bearer fake-access-token-for-tests"))
 			.willReturn(aResponse()
 				.withStatus(200)
 				.withHeader("Content-Type", "application/json")

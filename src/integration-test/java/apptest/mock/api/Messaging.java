@@ -14,7 +14,7 @@ public class Messaging {
 		return stubFor(post(urlEqualTo("/api-messaging/2281/webmessage"))
 			.inScenario(scenarioName)
 			.whenScenarioStateIs(requiredScenarioState)
-			.withHeader("Authorization", equalTo("Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"))
+			.withHeader("Authorization", equalTo("Bearer fake-access-token-for-tests"))
 			.withRequestBody(bodyPattern)
 			.willReturn(aResponse()
 				.withStatus(200)
@@ -26,7 +26,7 @@ public class Messaging {
 
 	public static void mockMessagingWebMessagePost(final ContentPattern<?> bodyPattern) {
 		stubFor(post(urlEqualTo("/api-messaging/2281/webmessage"))
-			.withHeader("Authorization", equalTo("Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"))
+			.withHeader("Authorization", equalTo("Bearer fake-access-token-for-tests"))
 			.withRequestBody(bodyPattern)
 			.willReturn(aResponse()
 				.withStatus(200)
@@ -36,7 +36,7 @@ public class Messaging {
 
 	public static void mockMessagingWebMessagePost(final String municipalityId, final ContentPattern<?> bodyPattern) {
 		stubFor(post(urlEqualTo(String.format("/api-messaging/%s/webmessage", municipalityId)))
-			.withHeader("Authorization", equalTo("Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"))
+			.withHeader("Authorization", equalTo("Bearer fake-access-token-for-tests"))
 			.withRequestBody(bodyPattern)
 			.willReturn(aResponse()
 				.withStatus(200)
@@ -48,7 +48,7 @@ public class Messaging {
 		return stubFor(post(urlEqualTo(String.format("/api-messaging/%s/digital-mail", municipalityId)))
 			.inScenario(scenarioName)
 			.whenScenarioStateIs(requiredScenarioState)
-			.withHeader("Authorization", equalTo("Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"))
+			.withHeader("Authorization", equalTo("Bearer fake-access-token-for-tests"))
 			.withRequestBody(bodyPattern)
 			.willReturn(aResponse()
 				.withStatus(201)
