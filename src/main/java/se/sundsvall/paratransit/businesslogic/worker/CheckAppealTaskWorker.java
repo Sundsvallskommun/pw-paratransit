@@ -10,8 +10,8 @@ import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_APPEAL;
 import static se.sundsvall.paratransit.Constants.CASE_TYPE_APPEAL;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_IS_APPEAL;
 
 @Component
 @ExternalTaskSubscription("CheckAppealTask")
@@ -35,7 +35,7 @@ public class CheckAppealTaskWorker extends AbstractWorker {
 			final var isAppeal = isAppeal(errand);
 
 			final var variables = new HashMap<String, Object>();
-			variables.put(CAMUNDA_VARIABLE_IS_APPEAL, isAppeal);
+			variables.put(PROCESS_VARIABLE_IS_APPEAL, isAppeal);
 
 			externalTaskService.complete(externalTask, variables);
 		} catch (final Exception exception) {

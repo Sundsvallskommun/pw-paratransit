@@ -10,7 +10,7 @@ import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 import se.sundsvall.paratransit.service.MessagingService;
 
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MESSAGE_ID;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_MESSAGE_ID;
 
 @Component
 @ExternalTaskSubscription("SendSimplifiedServiceTask")
@@ -36,7 +36,7 @@ public class SendSimplifiedServiceTaskWorker extends AbstractWorker {
 
 			final var messageId = messagingService.sendMessageSimplifiedService(municipalityId, errand);
 
-			messageId.ifPresentOrElse(id -> externalTaskService.complete(externalTask, Map.of(CAMUNDA_VARIABLE_MESSAGE_ID, id.toString())),
+			messageId.ifPresentOrElse(id -> externalTaskService.complete(externalTask, Map.of(PROCESS_VARIABLE_MESSAGE_ID, id.toString())),
 				() -> externalTaskService.complete(externalTask));
 		} catch (final Exception exception) {
 			logException(externalTask, exception);
