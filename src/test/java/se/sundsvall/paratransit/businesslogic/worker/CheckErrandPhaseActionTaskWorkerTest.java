@@ -22,8 +22,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.stereotype.Component;
 import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+import se.sundsvall.paratransit.integration.engine.EngineClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
@@ -62,7 +62,7 @@ class CheckErrandPhaseActionTaskWorkerTest {
 	private static final String NAMESPACE = "SBK_PARKING_PERMIT";
 
 	@Mock
-	private CamundaClient camundaClientMock;
+	private EngineClient engineClientMock;
 
 	@Mock
 	private CaseDataClient caseDataClientMock;
@@ -141,7 +141,7 @@ class CheckErrandPhaseActionTaskWorkerTest {
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_CASE_NUMBER);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_MUNICIPALITY_ID);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_NAMESPACE);
-		verify(camundaClientMock).setProcessInstanceVariable(processInstanceId, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
+		verify(engineClientMock).setProcessInstanceVariable(processInstanceId, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
 		verify(caseDataClientMock).getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID);
 		verify(caseDataClientMock).updateExtraParameters(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), patchExtraParametersCaptor.capture());
 		verify(externalTaskServiceMock).complete(externalTaskMock, variables);
@@ -184,7 +184,7 @@ class CheckErrandPhaseActionTaskWorkerTest {
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_CASE_NUMBER);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_MUNICIPALITY_ID);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_NAMESPACE);
-		verify(camundaClientMock).setProcessInstanceVariable(processInstanceId, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
+		verify(engineClientMock).setProcessInstanceVariable(processInstanceId, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
 		verify(caseDataClientMock).getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID);
 		verify(externalTaskServiceMock).complete(externalTaskMock, variables);
 		verifyNoMoreInteractions(caseDataClientMock);
@@ -221,7 +221,7 @@ class CheckErrandPhaseActionTaskWorkerTest {
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_CASE_NUMBER);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_MUNICIPALITY_ID);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_NAMESPACE);
-		verify(camundaClientMock).setProcessInstanceVariable(processInstanceId, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
+		verify(engineClientMock).setProcessInstanceVariable(processInstanceId, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
 		verify(caseDataClientMock).getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID);
 		verify(caseDataClientMock).updateExtraParameters(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), patchExtraParametersCaptor.capture());
 		verify(externalTaskServiceMock).complete(externalTaskMock, variables);

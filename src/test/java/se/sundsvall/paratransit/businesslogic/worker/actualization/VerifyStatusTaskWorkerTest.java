@@ -18,8 +18,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+import se.sundsvall.paratransit.integration.engine.EngineClient;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +63,7 @@ class VerifyStatusTaskWorkerTest {
 	private static final String DISPLAY_PHASE = "displayPhase";
 
 	@Mock
-	private CamundaClient camundaClientMock;
+	private EngineClient engineClientMock;
 
 	@Mock
 	private CaseDataClient caseDataClientMock;
@@ -109,7 +109,7 @@ class VerifyStatusTaskWorkerTest {
 		worker.execute(externalTaskMock, externalTaskServiceMock);
 
 		// Assert and verify
-		verify(camundaClientMock).setProcessInstanceVariable(PROCESS_INSTANCE_ID, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
+		verify(engineClientMock).setProcessInstanceVariable(PROCESS_INSTANCE_ID, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_CASE_NUMBER);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_REQUEST_ID);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_MUNICIPALITY_ID);
@@ -118,7 +118,7 @@ class VerifyStatusTaskWorkerTest {
 		verify(errandMock, times(2)).getStatus();
 		verify(errandMock).getExtraParameters();
 		verify(externalTaskServiceMock).complete(eq(externalTaskMock), variablesCaptor.capture());
-		verifyNoMoreInteractions(camundaClientMock, caseDataClientMock, errandMock, externalTaskMock, externalTaskServiceMock);
+		verifyNoMoreInteractions(engineClientMock, caseDataClientMock, errandMock, externalTaskMock, externalTaskServiceMock);
 		verifyNoInteractions(failureHandlerMock);
 
 		assertThat(variablesCaptor.getValue()).containsExactlyEntriesOf(
@@ -136,7 +136,7 @@ class VerifyStatusTaskWorkerTest {
 		worker.execute(externalTaskMock, externalTaskServiceMock);
 
 		// Assert and verify
-		verify(camundaClientMock).setProcessInstanceVariable(PROCESS_INSTANCE_ID, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
+		verify(engineClientMock).setProcessInstanceVariable(PROCESS_INSTANCE_ID, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_CASE_NUMBER);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_REQUEST_ID);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_MUNICIPALITY_ID);
@@ -147,7 +147,7 @@ class VerifyStatusTaskWorkerTest {
 		verify(errandMock).getExtraParameters();
 		verify(caseDataClientMock).updateExtraParameters(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), patchCaptor.capture());
 		verify(externalTaskServiceMock).complete(eq(externalTaskMock), variablesCaptor.capture());
-		verifyNoMoreInteractions(camundaClientMock, caseDataClientMock, errandMock, externalTaskMock, externalTaskServiceMock);
+		verifyNoMoreInteractions(engineClientMock, caseDataClientMock, errandMock, externalTaskMock, externalTaskServiceMock);
 		verifyNoInteractions(failureHandlerMock);
 
 		assertThat(patchCaptor.getValue()).extracting(ExtraParameter::getKey, ExtraParameter::getValues).containsExactlyInAnyOrder(
@@ -171,7 +171,7 @@ class VerifyStatusTaskWorkerTest {
 		worker.execute(externalTaskMock, externalTaskServiceMock);
 
 		// Assert and verify
-		verify(camundaClientMock).setProcessInstanceVariable(PROCESS_INSTANCE_ID, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
+		verify(engineClientMock).setProcessInstanceVariable(PROCESS_INSTANCE_ID, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_CASE_NUMBER);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_REQUEST_ID);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_MUNICIPALITY_ID);
@@ -183,7 +183,7 @@ class VerifyStatusTaskWorkerTest {
 		verify(errandMock, times(2)).getId();
 		verify(caseDataClientMock).updateExtraParameters(eq(MUNICIPALITY_ID), eq(NAMESPACE), eq(ERRAND_ID), patchCaptor.capture());
 		verify(externalTaskServiceMock).complete(eq(externalTaskMock), variablesCaptor.capture());
-		verifyNoMoreInteractions(camundaClientMock, caseDataClientMock, errandMock, externalTaskMock, externalTaskServiceMock);
+		verifyNoMoreInteractions(engineClientMock, caseDataClientMock, errandMock, externalTaskMock, externalTaskServiceMock);
 		verifyNoInteractions(failureHandlerMock);
 
 		assertThat(patchCaptor.getValue()).extracting(ExtraParameter::getKey, ExtraParameter::getValues).containsExactlyInAnyOrder(
@@ -212,7 +212,7 @@ class VerifyStatusTaskWorkerTest {
 		worker.execute(externalTaskMock, externalTaskServiceMock);
 
 		// Assert and verify
-		verify(camundaClientMock).setProcessInstanceVariable(PROCESS_INSTANCE_ID, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
+		verify(engineClientMock).setProcessInstanceVariable(PROCESS_INSTANCE_ID, PROCESS_VARIABLE_UPDATE_AVAILABLE, FALSE);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_CASE_NUMBER);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_REQUEST_ID);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_MUNICIPALITY_ID);
@@ -234,6 +234,6 @@ class VerifyStatusTaskWorkerTest {
 		verify(externalTaskMock).getId();
 		verify(externalTaskMock).getBusinessKey();
 		verify(failureHandlerMock).handleException(externalTaskServiceMock, externalTaskMock, problem.getMessage());
-		verifyNoMoreInteractions(camundaClientMock, caseDataClientMock, errandMock, externalTaskMock, externalTaskServiceMock);
+		verifyNoMoreInteractions(engineClientMock, caseDataClientMock, errandMock, externalTaskMock, externalTaskServiceMock);
 	}
 }
