@@ -17,10 +17,6 @@ import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 import static generated.se.sundsvall.casedata.Decision.DecisionOutcomeEnum.APPROVAL;
 import static generated.se.sundsvall.casedata.Decision.DecisionTypeEnum.FINAL;
 import static java.util.Collections.emptyList;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_FINAL_DECISION;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_APPROVED;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_STATUS;
 import static se.sundsvall.paratransit.Constants.CASEDATA_PHASE_DECISION;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_CASE_DECIDED;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_DECISION_EXECUTED;
@@ -28,6 +24,10 @@ import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_FINAL_DECISION;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_IS_APPROVED;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_PHASE_ACTION;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_PHASE_STATUS;
 import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 
 @Component
@@ -55,10 +55,10 @@ public class CheckDecisionTaskWorker extends AbstractWorker {
 			if (isCancel(errand)) {
 				logInfo("Errand is canceled.");
 				// isFinalDecision and isApproved must be set because they are used in model
-				variables.put(CAMUNDA_VARIABLE_FINAL_DECISION, false);
-				variables.put(CAMUNDA_VARIABLE_IS_APPROVED, false);
-				variables.put(CAMUNDA_VARIABLE_PHASE_ACTION, PHASE_ACTION_CANCEL);
-				variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_CANCELED);
+				variables.put(PROCESS_VARIABLE_FINAL_DECISION, false);
+				variables.put(PROCESS_VARIABLE_IS_APPROVED, false);
+				variables.put(PROCESS_VARIABLE_PHASE_ACTION, PHASE_ACTION_CANCEL);
+				variables.put(PROCESS_VARIABLE_PHASE_STATUS, PHASE_STATUS_CANCELED);
 			} else {
 				handleDecisionStatus(errand, municipalityId, namespace, variables);
 				handleApprovalStatus(errand, variables);
@@ -90,11 +90,11 @@ public class CheckDecisionTaskWorker extends AbstractWorker {
 				|| CASEDATA_STATUS_DECISION_EXECUTED.equals(status.getStatusType()));
 
 		if (hasDecisionStatus && isFinalDecision(errand)) {
-			variables.put(CAMUNDA_VARIABLE_FINAL_DECISION, true);
+			variables.put(PROCESS_VARIABLE_FINAL_DECISION, true);
 			logInfo("Decision is made.");
 		} else {
-			variables.put(CAMUNDA_VARIABLE_FINAL_DECISION, false);
-			variables.put(CAMUNDA_VARIABLE_PHASE_STATUS, PHASE_STATUS_WAITING);
+			variables.put(PROCESS_VARIABLE_FINAL_DECISION, false);
+			variables.put(PROCESS_VARIABLE_PHASE_STATUS, PHASE_STATUS_WAITING);
 			caseDataClient.updateExtraParameters(municipalityId, namespace, errand.getId(), toExtraParameters(CASEDATA_PHASE_DECISION, PHASE_STATUS_WAITING, PHASE_ACTION_UNKNOWN));
 			logInfo("Decision is not made yet.");
 		}
@@ -104,6 +104,6 @@ public class CheckDecisionTaskWorker extends AbstractWorker {
 		boolean isApproved = Optional.ofNullable(errand.getDecisions()).orElse(emptyList()).stream()
 			.filter(decision -> FINAL.equals(decision.getDecisionType()))
 			.anyMatch(decision -> isApproved(decision.getDecisionOutcome()));
-		variables.put(CAMUNDA_VARIABLE_IS_APPROVED, isApproved);
+		variables.put(PROCESS_VARIABLE_IS_APPROVED, isApproved);
 	}
 }

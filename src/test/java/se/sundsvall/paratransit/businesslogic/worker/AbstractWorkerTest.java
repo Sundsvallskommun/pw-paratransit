@@ -24,7 +24,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_REQUEST_ID;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_REQUEST_ID;
 
 @ExtendWith(MockitoExtension.class)
 class AbstractWorkerTest {
@@ -78,7 +78,7 @@ class AbstractWorkerTest {
 	void execute() {
 		final var requestId = UUID.randomUUID().toString();
 
-		when(externalTaskMock.getVariable(CAMUNDA_VARIABLE_REQUEST_ID)).thenReturn(requestId);
+		when(externalTaskMock.getVariable(PROCESS_VARIABLE_REQUEST_ID)).thenReturn(requestId);
 
 		// Mock static RequestId to verify that static method is being called
 		try (MockedStatic<RequestId> requestIdMock = mockStatic(RequestId.class)) {

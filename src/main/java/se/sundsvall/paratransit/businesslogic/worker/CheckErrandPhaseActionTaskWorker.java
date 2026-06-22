@@ -13,7 +13,6 @@ import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_DISPLAY_PHASE;
 import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_STATUS;
@@ -23,6 +22,7 @@ import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_CANCELED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_WAITING;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_PHASE_ACTION;
 import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 
 @Component
@@ -75,7 +75,7 @@ public class CheckErrandPhaseActionTaskWorker extends AbstractWorker {
 			}
 
 			final var variables = new HashMap<String, Object>();
-			variables.put(CAMUNDA_VARIABLE_PHASE_ACTION, phaseAction);
+			variables.put(PROCESS_VARIABLE_PHASE_ACTION, phaseAction);
 
 			externalTaskService.complete(externalTask, variables);
 		} catch (final Exception exception) {

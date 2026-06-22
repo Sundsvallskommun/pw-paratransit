@@ -13,13 +13,13 @@ import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_DISPLAY_PHASE;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_CASE_FINALIZED;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_ONGOING;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_DISPLAY_PHASE;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_PHASE;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_PHASE_ACTION;
 import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toExtraParameters;
 import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMapper.toPatchErrand;
 
@@ -38,8 +38,8 @@ public class UpdateErrandPhaseTaskWorker extends AbstractWorker {
 			final String municipalityId = getMunicipalityId(externalTask);
 			final String namespace = getNamespace(externalTask);
 			final Long caseNumber = getCaseNumber(externalTask);
-			final String phase = externalTask.getVariable(CAMUNDA_VARIABLE_PHASE);
-			final String displayPhase = externalTask.getVariable(CAMUNDA_VARIABLE_DISPLAY_PHASE);
+			final String phase = externalTask.getVariable(PROCESS_VARIABLE_PHASE);
+			final String displayPhase = externalTask.getVariable(PROCESS_VARIABLE_DISPLAY_PHASE);
 
 			final var errand = getErrand(municipalityId, namespace, caseNumber);
 			logInfo("Executing update of phase for errand with id {}", errand.getId());
@@ -58,7 +58,7 @@ public class UpdateErrandPhaseTaskWorker extends AbstractWorker {
 
 			// Set phase action to unknown in the beginning of the phase
 			final var variables = new HashMap<String, Object>();
-			variables.put(CAMUNDA_VARIABLE_PHASE_ACTION, PHASE_ACTION_UNKNOWN);
+			variables.put(PROCESS_VARIABLE_PHASE_ACTION, PHASE_ACTION_UNKNOWN);
 
 			externalTaskService.complete(externalTask, variables);
 		} catch (final Exception exception) {
