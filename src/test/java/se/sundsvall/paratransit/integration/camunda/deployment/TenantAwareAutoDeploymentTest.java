@@ -14,8 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.camunda.deployment.DeploymentProperties.ProcessArchive;
+import se.sundsvall.paratransit.integration.engine.EngineClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -41,7 +42,7 @@ class TenantAwareAutoDeploymentTest {
 	private static final String FILETYPE_FORM = "form";
 
 	@Mock
-	private CamundaClient deploymentApiMock;
+	private EngineClient deploymentApiMock;
 
 	@Mock
 	private DeploymentProperties deploymentPropertiesMock;
@@ -187,7 +188,7 @@ class TenantAwareAutoDeploymentTest {
 		when(deploymentPropertiesMock.isAutoDeployEnabled()).thenReturn(true);
 		when(deploymentPropertiesMock.getProcesses()).thenReturn(List.of(processArchiveMock));
 		when(processArchiveMock.name()).thenReturn(name);
-		when(deploymentApiMock.deploy(any(), any(), anyBoolean(), anyBoolean(), any(), any(), any())).thenThrow(originException);
+		doThrow(originException).when(deploymentApiMock).deploy(any(), any(), anyBoolean(), anyBoolean(), any(), any(), any());
 		when(resourcePatternResolverMock.getResources(DEFAULT_PATTERN_PREFIX + FILETYPE_BPMN)).thenReturn(new Resource[] {
 			resourceMock
 		});
