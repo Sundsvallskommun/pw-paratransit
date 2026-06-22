@@ -21,6 +21,7 @@ openapi:
 #----------------------------------------
 # Rest client
 config:
+  process-engine-type: camunda
   camunda:
     base-url: http://localhost:${wiremock.server.port}/api-camunda/engine-rest
   common:

@@ -13,8 +13,8 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+import se.sundsvall.paratransit.integration.engine.EngineClient;
 
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
@@ -27,8 +27,8 @@ class AbstractWorkerTest {
 
 	private static class Worker extends AbstractWorker {
 
-		protected Worker(CamundaClient camundaClient, CaseDataClient caseDataClient, FailureHandler failureHandler) {
-			super(camundaClient, caseDataClient, failureHandler);
+		protected Worker(EngineClient engineClient, CaseDataClient caseDataClient, FailureHandler failureHandler) {
+			super(engineClient, caseDataClient, failureHandler);
 		}
 
 		@Override
@@ -38,7 +38,7 @@ class AbstractWorkerTest {
 	} // Test class extending the abstract class containing the clearUpdateAvailable method
 
 	@Mock
-	private CamundaClient camundaClientMock;
+	private EngineClient engineClientMock;
 
 	@Mock
 	private ExternalTask externalTaskMock;
@@ -66,8 +66,8 @@ class AbstractWorkerTest {
 		worker.clearUpdateAvailable(externalTaskMock);
 
 		// Assert and verify
-		verify(camundaClientMock).setProcessInstanceVariable(uuid, key, value);
-		verifyNoMoreInteractions(camundaClientMock);
+		verify(engineClientMock).setProcessInstanceVariable(uuid, key, value);
+		verifyNoMoreInteractions(engineClientMock);
 	}
 
 	@Test

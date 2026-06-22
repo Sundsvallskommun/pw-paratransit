@@ -8,8 +8,8 @@ import org.camunda.bpm.client.task.ExternalTaskService;
 import org.springframework.stereotype.Component;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.businesslogic.worker.AbstractWorker;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+import se.sundsvall.paratransit.integration.engine.EngineClient;
 
 import static java.util.Objects.isNull;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_DRAFT;
@@ -26,9 +26,9 @@ import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMappe
 @ExternalTaskSubscription("VerifyStatus")
 public class VerifyStatusTaskWorker extends AbstractWorker {
 
-	VerifyStatusTaskWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
+	VerifyStatusTaskWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
 
-		super(camundaClient, caseDataClient, failureHandler);
+		super(engineClient, caseDataClient, failureHandler);
 	}
 
 	@Override

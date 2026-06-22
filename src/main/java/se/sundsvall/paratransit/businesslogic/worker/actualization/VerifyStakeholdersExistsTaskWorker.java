@@ -13,8 +13,8 @@ import org.camunda.bpm.client.task.ExternalTaskService;
 import org.springframework.stereotype.Component;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.businesslogic.worker.AbstractWorker;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+import se.sundsvall.paratransit.integration.engine.EngineClient;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
@@ -36,8 +36,8 @@ import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMappe
 @ExternalTaskSubscription("VerifyStakeholdersExists")
 public class VerifyStakeholdersExistsTaskWorker extends AbstractWorker {
 
-	VerifyStakeholdersExistsTaskWorker(CamundaClient camundaClient, CaseDataClient caseDataClient, FailureHandler failureHandler) {
-		super(camundaClient, caseDataClient, failureHandler);
+	VerifyStakeholdersExistsTaskWorker(EngineClient engineClient, CaseDataClient caseDataClient, FailureHandler failureHandler) {
+		super(engineClient, caseDataClient, failureHandler);
 	}
 
 	@Override

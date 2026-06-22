@@ -32,6 +32,7 @@ camunda:
 # Camunda integration settings
 #----------------------------------------
 config:
+  process-engine-type: camunda
   common:
     token-uri: token.url
     client-id: client.id

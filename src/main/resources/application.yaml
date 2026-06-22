@@ -81,6 +81,12 @@ camunda:
       timeout: 10
 
 #----------------------------------------
+# Process engine selection
+#----------------------------------------
+process-engine:
+  type: ${config.process-engine-type:camunda}
+
+#----------------------------------------
 # Camunda integration settings
 #----------------------------------------
 # Rest client
