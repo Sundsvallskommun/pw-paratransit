@@ -16,22 +16,22 @@
 	</thead>
 	<tbody>
 		<tr>
-			<td class="code">camunda.bpm.client.base-url</td>
-			<td>URL address to Camunda instance rest engine to use</td>
+			<td class="code">config.process-engine-base-url</td>
+			<td>URL address to the process engine rest API that the external task client polls (sources <span class="code">camunda.bpm.client.base-url</span>). Must point at the same engine as <span class="code">process-engine.type</span></td>
 			<td><strong>null</strong></td>
 		</tr>
 		<tr>
-			<td class="code">camunda.bpm.deployment</td>
-			<td>The node contains information about the processes that shall be deployed</td>
+			<td class="code">process-engine.deployment</td>
+			<td>The node contains information about the processes that shall be deployed (engine-agnostic, deployed via EngineClient)</td>
 			<td><strong>null</strong></td>
 		</tr>
 		<tr>
-			<td class="code">camunda.bpm.deployment.autoDeployEnabled</td>
+			<td class="code">process-engine.deployment.autoDeployEnabled</td>
 			<td>When set to <strong>false</strong> then autodeploy is disabled</td>
 			<td><strong>true</strong></td>
 		</tr>
 		<tr>
-			<td class="code">camunda.bpm.deployment.processes</td>
+			<td class="code">process-engine.deployment.processes</td>
 			<td>When deployment node is present, the processes node should contain a list<br />
 			of one or more processes to deploy (in one or more tenant namespaces)</td>
 			<td><strong>emtpy list</strong></td>
@@ -101,9 +101,8 @@
 		<tr>
 			<td class="code">
 			<span class="code">
-				&nbsp; bpm:<br />
-				&nbsp; &nbsp; client:<br />
-				&nbsp; &nbsp; &nbsp; base-url: http://localhost:8080/engine-rest<br />
+				&nbsp; process-engine:<br />
+				&nbsp; &nbsp; type: operaton<br />
 				&nbsp; &nbsp; deployment:<br />
 				&nbsp; &nbsp; &nbsp; processes:<br />
 				&nbsp; &nbsp; &nbsp; &nbsp; - name: My awesome process<br />
@@ -116,6 +115,50 @@
 		</tr>
 	</tbody>
 </table>
+
+<h3>Running as dual instances (Camunda + Operaton)</h3>
+
+<p>The service is migrating from Camunda to <strong>Operaton</strong> as its process engine using a dual-engine
+strategy with a gradual transition:</p>
+
+<ul>
+	<li><strong>New processes</strong> are always started in Operaton (<span class="code">ProcessService.startProcess</span> always targets the <span class="code">OperatonClient</span>).</li>
+	<li><strong>Older processes</strong> keep living in Camunda; updates probe Operaton first and fall back to Camunda.</li>
+	<li>The <span class="code">process-engine.type</span> property (<span class="code">camunda</span> | <span class="code">operaton</span>) controls which engine <em>a single instance</em> deploys to and polls.</li>
+</ul>
+
+<p>During the transition the <strong>same artifact</strong> is deployed as <strong>two instances</strong> that differ only in
+configuration:</p>
+
+<table class="settings">
+	<thead>
+		<tr>
+			<th>Instance</th>
+			<th>Configuration</th>
+			<th>Role</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><strong>Camunda instance</strong></td>
+			<td class="code">config.process-engine-type=camunda<br />config.process-engine-base-url=&lt;camunda engine-rest&gt;</td>
+			<td>Drains and finishes the older processes that still live in Camunda</td>
+		</tr>
+		<tr>
+			<td><strong>Operaton instance</strong></td>
+			<td class="code">config.process-engine-type=operaton<br />config.process-engine-base-url=&lt;operaton engine-rest&gt;</td>
+			<td>Runs all new processes</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>Notes:</p>
+
+<ul>
+	<li><strong>Both</strong> instances require <span class="code">config.operaton.*</span> (base-url / client-id / client-secret / token-uri), because the <span class="code">OperatonClient</span> bean and the <span class="code">operaton</span> OAuth2 registration always load regardless of engine type.</li>
+	<li><span class="code">config.process-engine-base-url</span> must point at the <strong>same</strong> engine as <span class="code">config.process-engine-type</span>, so that deploy/start and external-task polling hit the same engine.</li>
+	<li><span class="code">config.process-engine-base-url</span> and <span class="code">config.operaton.*</span> have <strong>no defaults</strong> by design and must be provisioned per environment, otherwise the app will not boot.</li>
+</ul>
 
 ## Status
 

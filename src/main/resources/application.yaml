@@ -62,18 +62,14 @@ openapi:
 camunda:
   bpm:
     client:
-      base-url: ${config.camunda.base-url}
+      # URL to the process engine REST API that the external task client polls to fetch and lock external tasks.
+      # Must point at the same engine as the active Feign client (integration.operaton.url / integration.camunda.url),
+      # otherwise deploy/start and polling end up on different engines and the process stalls.
+      base-url: ${config.process-engine-base-url}
       backoff:
         initTime: 500
         factor: 2
         maxTime: 15000
-    deployment:
-      processes:
-        - name: Paratransit process
-          tenant: PARATRANSIT
-          bpmnResourcePattern: classpath*:processmodels/*.bpmn
-          dmnResourcePattern: classpath*:processmodels/*.dmn
-          formResourcePattern: classpath*:processmodels/*.form
   worker:
     max:
       retries: 3
@@ -81,10 +77,23 @@ camunda:
       timeout: 10
 
 #----------------------------------------
-# Process engine selection
+# Process engine selection (Camunda | Operaton)
+# 'type' controls which engine the task workers target. Each deployed instance points the external
+# task client at the matching engine via config.process-engine-base-url so it polls the right one.
+# 'deployment' lists the processes deployed at startup (engine-agnostic, via EngineClient).
+# Note: config.process-engine-base-url and config.operaton.* have no default by design and must be
+# provisioned per environment (for both engine types, since the OperatonClient bean + operaton OAuth2
+# registration always load) - otherwise the app will not boot.
 #----------------------------------------
 process-engine:
   type: ${config.process-engine-type:camunda}
+  deployment:
+    processes:
+      - name: Paratransit process
+        tenant: PARATRANSIT
+        bpmnResourcePattern: classpath*:processmodels/*.bpmn
+        dmnResourcePattern: classpath*:processmodels/*.dmn
+        formResourcePattern: classpath*:processmodels/*.form
 
 #----------------------------------------
 # Camunda integration settings
