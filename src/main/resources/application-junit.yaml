@@ -14,24 +14,31 @@ camunda:
   bpm:
     client:
       base-url: base-url
-    deployment:
-      autoDeployEnabled: false
-      processes:
-        - name: process_name_1
-          tenant: tenant_id_1
-          bpmnResourcePattern: bpmnResourcePattern_1
-          dmnResourcePattern: dmnResourcePattern_1
-          formResourcePattern: formResourcePattern_1
-        - name: process_name_2
-          tenant: tenant_id_2
-          bpmnResourcePattern: bpmnResourcePattern_2
-          dmnResourcePattern: dmnResourcePattern_2
-          formResourcePattern: formResourcePattern_2
+
+#----------------------------------------
+# Process engine selection
+#----------------------------------------
+process-engine:
+  deployment:
+    autoDeployEnabled: false
+    processes:
+      - name: process_name_1
+        tenant: tenant_id_1
+        bpmnResourcePattern: bpmnResourcePattern_1
+        dmnResourcePattern: dmnResourcePattern_1
+        formResourcePattern: formResourcePattern_1
+      - name: process_name_2
+        tenant: tenant_id_2
+        bpmnResourcePattern: bpmnResourcePattern_2
+        dmnResourcePattern: dmnResourcePattern_2
+        formResourcePattern: formResourcePattern_2
 
 #----------------------------------------
 # Camunda integration settings
 #----------------------------------------
 config:
+  process-engine-type: camunda
+  process-engine-base-url: ${config.camunda.base-url}
   common:
     token-uri: token.url
     client-id: client.id
@@ -60,6 +67,11 @@ config:
     client-secret: ${config.common.client-secret}
   partyassets:
     base-url: partyassets.base.url
+    token-uri: ${config.common.token-uri}
+    client-id: ${config.common.client-id}
+    client-secret: ${config.common.client-secret}
+  operaton:
+    base-url: operaton.base.url
     token-uri: ${config.common.token-uri}
     client-id: ${config.common.client-id}
     client-secret: ${config.common.client-secret}

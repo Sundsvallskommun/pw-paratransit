@@ -6,11 +6,11 @@ import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.springframework.stereotype.Component;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+import se.sundsvall.paratransit.integration.engine.EngineClient;
 import se.sundsvall.paratransit.service.MessagingService;
 
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MESSAGE_ID;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_MESSAGE_ID;
 
 @Component
 @ExternalTaskSubscription("SendSimplifiedServiceTask")
@@ -18,9 +18,9 @@ public class SendSimplifiedServiceTaskWorker extends AbstractWorker {
 
 	private final MessagingService messagingService;
 
-	SendSimplifiedServiceTaskWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler,
+	SendSimplifiedServiceTaskWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler,
 		final MessagingService messagingService) {
-		super(camundaClient, caseDataClient, failureHandler);
+		super(engineClient, caseDataClient, failureHandler);
 		this.messagingService = messagingService;
 	}
 
@@ -36,7 +36,7 @@ public class SendSimplifiedServiceTaskWorker extends AbstractWorker {
 
 			final var messageId = messagingService.sendMessageSimplifiedService(municipalityId, errand);
 
-			messageId.ifPresentOrElse(id -> externalTaskService.complete(externalTask, Map.of(CAMUNDA_VARIABLE_MESSAGE_ID, id.toString())),
+			messageId.ifPresentOrElse(id -> externalTaskService.complete(externalTask, Map.of(PROCESS_VARIABLE_MESSAGE_ID, id.toString())),
 				() -> externalTaskService.complete(externalTask));
 		} catch (final Exception exception) {
 			logException(externalTask, exception);
