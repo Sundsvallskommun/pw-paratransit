@@ -9,57 +9,63 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import generated.se.sundsvall.camunda.HistoricActivityInstanceDto;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import org.assertj.core.groups.Tuple;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.beans.factory.annotation.Value;
 import se.sundsvall.dept44.test.AbstractAppTest;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 
 /**
- * Test class using testcontainer to execute the process.
- * There are a lot of resources that can be added to CamundaClient
- * to make good assertions. This test class contains a few examples.
+ * Engine-neutral base for the testcontainer-driven process tests. Holds the shared assertion and await helpers; the
+ * per-engine base classes (in the {@code apptest.camunda} and {@code apptest.operaton} packages) pick the engine by
+ * delegating their {@code @DynamicPropertySource} to {@link apptest.engine.EngineTestProperties}. The
+ * {@code camundaClient} is used purely as a read client for process history and works against either engine since
+ * Operaton is API-compatible with Camunda 7.
  * See Camunda API for more details https://docs.camunda.org/rest/camunda-bpm-platform/7.20/
  */
-@Testcontainers
-abstract class AbstractCamundaAppTest extends AbstractAppTest {
+public abstract class AbstractEngineAppTest extends AbstractAppTest {
 
-	private static final String CAMUNDA_IMAGE_NAME = "camunda/camunda-bpm-platform:run-7.20.0";
+	private static final String TENANT_ID_PARATRANSIT = "PARATRANSIT";
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
 	@Autowired
 	protected CamundaClient camundaClient;
 
-	@SuppressWarnings("resource")
-	@Container
-	private static final GenericContainer<?> CAMUNDA = new GenericContainer<>(CAMUNDA_IMAGE_NAME)
-		.waitingFor(Wait.forHttp("/"))
-		.withExposedPorts(8080);
+	@Value("${integration.camunda.url}")
+	private String engineBaseUrl;
 
-	@DynamicPropertySource
-	static void registerProperties(DynamicPropertyRegistry registry) {
-		CAMUNDA.start();
-		final var camundaBaseUrl = "http://" + "localhost:" + CAMUNDA.getMappedPort(8080) + "/engine-rest";
-		registry.add("integration.camunda.url", () -> camundaBaseUrl);
-		registry.add("camunda.bpm.client.base-url", () -> camundaBaseUrl);
-		// Operaton is an API-compatible fork of Camunda 7, so during this migration step the OperatonClient is pointed at
-		// the same engine container. New processes are routed to Operaton (see ProcessService) while the workers still poll
-		// this engine, so the whole flow runs against one container until a dedicated Operaton engine is introduced later.
-		registry.add("integration.operaton.url", () -> camundaBaseUrl);
-	}
-
-	@AfterAll
-	static void teardown() {
-		CAMUNDA.stop();
+	/**
+	 * Gives every test a clean slate on the shared engine container before it runs. The container is reused across
+	 * {@code @DirtiesContext} contexts, so a process instance that outlived an earlier test (after a failure, or because
+	 * the slower Operaton engine had not drained it yet) would otherwise be picked up by this context's external task
+	 * workers and corrupt this test's WireMock scenario state. We delete the tenant's instances and then clear the
+	 * WireMock request journal, so a stray request from a leftover worker racing the context startup cannot trip the
+	 * {@code failFast} near-miss check before the test's own flow even begins.
+	 */
+	@BeforeEach
+	void resetSharedEngineState() throws Exception {
+		final var listRequest = HttpRequest.newBuilder(URI.create(engineBaseUrl + "/process-instance?tenantIdIn=" + TENANT_ID_PARATRANSIT)).GET().build();
+		final var listResponse = HTTP_CLIENT.send(listRequest, HttpResponse.BodyHandlers.ofString());
+		final JsonNode instances = OBJECT_MAPPER.readTree(listResponse.body());
+		for (final JsonNode instance : instances) {
+			final var deleteRequest = HttpRequest.newBuilder(
+				URI.create(engineBaseUrl + "/process-instance/" + instance.get("id").asText() + "?skipCustomListeners=true&skipIoMappings=true&failIfNotExists=false"))
+				.DELETE().build();
+			HTTP_CLIENT.send(deleteRequest, HttpResponse.BodyHandlers.discarding());
+		}
+		wiremock.resetRequests();
 	}
 
 	protected List<HistoricActivityInstanceDto> getProcessInstanceRoute(String processInstanceId) {
@@ -97,7 +103,7 @@ abstract class AbstractCamundaAppTest extends AbstractAppTest {
 		var element = assertThat(getProcessInstanceRoute(processId))
 			.extracting(HistoricActivityInstanceDto::getActivityName, HistoricActivityInstanceDto::getActivityId)
 			.containsExactlyInAnyOrderElementsOf(list);
-		if(!acceptDuplication) {
+		if (!acceptDuplication) {
 			element.doesNotHaveDuplicates();
 		}
 	}
