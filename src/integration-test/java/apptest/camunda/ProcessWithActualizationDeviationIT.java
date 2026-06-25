@@ -1,4 +1,4 @@
-package apptest;
+package apptest.camunda;
 
 import apptest.verification.Tuples;
 import java.time.Duration;
