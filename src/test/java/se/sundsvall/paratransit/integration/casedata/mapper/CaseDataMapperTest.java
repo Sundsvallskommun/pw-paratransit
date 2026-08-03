@@ -196,7 +196,7 @@ class CaseDataMapperTest {
 
 	@Test
 	void toAttachmentWithNullAsParameters() {
-		final var bean = CaseDataMapper.toAttachment(null, null, null, null, null);
+		final var bean = CaseDataMapper.toAttachment(null, null, null, null);
 
 		assertThat(bean).isNotNull().hasAllNullFieldsOrPropertiesExcept("extraParameters")
 			.extracting(Attachment::getExtraParameters)
@@ -209,10 +209,8 @@ class CaseDataMapperTest {
 		final var name = "name";
 		final var extension = "extension";
 		final var mimeType = "mimeType";
-		final var output = "ZmlsZW91dHB1dCBhcyBiYXNlNjQgc3RyaW5n";
-		final var renderedContent = new RenderResponse().output(output);
 
-		final var bean = CaseDataMapper.toAttachment(category, name, extension, mimeType, renderedContent);
+		final var bean = CaseDataMapper.toAttachment(category, name, extension, mimeType);
 
 		assertThat(bean).isNotNull().hasAllNullFieldsOrPropertiesExcept("category", "name", "extension", "mimeType", "extraParameters")
 			.extracting(

@@ -66,14 +66,12 @@ public class CaseDataMapper {
 			.article(article);
 	}
 
-	public static Attachment toAttachment(final String category, final String name, final String extension, final String mimeType, final RenderResponse renderedContent) {
-		final var bean = new Attachment()
+	public static Attachment toAttachment(final String category, final String name, final String extension, final String mimeType) {
+		return new Attachment()
 			.category(category)
 			.name(name)
 			.extension(extension)
 			.mimeType(mimeType);
-
-		return bean;
 	}
 
 	public static MessageAttachment toMessageAttachment(final String fileName, final String contentType, final RenderResponse renderedContent) {
