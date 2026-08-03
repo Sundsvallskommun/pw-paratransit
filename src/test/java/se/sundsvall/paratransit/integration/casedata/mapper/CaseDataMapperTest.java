@@ -73,7 +73,7 @@ class CaseDataMapperTest {
 	void toMessageRequestWithNullAsParameters() {
 		final var bean = CaseDataMapper.toMessageRequest(null, null, null, null, null, null, null);
 
-		assertThat(bean).isNotNull().hasAllNullFieldsOrPropertiesExcept("sent", "attachments", "emailHeaders", "recipients");
+		assertThat(bean).isNotNull().hasAllNullFieldsOrPropertiesExcept("sent", "attachments", "emailHeaders", "recipients", "ccRecipients");
 		assertThat(OffsetDateTime.parse(bean.getSent())).isCloseTo(now(systemDefault()), within(2, SECONDS));
 	}
 
@@ -214,20 +214,18 @@ class CaseDataMapperTest {
 
 		final var bean = CaseDataMapper.toAttachment(category, name, extension, mimeType, renderedContent);
 
-		assertThat(bean).isNotNull().hasAllNullFieldsOrPropertiesExcept("category", "name", "extension", "mimeType", "file", "extraParameters")
+		assertThat(bean).isNotNull().hasAllNullFieldsOrPropertiesExcept("category", "name", "extension", "mimeType", "extraParameters")
 			.extracting(
 				Attachment::getCategory,
 				Attachment::getName,
 				Attachment::getExtension,
 				Attachment::getMimeType,
-				Attachment::getFile,
 				Attachment::getExtraParameters)
 			.containsExactly(
 				category,
 				name,
 				extension,
 				mimeType,
-				output,
 				emptyMap());
 	}
 

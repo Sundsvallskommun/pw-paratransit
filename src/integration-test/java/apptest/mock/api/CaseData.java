@@ -217,7 +217,8 @@ public class CaseData {
 				"externalCaseId" : "2971",
 				"phase" : "%s",
 					"relatesTo" : [ ],
-			        "labels" : [ ]
+			        "labels" : [ ],
+			        "jsonParameters" : [ ]
 					}""", phase);
 	}
 

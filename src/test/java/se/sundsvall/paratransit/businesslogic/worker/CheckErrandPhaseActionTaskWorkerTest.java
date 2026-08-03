@@ -114,7 +114,6 @@ class CheckErrandPhaseActionTaskWorkerTest {
 	@Test
 	void executeWhenPhaseActionIsNull() {
 		// Setup
-		final var externalCaseId = "externalCaseId";
 		final var processInstanceId = "processInstanceId";
 		final var extraParameters = new ArrayList<ExtraParameter>();
 		extraParameters.add(new ExtraParameter(CASEDATA_KEY_PHASE_ACTION));

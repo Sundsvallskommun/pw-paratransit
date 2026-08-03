@@ -73,10 +73,6 @@ public class CaseDataMapper {
 			.extension(extension)
 			.mimeType(mimeType);
 
-		ofNullable(renderedContent)
-			.map(RenderResponse::getOutput)
-			.ifPresent(bean::setFile);
-
 		return bean;
 	}
 
