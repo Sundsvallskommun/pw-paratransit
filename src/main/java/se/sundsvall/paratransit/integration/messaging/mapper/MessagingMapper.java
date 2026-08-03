@@ -23,6 +23,7 @@ public class MessagingMapper {
 		return new WebMessageRequest()
 			.message(textProvider.getSimplifiedServiceTexts(municipalityId).getMessage())
 			.oepInstance(EXTERNAL)
+			.attachments(null)
 			.party(new WebMessageParty()
 				.partyId(UUID.fromString(partyId))
 				.addExternalReferencesItem(new ExternalReference().key(MESSAGING_KEY_FLOW_INSTANCE_ID).value(externalCaseId)));
