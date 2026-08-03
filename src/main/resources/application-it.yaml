@@ -21,6 +21,8 @@ openapi:
 #----------------------------------------
 # Rest client
 config:
+  process-engine-type: camunda
+  process-engine-base-url: ${config.camunda.base-url}
   camunda:
     base-url: http://localhost:${wiremock.server.port}/api-camunda/engine-rest
   common:
@@ -49,6 +51,11 @@ config:
     client-secret: ${config.common.client-secret}
   partyassets:
     base-url: http://localhost:${wiremock.server.port}/api-party-assets
+    token-uri: ${config.common.token-uri}
+    client-id: ${config.common.client-id}
+    client-secret: ${config.common.client-secret}
+  operaton:
+    base-url: http://localhost:${wiremock.server.port}/api-operaton/engine-rest
     token-uri: ${config.common.token-uri}
     client-id: ${config.common.client-id}
     client-secret: ${config.common.client-secret}

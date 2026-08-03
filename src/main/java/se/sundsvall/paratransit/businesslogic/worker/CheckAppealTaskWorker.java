@@ -7,19 +7,19 @@ import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.springframework.stereotype.Component;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+import se.sundsvall.paratransit.integration.engine.EngineClient;
 
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_IS_APPEAL;
 import static se.sundsvall.paratransit.Constants.CASE_TYPE_APPEAL;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_IS_APPEAL;
 
 @Component
 @ExternalTaskSubscription("CheckAppealTask")
 public class CheckAppealTaskWorker extends AbstractWorker {
 
-	CheckAppealTaskWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
+	CheckAppealTaskWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
 
-		super(camundaClient, caseDataClient, failureHandler);
+		super(engineClient, caseDataClient, failureHandler);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class CheckAppealTaskWorker extends AbstractWorker {
 			final var isAppeal = isAppeal(errand);
 
 			final var variables = new HashMap<String, Object>();
-			variables.put(CAMUNDA_VARIABLE_IS_APPEAL, isAppeal);
+			variables.put(PROCESS_VARIABLE_IS_APPEAL, isAppeal);
 
 			externalTaskService.complete(externalTask, variables);
 		} catch (final Exception exception) {

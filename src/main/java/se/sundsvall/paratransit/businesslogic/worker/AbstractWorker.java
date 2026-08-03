@@ -11,33 +11,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+import se.sundsvall.paratransit.integration.engine.EngineClient;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_CASE_NUMBER;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
-import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_REQUEST_ID;
 import static se.sundsvall.paratransit.Constants.CASEDATA_KEY_PHASE_ACTION;
 import static se.sundsvall.paratransit.Constants.FALSE;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_CANCEL;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_CASE_NUMBER;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_MUNICIPALITY_ID;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_NAMESPACE;
+import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_REQUEST_ID;
 import static se.sundsvall.paratransit.Constants.UPDATE_AVAILABLE;
 
 public abstract class AbstractWorker implements ExternalTaskHandler {
 
 	private final Logger logger;
 
-	private final CamundaClient camundaClient;
+	private final EngineClient engineClient;
 
 	protected final CaseDataClient caseDataClient;
 
 	protected final FailureHandler failureHandler;
 
-	protected AbstractWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
+	protected AbstractWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
 		this.logger = LoggerFactory.getLogger(getClass());
-		this.camundaClient = camundaClient;
+		this.engineClient = engineClient;
 		this.caseDataClient = caseDataClient;
 		this.failureHandler = failureHandler;
 	}
@@ -47,12 +47,12 @@ public abstract class AbstractWorker implements ExternalTaskHandler {
 		 * Clearing process variable has to be a blocking operation.
 		 * Using ExternalTaskService.setVariables() will not work without creating race conditions.
 		 */
-		camundaClient.setProcessInstanceVariable(externalTask.getProcessInstanceId(), UPDATE_AVAILABLE, FALSE);
+		engineClient.setProcessInstanceVariable(externalTask.getProcessInstanceId(), UPDATE_AVAILABLE, FALSE);
 	}
 
 	protected void setProcessInstanceVariable(final ExternalTask externalTask, final String variableName, final VariableValueDto variableValue) {
 
-		camundaClient.setProcessInstanceVariable(externalTask.getProcessInstanceId(), variableName, variableValue);
+		engineClient.setProcessInstanceVariable(externalTask.getProcessInstanceId(), variableName, variableValue);
 	}
 
 	protected Errand getErrand(final String municipalityId, final String namespace, final Long caseNumber) {
@@ -76,23 +76,23 @@ public abstract class AbstractWorker implements ExternalTaskHandler {
 
 	@Override
 	public void execute(final ExternalTask externalTask, final ExternalTaskService externalTaskService) {
-		RequestId.init(externalTask.getVariable(CAMUNDA_VARIABLE_REQUEST_ID));
+		RequestId.init(externalTask.getVariable(PROCESS_VARIABLE_REQUEST_ID));
 		executeBusinessLogic(externalTask, externalTaskService);
 	}
 
 	protected String getMunicipalityId(final ExternalTask externalTask) {
 
-		return externalTask.getVariable(CAMUNDA_VARIABLE_MUNICIPALITY_ID);
+		return externalTask.getVariable(PROCESS_VARIABLE_MUNICIPALITY_ID);
 	}
 
 	protected String getNamespace(final ExternalTask externalTask) {
 
-		return externalTask.getVariable(CAMUNDA_VARIABLE_NAMESPACE);
+		return externalTask.getVariable(PROCESS_VARIABLE_NAMESPACE);
 	}
 
 	protected Long getCaseNumber(final ExternalTask externalTask) {
 
-		return externalTask.getVariable(CAMUNDA_VARIABLE_CASE_NUMBER);
+		return externalTask.getVariable(PROCESS_VARIABLE_CASE_NUMBER);
 	}
 
 	protected boolean isCancel(final Errand errand) {

@@ -1,4 +1,4 @@
-package apptest;
+package apptest.operaton;
 
 import apptest.verification.Tuples;
 import java.time.Duration;
@@ -44,7 +44,7 @@ import static se.sundsvall.paratransit.Constants.CASE_TYPE_PARATRANSIT;
 
 @DirtiesContext
 @WireMockAppTestSuite(files = "classpath:/Wiremock/", classes = Application.class)
-class ProcessWithFollowUpDeviationIT extends AbstractCamundaAppTest {
+class ProcessWithFollowUpDeviationIT extends AbstractOperatonAppTest {
 
 	private static final int DEFAULT_TESTCASE_TIMEOUT_IN_SECONDS = 30;
 	private static final String TENANT_ID_PARATRANSIT = "PARATRANSIT";
