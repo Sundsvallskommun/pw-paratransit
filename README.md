@@ -16,11 +16,6 @@
 	</thead>
 	<tbody>
 		<tr>
-			<td class="code">config.process-engine-base-url</td>
-			<td>URL address to the process engine rest API that the external task client polls (sources <span class="code">camunda.bpm.client.base-url</span>). Must point at the same engine as <span class="code">process-engine.type</span></td>
-			<td><strong>null</strong></td>
-		</tr>
-		<tr>
 			<td class="code">process-engine.deployment</td>
 			<td>The node contains information about the processes that shall be deployed (engine-agnostic, deployed via EngineClient)</td>
 			<td><strong>null</strong></td>
@@ -141,12 +136,12 @@ configuration:</p>
 	<tbody>
 		<tr>
 			<td><strong>Camunda instance</strong></td>
-			<td class="code">config.process-engine-type=camunda<br />config.process-engine-base-url=&lt;camunda engine-rest&gt;</td>
+			<td class="code">config.process-engine-type=camunda</td>
 			<td>Drains and finishes the older processes that still live in Camunda</td>
 		</tr>
 		<tr>
 			<td><strong>Operaton instance</strong></td>
-			<td class="code">config.process-engine-type=operaton<br />config.process-engine-base-url=&lt;operaton engine-rest&gt;</td>
+			<td class="code">config.process-engine-type=operaton</td>
 			<td>Runs all new processes</td>
 		</tr>
 	</tbody>
@@ -156,8 +151,9 @@ configuration:</p>
 
 <ul>
 	<li><strong>Both</strong> instances require <span class="code">config.operaton.*</span> (base-url / client-id / client-secret / token-uri), because the <span class="code">OperatonClient</span> bean and the <span class="code">operaton</span> OAuth2 registration always load regardless of engine type.</li>
-	<li><span class="code">config.process-engine-base-url</span> must point at the <strong>same</strong> engine as <span class="code">config.process-engine-type</span>, so that deploy/start and external-task polling hit the same engine.</li>
-	<li><span class="code">config.process-engine-base-url</span> and <span class="code">config.operaton.*</span> have <strong>no defaults</strong> by design and must be provisioned per environment, otherwise the app will not boot.</li>
+	<li>The external task client's poll URL is <strong>derived</strong> from <span class="code">config.process-engine-type</span>, which selects <span class="code">config.camunda.base-url</span> or <span class="code">config.operaton.base-url</span>, so deploy/start and external-task polling always hit the same engine.</li>
+	<li><span class="code">config.camunda.base-url</span> points at the <strong>old</strong> engine on both instances - the Operaton instance still reads older process instances from Camunda through the <span class="code">CamundaClient</span> fallback, and that client carries no OAuth2 token.</li>
+	<li><span class="code">config.operaton.*</span> has <strong>no defaults</strong> by design and must be provisioned per environment, otherwise the app will not boot.</li>
 </ul>
 
 ## Status
