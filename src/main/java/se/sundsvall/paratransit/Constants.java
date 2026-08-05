@@ -37,12 +37,7 @@ public class Constants {
 	public static final String CASEDATA_KEY_PHASE_ACTION = "process.phaseAction";
 	public static final String CASEDATA_KEY_DISPLAY_PHASE = "process.displayPhase";
 
-	public static final String CASEDATA_PHASE_ACTUALIZATION = "Aktualisering";
-	public static final String CASEDATA_PHASE_INVESTIGATION = "Utredning";
 	public static final String CASEDATA_PHASE_DECISION = "Beslut";
-	public static final String CASEDATA_PHASE_CANCELED = "Avslutad";
-	public static final String CASEDATA_PHASE_EXECUTION = "Verkställa";
-	public static final String CASEDATA_PHASE_FOLLOW_UP = "Uppföljning";
 
 	public static final String PHASE_ACTION_COMPLETE = "COMPLETE";
 	public static final String PHASE_ACTION_CANCEL = "CANCEL";
@@ -53,16 +48,10 @@ public class Constants {
 	public static final String PHASE_STATUS_CANCELED = "CANCELED";
 
 	public static final String CASEDATA_STATUS_CASE_RECEIVED = "Ärende inkommit";
-	public static final String CASEDATA_STATUS_AWAITING_COMPLETION = "Väntar på komplettering";
-	public static final String CASEDATA_STATUS_COMPLETION_RECEIVED = "Komplettering inkommen";
-	public static final String CASEDATA_STATUS_CASE_PROCESS = "Under utredning";
-	public static final String CASEDATA_STATUS_CASE_DECIDE = "Under beslut";
 	public static final String CASEDATA_STATUS_DECISION_EXECUTED = "Beslut verkställt";
 	public static final String CASEDATA_STATUS_CASE_DECIDED = "Beslutad";
 	public static final String CASEDATA_STATUS_CASE_FINALIZED = "Ärende avslutat";
 	public static final String CASEDATA_STATUS_DRAFT = "Utkast";
-
-	public static final String CATEGORY_BESLUT = "BESLUT";
 
 	public static final String ROLE_APPLICANT = "APPLICANT";
 	public static final String ROLE_REPORTER = "REPORTER";

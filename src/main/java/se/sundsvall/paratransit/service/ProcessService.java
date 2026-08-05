@@ -1,12 +1,16 @@
 package se.sundsvall.paratransit.service;
 
+import generated.se.sundsvall.camunda.VariableValueDto;
 import java.util.Map;
+import java.util.Objects;
 import org.camunda.bpm.engine.variable.type.ValueType;
 import org.springframework.stereotype.Service;
 import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_MUNICIPALITY_ID;
 import static se.sundsvall.paratransit.Constants.CAMUNDA_VARIABLE_NAMESPACE;
@@ -34,7 +38,7 @@ public class ProcessService {
 
 	public void updateProcess(final String municipalityId, final String namespace, final String processInstanceId) {
 
-		verifyExistingProcessInstance(processInstanceId);
+		verifyExistingProcessInstance(municipalityId, namespace, processInstanceId);
 
 		final var variablesToUpdate = Map.of(
 			CAMUNDA_VARIABLE_MUNICIPALITY_ID, toVariableValueDto(ValueType.STRING, municipalityId),
@@ -45,9 +49,28 @@ public class ProcessService {
 		camundaClient.setProcessInstanceVariables(processInstanceId, toPatchVariablesDto(variablesToUpdate));
 	}
 
-	private void verifyExistingProcessInstance(final String processInstanceId) {
-		if (camundaClient.getProcessInstance(processInstanceId).isEmpty()) {
+	/**
+	 * Verifies that the process instance exists and that it belongs to the provided municipality and namespace.
+	 * A process instance owned by another municipality or namespace is reported as non existing, to avoid disclosing
+	 * process instances outside of the callers scope.
+	 */
+	private void verifyExistingProcessInstance(final String municipalityId, final String namespace, final String processInstanceId) {
+		if (camundaClient.getProcessInstance(processInstanceId).isEmpty() || !belongsTo(municipalityId, namespace, processInstanceId)) {
 			throw Problem.valueOf(NOT_FOUND, "Process instance with ID '%s' does not exist!".formatted(processInstanceId));
 		}
+	}
+
+	private boolean belongsTo(final String municipalityId, final String namespace, final String processInstanceId) {
+		final var variables = ofNullable(camundaClient.getProcessInstanceVariables(processInstanceId)).orElse(emptyMap());
+
+		return Objects.equals(municipalityId, toStringValue(variables.get(CAMUNDA_VARIABLE_MUNICIPALITY_ID)))
+			&& Objects.equals(namespace, toStringValue(variables.get(CAMUNDA_VARIABLE_NAMESPACE)));
+	}
+
+	private static String toStringValue(final VariableValueDto variable) {
+		return ofNullable(variable)
+			.map(VariableValueDto::getValue)
+			.map(String::valueOf)
+			.orElse(null);
 	}
 }

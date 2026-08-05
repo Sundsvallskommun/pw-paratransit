@@ -55,7 +55,7 @@ public class CheckErrandPhaseActionTaskWorker extends AbstractWorker {
 				.filter(extraParameters -> CASEDATA_KEY_DISPLAY_PHASE.equals(extraParameters.getKey()))
 				.findFirst()
 				.flatMap(extraParameters -> extraParameters.getValues().stream().findFirst())
-				.orElse(CASEDATA_KEY_DISPLAY_PHASE);
+				.orElse(null);
 
 			switch (phaseAction) {
 				case PHASE_ACTION_COMPLETE -> {

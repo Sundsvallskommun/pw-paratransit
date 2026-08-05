@@ -1,9 +1,7 @@
 package se.sundsvall.paratransit.businesslogic.worker;
 
 import generated.se.sundsvall.camunda.VariableValueDto;
-import generated.se.sundsvall.casedata.Attachment;
 import generated.se.sundsvall.casedata.Errand;
-import java.util.List;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskHandler;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -58,10 +56,6 @@ public abstract class AbstractWorker implements ExternalTaskHandler {
 	protected Errand getErrand(final String municipalityId, final String namespace, final Long caseNumber) {
 
 		return caseDataClient.getErrandById(municipalityId, namespace, caseNumber);
-	}
-
-	protected List<Attachment> getErrandAttachments(final String municipalityId, final String namespace, final Long caseNumber) {
-		return caseDataClient.getErrandAttachments(municipalityId, namespace, caseNumber);
 	}
 
 	protected void logInfo(final String msg, final Object... arguments) {
