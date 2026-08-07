@@ -5,6 +5,7 @@ import generated.se.sundsvall.camunda.ProcessInstanceDto;
 import generated.se.sundsvall.camunda.ProcessInstanceWithVariablesDto;
 import generated.se.sundsvall.camunda.StartProcessInstanceDto;
 import generated.se.sundsvall.camunda.VariableValueDto;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import org.camunda.bpm.engine.variable.type.ValueType;
@@ -96,6 +97,7 @@ class ProcessServiceTest {
 		final var logId = randomUUID().toString();
 
 		when(camundaClientMock.getProcessInstance(any())).thenReturn(Optional.of(new ProcessInstanceDto()));
+		when(camundaClientMock.getProcessInstanceVariables(any())).thenReturn(processVariables(municipalityId, namespace));
 
 		// Mock static RequestId to enable spy and to verify that static method is being called
 		try (final MockedStatic<RequestId> requestIdMock = mockStatic(RequestId.class)) {
@@ -107,6 +109,7 @@ class ProcessServiceTest {
 
 		// Assert
 		verify(camundaClientMock).getProcessInstance(uuid);
+		verify(camundaClientMock).getProcessInstanceVariables(uuid);
 		verify(camundaClientMock).setProcessInstanceVariables(eq(uuid), updateProcessArgumentCaptor.capture());
 		verifyNoMoreInteractions(camundaClientMock);
 		assertThat(updateProcessArgumentCaptor.getValue().getModifications()).hasSize(4)
@@ -142,5 +145,86 @@ class ProcessServiceTest {
 		verify(camundaClientMock).getProcessInstance(uuid);
 		verify(camundaClientMock, never()).setProcessInstanceVariables(any(), any());
 		verifyNoMoreInteractions(camundaClientMock);
+	}
+
+	@Test
+	void updateProcessWhenMunicipalityIdDoesNotMatch() {
+
+		// Arrange
+		final var municipalityId = "2281";
+		final var namespace = "SBK_PARKING_PERMIT";
+		final var uuid = randomUUID().toString();
+
+		when(camundaClientMock.getProcessInstance(any())).thenReturn(Optional.of(new ProcessInstanceDto()));
+		when(camundaClientMock.getProcessInstanceVariables(any())).thenReturn(processVariables("1234", namespace));
+
+		// Act
+		final var result = assertThrows(se.sundsvall.dept44.problem.ThrowableProblem.class, () -> processService.updateProcess(municipalityId, namespace, uuid));
+
+		// Assert
+		assertThat(result)
+			.hasFieldOrPropertyWithValue("status", NOT_FOUND)
+			.hasFieldOrPropertyWithValue("detail", "Process instance with ID '%s' does not exist!".formatted(uuid));
+
+		verify(camundaClientMock).getProcessInstance(uuid);
+		verify(camundaClientMock).getProcessInstanceVariables(uuid);
+		verify(camundaClientMock, never()).setProcessInstanceVariables(any(), any());
+		verifyNoMoreInteractions(camundaClientMock);
+	}
+
+	@Test
+	void updateProcessWhenNamespaceDoesNotMatch() {
+
+		// Arrange
+		final var municipalityId = "2281";
+		final var namespace = "SBK_PARKING_PERMIT";
+		final var uuid = randomUUID().toString();
+
+		when(camundaClientMock.getProcessInstance(any())).thenReturn(Optional.of(new ProcessInstanceDto()));
+		when(camundaClientMock.getProcessInstanceVariables(any())).thenReturn(processVariables(municipalityId, "OTHER_NAMESPACE"));
+
+		// Act
+		final var result = assertThrows(se.sundsvall.dept44.problem.ThrowableProblem.class, () -> processService.updateProcess(municipalityId, namespace, uuid));
+
+		// Assert
+		assertThat(result)
+			.hasFieldOrPropertyWithValue("status", NOT_FOUND)
+			.hasFieldOrPropertyWithValue("detail", "Process instance with ID '%s' does not exist!".formatted(uuid));
+
+		verify(camundaClientMock).getProcessInstance(uuid);
+		verify(camundaClientMock).getProcessInstanceVariables(uuid);
+		verify(camundaClientMock, never()).setProcessInstanceVariables(any(), any());
+		verifyNoMoreInteractions(camundaClientMock);
+	}
+
+	@Test
+	void updateProcessWhenVariablesAreMissing() {
+
+		// Arrange
+		final var municipalityId = "2281";
+		final var namespace = "SBK_PARKING_PERMIT";
+		final var uuid = randomUUID().toString();
+
+		when(camundaClientMock.getProcessInstance(any())).thenReturn(Optional.of(new ProcessInstanceDto()));
+		when(camundaClientMock.getProcessInstanceVariables(any())).thenReturn(null);
+
+		// Act
+		final var result = assertThrows(se.sundsvall.dept44.problem.ThrowableProblem.class, () -> processService.updateProcess(municipalityId, namespace, uuid));
+
+		// Assert
+		assertThat(result)
+			.hasFieldOrPropertyWithValue("status", NOT_FOUND)
+			.hasFieldOrPropertyWithValue("detail", "Process instance with ID '%s' does not exist!".formatted(uuid));
+
+		verify(camundaClientMock).getProcessInstance(uuid);
+		verify(camundaClientMock).getProcessInstanceVariables(uuid);
+		verify(camundaClientMock, never()).setProcessInstanceVariables(any(), any());
+		verifyNoMoreInteractions(camundaClientMock);
+	}
+
+	private static Map<String, VariableValueDto> processVariables(final String municipalityId, final String namespace) {
+		return Map.of(
+			"municipalityId", new VariableValueDto().type(ValueType.STRING.getName()).value(municipalityId),
+			"namespace", new VariableValueDto().type(ValueType.STRING.getName()).value(namespace));
 	}
 }
