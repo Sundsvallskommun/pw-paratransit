@@ -42,9 +42,9 @@ public class ProcessService {
 
 	public void updateProcess(final String municipalityId, final String namespace, final String processInstanceId) {
 		// New processes live in Operaton, older ones still in Camunda. Probe Operaton first and fall back to Camunda.
-		if (operatonClient.getProcessInstance(processInstanceId).isPresent() && belongsTo(municipalityId, namespace, processInstanceId)) {
+		if (operatonClient.getProcessInstance(processInstanceId).isPresent() && belongsToOperaton(municipalityId, namespace, processInstanceId)) {
 			operatonClient.setProcessInstanceVariables(processInstanceId, operatonUpdateVariables(municipalityId, namespace));
-		} else if (camundaClient.getProcessInstance(processInstanceId).isPresent() && belongsTo(municipalityId, namespace, processInstanceId)) {
+		} else if (camundaClient.getProcessInstance(processInstanceId).isPresent() && belongsToCamunda(municipalityId, namespace, processInstanceId)) {
 			camundaClient.setProcessInstanceVariables(processInstanceId, camundaUpdateVariables(municipalityId, namespace));
 		} else {
 			throw Problem.valueOf(NOT_FOUND, "Process instance with ID '%s' does not exist!".formatted(processInstanceId));
@@ -67,17 +67,25 @@ public class ProcessService {
 			PROCESS_VARIABLE_REQUEST_ID, CamundaMapper.toVariableValueDto(ValueType.STRING, RequestId.get())));
 	}
 
-	private boolean belongsTo(final String municipalityId, final String namespace, final String processInstanceId) {
-		final var variables = ofNullable(camundaClient.getProcessInstanceVariables(processInstanceId)).orElse(emptyMap());
+	/**
+	 * Verifies that the process instance belongs to the provided municipality and namespace. A process instance owned by
+	 * another municipality or namespace is reported as non existing, to avoid disclosing process instances outside of the
+	 * callers scope.
+	 */
+	private boolean belongsToOperaton(final String municipalityId, final String namespace, final String processInstanceId) {
+		final var variables = ofNullable(operatonClient.getProcessInstanceVariables(processInstanceId)).orElse(emptyMap());
 
-		return Objects.equals(municipalityId, toStringValue(variables.get(PROCESS_VARIABLE_MUNICIPALITY_ID)))
-				&& Objects.equals(namespace, toStringValue(variables.get(PROCESS_VARIABLE_NAMESPACE)));
+		return Objects.equals(municipalityId, ofNullable(variables.get(PROCESS_VARIABLE_MUNICIPALITY_ID)).map(generated.se.sundsvall.operaton.VariableValueDto::getValue).map(String::valueOf).orElse(null))
+			&& Objects.equals(namespace, ofNullable(variables.get(PROCESS_VARIABLE_NAMESPACE)).map(generated.se.sundsvall.operaton.VariableValueDto::getValue).map(String::valueOf).orElse(null));
 	}
 
-	private static String toStringValue(final VariableValueDto variable) {
-		return ofNullable(variable)
-				.map(VariableValueDto::getValue)
-				.map(String::valueOf)
-				.orElse(null);
+	/**
+	 * @see #belongsToOperaton(String, String, String)
+	 */
+	private boolean belongsToCamunda(final String municipalityId, final String namespace, final String processInstanceId) {
+		final var variables = ofNullable(camundaClient.getProcessInstanceVariables(processInstanceId)).orElse(emptyMap());
+
+		return Objects.equals(municipalityId, ofNullable(variables.get(PROCESS_VARIABLE_MUNICIPALITY_ID)).map(VariableValueDto::getValue).map(String::valueOf).orElse(null))
+			&& Objects.equals(namespace, ofNullable(variables.get(PROCESS_VARIABLE_NAMESPACE)).map(VariableValueDto::getValue).map(String::valueOf).orElse(null));
 	}
 }

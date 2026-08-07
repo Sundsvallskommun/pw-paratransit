@@ -9,6 +9,7 @@ import generated.se.sundsvall.operaton.VariableValueDto;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import java.io.File;
 import java.time.OffsetDateTime;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,4 +62,7 @@ public interface OperatonClient {
 
 	@GetMapping(path = "process-instance/{id}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
 	Optional<ProcessInstanceDto> getProcessInstance(@PathVariable String id);
+
+	@GetMapping(path = "process-instance/{id}/variables", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+	Map<String, VariableValueDto> getProcessInstanceVariables(@PathVariable String id);
 }
