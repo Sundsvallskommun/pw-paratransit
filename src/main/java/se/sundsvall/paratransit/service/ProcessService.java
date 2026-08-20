@@ -20,7 +20,7 @@ import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_MUNICIPALITY_I
 import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_NAMESPACE;
 import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_REQUEST_ID;
 import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_UPDATE_AVAILABLE;
-import static se.sundsvall.paratransit.Constants.TENANTID_TEMPLATE;
+import static se.sundsvall.paratransit.Constants.TENANT_ID;
 import static se.sundsvall.paratransit.Constants.TRUE;
 
 @Service
@@ -37,7 +37,7 @@ public class ProcessService {
 
 	public String startProcess(final String municipalityId, final String namespace, final Long caseNumber) {
 		// New processes are always created in Operaton.
-		return operatonClient.startProcessWithTenant(PROCESS_KEY, TENANTID_TEMPLATE, OperatonMapper.toStartProcessInstanceDto(municipalityId, namespace, caseNumber)).getId();
+		return operatonClient.startProcessWithTenant(PROCESS_KEY, TENANT_ID, OperatonMapper.toStartProcessInstanceDto(municipalityId, namespace, caseNumber)).getId();
 	}
 
 	public void updateProcess(final String municipalityId, final String namespace, final String processInstanceId) {

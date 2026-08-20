@@ -1,4 +1,4 @@
-package se.sundsvall.paratransit.integration.camunda.deployment;
+package se.sundsvall.paratransit.integration.engine.deployment;
 
 import jakarta.annotation.PostConstruct;
 import java.io.File;
@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import se.sundsvall.paratransit.integration.camunda.deployment.DeploymentProperties.ProcessArchive;
 import se.sundsvall.paratransit.integration.engine.EngineClient;
+import se.sundsvall.paratransit.integration.engine.deployment.DeploymentProperties.ProcessArchive;
 
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
