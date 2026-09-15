@@ -1,4 +1,4 @@
-package se.sundsvall.paratransit.integration.camunda.deployment;
+package se.sundsvall.paratransit.integration.engine.deployment;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import se.sundsvall.paratransit.Application;
-import se.sundsvall.paratransit.integration.camunda.deployment.DeploymentProperties.ProcessArchive;
+import se.sundsvall.paratransit.integration.engine.deployment.DeploymentProperties.ProcessArchive;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -23,7 +23,7 @@ class DeploymentPropertiesTest {
 	@Test
 	void testAnnotation() {
 		assertThat(DeploymentProperties.class).hasAnnotation(ConfigurationProperties.class);
-		assertThat(DeploymentProperties.class.getAnnotation(ConfigurationProperties.class).value()).isEqualTo("camunda.bpm.deployment");
+		assertThat(DeploymentProperties.class.getAnnotation(ConfigurationProperties.class).value()).isEqualTo("process-engine.deployment");
 	}
 
 	@Test

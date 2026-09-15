@@ -1,4 +1,4 @@
-package se.sundsvall.paratransit.integration.camunda.deployment;
+package se.sundsvall.paratransit.integration.engine.deployment;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package se.sundsvall.paratransit.integration.camunda.deployment;
+package se.sundsvall.paratransit.integration.engine.deployment;
 
 public class DeploymentException extends RuntimeException {
 	private static final long serialVersionUID = -1616889424590166876L;

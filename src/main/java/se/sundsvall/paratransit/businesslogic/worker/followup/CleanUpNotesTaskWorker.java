@@ -7,8 +7,8 @@ import org.camunda.bpm.client.task.ExternalTaskService;
 import org.springframework.stereotype.Component;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.businesslogic.worker.AbstractWorker;
-import se.sundsvall.paratransit.integration.camunda.CamundaClient;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
+import se.sundsvall.paratransit.integration.engine.EngineClient;
 
 import static generated.se.sundsvall.casedata.NoteType.INTERNAL;
 import static java.util.Collections.emptyList;
@@ -17,9 +17,9 @@ import static java.util.Collections.emptyList;
 @ExternalTaskSubscription("CleanUpNotesTask")
 public class CleanUpNotesTaskWorker extends AbstractWorker {
 
-	CleanUpNotesTaskWorker(final CamundaClient camundaClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
+	CleanUpNotesTaskWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
 
-		super(camundaClient, caseDataClient, failureHandler);
+		super(engineClient, caseDataClient, failureHandler);
 	}
 
 	@Override
