@@ -13175,7 +13175,7 @@
 									"summary": "POST /user/create",
 									"value": {
 										"credentials": {
-											"password": "s3cret"
+											"password": ""
 										},
 										"profile": {
 											"firstName": "John",
@@ -15873,8 +15873,8 @@
 								"example-1": {
 									"summary": "PUT /user/jonny1/credentials",
 									"value": {
-										"password": "s3cr3t",
-										"authenticatedUserPassword": "demo"
+										"password": "",
+										"authenticatedUserPassword": ""
 									}
 								}
 							}
