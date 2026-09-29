@@ -13,6 +13,8 @@ import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -102,8 +104,16 @@ class CheckDecisionTaskWorkerTest {
 	@Captor
 	private ArgumentCaptor<Map<String, Object>> mapCaptor;
 
-	@Test
-	void executeWhenDecisionIsDecidedAndApproved() {
+	@ParameterizedTest
+	@CsvSource({
+		"APPROVAL, true",
+		"CONDITIONAL_APPROVAL, true",
+		"REJECTION, false",
+		"DISMISSAL, false",
+		"CANCELLATION, false",
+		"REVOCATION, false"
+	})
+	void executeWhenDecisionIsDecided(final DecisionOutcomeEnum decisionOutcome, final boolean expectedIsApproved) {
 
 		// Arrange
 		final var status = new Status();
@@ -114,7 +124,7 @@ class CheckDecisionTaskWorkerTest {
 		when(externalTaskMock.getVariable(PROCESS_VARIABLE_NAMESPACE)).thenReturn(NAMESPACE);
 		when(externalTaskMock.getProcessInstanceId()).thenReturn(PROCESS_INSTANCE_ID);
 		when(caseDataClientMock.getErrandById(MUNICIPALITY_ID, NAMESPACE, ERRAND_ID)).thenReturn(errandMock);
-		when(errandMock.getDecisions()).thenReturn(List.of(createFinalDecision(APPROVAL)));
+		when(errandMock.getDecisions()).thenReturn(List.of(createFinalDecision(decisionOutcome)));
 		when(errandMock.getExtraParameters()).thenReturn(List.of(new ExtraParameter(KEY_PHASE_ACTION).addValuesItem("COMPLETE")));
 		when(errandMock.getStatuses()).thenReturn(List.of(status));
 
@@ -124,7 +134,7 @@ class CheckDecisionTaskWorkerTest {
 		// Assert and verify
 		verify(externalTaskServiceMock).complete(any(ExternalTask.class), mapCaptor.capture());
 		assertThat(mapCaptor.getValue()).containsEntry(PROCESS_VARIABLE_FINAL_DECISION, true)
-			.containsEntry(PROCESS_VARIABLE_IS_APPROVED, true);
+			.containsEntry(PROCESS_VARIABLE_IS_APPROVED, expectedIsApproved);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_REQUEST_ID);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_CASE_NUMBER);
 		verify(externalTaskMock).getVariable(PROCESS_VARIABLE_MUNICIPALITY_ID);
