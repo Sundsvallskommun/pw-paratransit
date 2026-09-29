@@ -16,6 +16,7 @@ import se.sundsvall.paratransit.integration.engine.EngineClient;
 
 import static generated.se.sundsvall.casedata.Decision.DecisionOutcomeEnum.APPROVAL;
 import static generated.se.sundsvall.casedata.Decision.DecisionOutcomeEnum.CONDITIONAL_APPROVAL;
+import static generated.se.sundsvall.casedata.Decision.DecisionOutcomeEnum.REVOCATION;
 import static generated.se.sundsvall.casedata.Decision.DecisionTypeEnum.FINAL;
 import static java.util.Collections.emptyList;
 import static se.sundsvall.paratransit.Constants.CASEDATA_PHASE_DECISION;
@@ -73,7 +74,7 @@ public class CheckDecisionTaskWorker extends AbstractWorker {
 	}
 
 	private boolean isApproved(final Decision.DecisionOutcomeEnum decisionOutcome) {
-		return APPROVAL.equals(decisionOutcome) || CONDITIONAL_APPROVAL.equals(decisionOutcome);
+		return APPROVAL.equals(decisionOutcome) || CONDITIONAL_APPROVAL.equals(decisionOutcome) || REVOCATION.equals(decisionOutcome);
 	}
 
 	private boolean isFinalDecision(final Errand errand) {
