@@ -111,7 +111,7 @@ class CheckDecisionTaskWorkerTest {
 		"REJECTION, false",
 		"DISMISSAL, false",
 		"CANCELLATION, false",
-		"REVOCATION, false"
+		"REVOCATION, true"
 	})
 	void executeWhenDecisionIsDecided(final DecisionOutcomeEnum decisionOutcome, final boolean expectedIsApproved) {
 
