@@ -22,7 +22,6 @@ import static apptest.mock.Decision.mockDecisionUpdateStatusExecuted;
 import static apptest.mock.Execution.mockExecution;
 import static apptest.mock.FollowUp.mockFollowUp;
 import static apptest.mock.Investigation.mockInvestigation;
-import static apptest.mock.api.ApiGateway.mockApiGatewayToken;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.verification.ProcessPathway.actualizationPathway;
@@ -71,7 +70,6 @@ class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 		final var scenarioName = "test_decision_001_createProcessForDecisionNotFinalToFinal";
 
 		// Setup mocks
-		mockApiGatewayToken();
 		mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		mockActualization(caseId, scenarioName);
 		final var stateAfterInvestigation = mockInvestigation(caseId, scenarioName);
@@ -173,7 +171,6 @@ class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 		final var scenarioName = "test_decision_002_createProcessForCancelWhenWaitForDecision_" + decisionType;
 
 		// Setup mocks
-		mockApiGatewayToken();
 		mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		mockActualization(caseId, scenarioName);
 		final var stateAfterInvestigation = mockInvestigation(caseId, scenarioName);
@@ -233,7 +230,6 @@ class ProcessWithDecisionDeviationIT extends AbstractCamundaAppTest {
 		final var scenarioName = "test_decision_003_createProcessForNotApproved";
 
 		// Setup mocks
-		mockApiGatewayToken();
 		mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		mockActualization(caseId, scenarioName);
 		final var stateAfterInvestigation = mockInvestigation(caseId, scenarioName);

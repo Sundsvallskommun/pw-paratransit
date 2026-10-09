@@ -19,7 +19,6 @@ import static apptest.mock.FollowUp.mockFollowUp;
 import static apptest.mock.Investigation.mockInvestigationCheckPhaseAction;
 import static apptest.mock.Investigation.mockInvestigationUpdatePhase;
 import static apptest.mock.Investigation.mockInvestigationUpdateStatus;
-import static apptest.mock.api.ApiGateway.mockApiGatewayToken;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.verification.ProcessPathway.actualizationPathway;
@@ -68,7 +67,6 @@ class ProcessWithInvestigationDeviationIT extends AbstractOperatonAppTest {
 		final var scenarioName = "test_investigation_002_createProcessForPhaseActionNotComplete";
 
 		// Setup mocks
-		mockApiGatewayToken();
 		mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterActualization = mockActualization(caseId, scenarioName);
 		// Mock deviation
@@ -167,7 +165,6 @@ class ProcessWithInvestigationDeviationIT extends AbstractOperatonAppTest {
 		final var scenarioName = "test_investigation_003_createProcessForCancelInInvestigation";
 
 		// Setup mocks
-		mockApiGatewayToken();
 		mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterActualization = mockActualization(caseId, scenarioName);
 
