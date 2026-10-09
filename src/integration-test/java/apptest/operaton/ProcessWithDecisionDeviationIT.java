@@ -164,7 +164,9 @@ class ProcessWithDecisionDeviationIT extends AbstractOperatonAppTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "FINAL", "PROPOSED" })
+	@ValueSource(strings = {
+		"FINAL", "PROPOSED"
+	})
 	void test_decision_002_createProcessForCancelWhenWaitForDecision(final String decisionType) throws ClassNotFoundException {
 
 		final var caseId = "910";

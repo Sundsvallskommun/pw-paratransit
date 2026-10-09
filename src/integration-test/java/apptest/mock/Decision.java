@@ -1,5 +1,7 @@
 package apptest.mock;
 
+import java.util.Map;
+
 import static apptest.mock.api.CaseData.createPatchErrandBody;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataPatch;
@@ -8,14 +10,12 @@ import static apptest.mock.api.CaseData.mockCaseDataPatchStatus;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 
-import java.util.Map;
-
 public class Decision {
 
 	public static String mockDecision(final String caseId, final String scenarioName) {
 		var scenarioAfterUpdatePhase = mockDecisionUpdatePhase(caseId, scenarioName, "investigation_check-phase-action_task-worker---api-casedata-patch-extra-parameters");
 		var scenarioAfterUpdateStatus = mockDecisionUpdateStatusDeciding(caseId, scenarioName, scenarioAfterUpdatePhase);
-		var scenarioAfterCheckDecision =  mockDecisionCheckIfDecisionMade(caseId, scenarioName, scenarioAfterUpdateStatus);
+		var scenarioAfterCheckDecision = mockDecisionCheckIfDecisionMade(caseId, scenarioName, scenarioAfterUpdateStatus);
 		return mockDecisionUpdateStatusExecuted(caseId, scenarioName, scenarioAfterCheckDecision);
 	}
 
@@ -93,7 +93,6 @@ public class Decision {
 				  }
 				"""));
 	}
-
 
 	public static String mockDecisionCheckIfDecisionMade(final String caseId, final String scenarioName, final String requiredScenarioState) {
 		return mockCaseDataGet(caseId, scenarioName, requiredScenarioState,
