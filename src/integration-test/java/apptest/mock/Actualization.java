@@ -1,5 +1,7 @@
 package apptest.mock;
 
+import java.util.Map;
+
 import static apptest.mock.api.CaseData.createPatchErrandBody;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataPatch;
@@ -9,8 +11,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_COMPLETE;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
 import static se.sundsvall.paratransit.Constants.PHASE_STATUS_COMPLETED;
-
-import java.util.Map;
 
 public class Actualization {
 
@@ -37,7 +37,7 @@ public class Actualization {
 			equalToJson(createPatchErrandBody("Aktualisering")));
 
 		return mockCaseDataPatchExtraParameters(caseId, scenarioName, stateAfterErrandPatch,
-		"actualization_update-phase-task-worker---api-casedata-patch-extra-parameters",
+			"actualization_update-phase-task-worker---api-casedata-patch-extra-parameters",
 			equalToJson("""
 				 [
 				    {
@@ -91,7 +91,6 @@ public class Actualization {
 				]
 				""".formatted(PHASE_STATUS_COMPLETED, PHASE_ACTION_COMPLETE)));
 	}
-
 
 	public static String mockActualizationUpdateDisplayPhase(final String caseId, final String scenarioName, final String requiredScenarioState) {
 		final var stateAfterGetErrand = mockCaseDataGet(caseId, scenarioName, requiredScenarioState,

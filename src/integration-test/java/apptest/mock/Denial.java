@@ -1,5 +1,7 @@
 package apptest.mock;
 
+import java.util.Map;
+
 import static apptest.mock.api.CaseData.createPatchErrandBody;
 import static apptest.mock.api.CaseData.mockCaseDataAddMessagePost;
 import static apptest.mock.api.CaseData.mockCaseDataAddStakeholderPatch;
@@ -12,8 +14,6 @@ import static apptest.mock.api.Messaging.mockMessagingWebMessagePost;
 import static apptest.mock.api.Templating.mockRenderPdf;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static se.sundsvall.paratransit.Constants.PHASE_ACTION_UNKNOWN;
-
-import java.util.Map;
 
 public class Denial {
 
@@ -85,49 +85,50 @@ public class Denial {
 
 		return mockCaseDataDecisionPatch(caseId, scenarioName, stateAfterRenderPdf,
 			"automatic_denial_decision-task-worker---api-casedata-add-decision",
-			equalToJson("""
-							{
-								"created": "${json-unit.any-string}",
-								"decisionType": "FINAL",
-								"decisionOutcome": "DISMISSAL",
-								"description": "Personen inte folkbokförd i Sundsvalls kommun.",
-								"law": [
-									{
-										"heading": "13 kap. 8§ Parkeringstillstånd för rörelsehindrade",
-										"sfs": "Trafikförordningen (1998:1276)",
-										"chapter": "13",
-										"article": "8"
-									}
-								],
-								"decidedBy": {
-									"id": 2,
-									"version": 2,
-									"created": "2022-12-02T15:18:45.363499+01:00",
-									"updated": "2022-12-02T15:19:01.5636+01:00",
-									"type": "PERSON",
-									"firstName": "Process",
-									"lastName": "Engine",
-									"roles": [
-										"REPORTER"
+			equalToJson(
+				"""
+								{
+									"created": "${json-unit.any-string}",
+									"decisionType": "FINAL",
+									"decisionOutcome": "DISMISSAL",
+									"description": "Personen inte folkbokförd i Sundsvalls kommun.",
+									"law": [
+										{
+											"heading": "13 kap. 8§ Parkeringstillstånd för rörelsehindrade",
+											"sfs": "Trafikförordningen (1998:1276)",
+											"chapter": "13",
+											"article": "8"
+										}
 									],
-									"addresses": [],
-									"contactInformation": [],
+									"decidedBy": {
+										"id": 2,
+										"version": 2,
+										"created": "2022-12-02T15:18:45.363499+01:00",
+										"updated": "2022-12-02T15:19:01.5636+01:00",
+										"type": "PERSON",
+										"firstName": "Process",
+										"lastName": "Engine",
+										"roles": [
+											"REPORTER"
+										],
+										"addresses": [],
+										"contactInformation": [],
+										"extraParameters": {}
+									},
+									"decidedAt": "${json-unit.any-string}",
+									"attachments": [
+										{
+											"category": "BESLUT",
+											"name": "beslut.pdf",
+											"extension": "pdf",
+											"mimeType": "application/pdf",
+											"extraParameters": {},
+											"file": "JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvTGFuZyhzdi1TRSkgL1N0cnVjdFRyZWVSb290IDE0IDAgUi9NYXJrSW5mbzw8L01hcmtlZCB0cnVlPj4vTWV0YWRhdGEgMjUgMCBSL1ZpZXdlclByZWZlcmVuY2VzIDI2IDAgUj4"
+										}
+									],
 									"extraParameters": {}
-								},
-								"decidedAt": "${json-unit.any-string}",
-								"attachments": [
-									{
-										"category": "BESLUT",
-										"name": "beslut.pdf",
-										"extension": "pdf",
-										"mimeType": "application/pdf",
-										"extraParameters": {},
-										"file": "JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvTGFuZyhzdi1TRSkgL1N0cnVjdFRyZWVSb290IDE0IDAgUi9NYXJrSW5mbzw8L01hcmtlZCB0cnVlPj4vTWV0YWRhdGEgMjUgMCBSL1ZpZXdlclByZWZlcmVuY2VzIDI2IDAgUj4"
-									}
-								],
-								"extraParameters": {}
-							}
-				"""));
+								}
+					"""));
 	}
 
 	public static String mockDenialUpdateStatus(final String caseId, final String scenarioName, final String requiredScenarioState) {
@@ -175,27 +176,28 @@ public class Denial {
 				"""));
 
 		return mockMessagingWebMessagePost(scenarioName, state, "automatic-denial_send-denial-decision-task-worker---api-messaging-send-web-message",
-			equalToJson("""
-							{
-								"party": {
-									"partyId": "6b8928bb-9800-4d52-a9fa-20d88c81f1d6",
-									"externalReferences" : [ {
-				                              "key" : "flowInstanceId",
-				                              "value" : "2971"
-				                          } ]
-								},
-								"message": "Ärendet avskrivs",
-								"sendAsOwner" : false,
-				                "oepInstance" : "EXTERNAL",
-								"attachments": [
-									{
-										"fileName": "beslut.pdf",
-										"mimeType": "application/pdf",
-										"base64Data": "JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvTGFuZyhzdi1TRSkgL1N0cnVjdFRyZWVSb290IDE0IDAgUi9NYXJrSW5mbzw8L01hcmtlZCB0cnVlPj4vTWV0YWRhdGEgMjUgMCBSL1ZpZXdlclByZWZlcmVuY2VzIDI2IDAgUj4"
-									}
-								]
-							}
-				"""));
+			equalToJson(
+				"""
+								{
+									"party": {
+										"partyId": "6b8928bb-9800-4d52-a9fa-20d88c81f1d6",
+										"externalReferences" : [ {
+					                              "key" : "flowInstanceId",
+					                              "value" : "2971"
+					                          } ]
+									},
+									"message": "Ärendet avskrivs",
+									"sendAsOwner" : false,
+					                "oepInstance" : "EXTERNAL",
+									"attachments": [
+										{
+											"fileName": "beslut.pdf",
+											"mimeType": "application/pdf",
+											"base64Data": "JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvTGFuZyhzdi1TRSkgL1N0cnVjdFRyZWVSb290IDE0IDAgUi9NYXJrSW5mbzw8L01hcmtlZCB0cnVlPj4vTWV0YWRhdGEgMjUgMCBSL1ZpZXdlclByZWZlcmVuY2VzIDI2IDAgUj4"
+										}
+									]
+								}
+					"""));
 	}
 
 	public static String mockDenialAddMessageToErrand(final String caseId, final String scenarioName, final String requiredScenarioState) {
@@ -224,26 +226,27 @@ public class Denial {
 
 		return mockCaseDataAddMessagePost(caseId, scenarioName, state,
 			"automatic_denial_add-message-to-errand-task-worker---api-post-message",
-			equalToJson("""
-							{
-								"messageId": "570c3e28-b640-49e9-899c-9d290eb0539a",
-								"direction": "OUTBOUND",
-								"externalCaseId": "2971",
-								"message": "Hej\\n\\nDu har fått ett beslut från Sundsvalls kommun.\\n\\nMed vänlig hälsning\\nSundsvalls kommun",
-								"sent": "${json-unit.any-string}",
-								"subject": "Beslut från Sundsvalls kommun",
-								"username": "ProcessEngine",
-								"recipients" : [ ],
-								"attachments": [
-									{
-										"content": "JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvTGFuZyhzdi1TRSkgL1N0cnVjdFRyZWVSb290IDE0IDAgUi9NYXJrSW5mbzw8L01hcmtlZCB0cnVlPj4vTWV0YWRhdGEgMjUgMCBSL1ZpZXdlclByZWZlcmVuY2VzIDI2IDAgUj4",
-										"name": "beslut.pdf",
-										"contentType": "application/pdf"
-									}
-								],
-								"emailHeaders": []
-							}
-				"""));
+			equalToJson(
+				"""
+								{
+									"messageId": "570c3e28-b640-49e9-899c-9d290eb0539a",
+									"direction": "OUTBOUND",
+									"externalCaseId": "2971",
+									"message": "Hej\\n\\nDu har fått ett beslut från Sundsvalls kommun.\\n\\nMed vänlig hälsning\\nSundsvalls kommun",
+									"sent": "${json-unit.any-string}",
+									"subject": "Beslut från Sundsvalls kommun",
+									"username": "ProcessEngine",
+									"recipients" : [ ],
+									"attachments": [
+										{
+											"content": "JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvTGFuZyhzdi1TRSkgL1N0cnVjdFRyZWVSb290IDE0IDAgUi9NYXJrSW5mbzw8L01hcmtlZCB0cnVlPj4vTWV0YWRhdGEgMjUgMCBSL1ZpZXdlclByZWZlcmVuY2VzIDI2IDAgUj4",
+											"name": "beslut.pdf",
+											"contentType": "application/pdf"
+										}
+									],
+									"emailHeaders": []
+								}
+					"""));
 	}
 
 	public static String mockSendSimplifiedService(final String caseId, final String scenarioName, String requiredScenarioState) {
@@ -256,21 +259,22 @@ public class Denial {
 				"displayPhaseParameter", "Beslut"));
 
 		mockMessagingWebMessagePost(
-			equalToJson("""
-							{
-								"party" : {
-									"partyId" : "6b8928bb-9800-4d52-a9fa-20d88c81f1d6",
-									"externalReferences" : [ {
-										"key" : "flowInstanceId",
-										"value" : "2971"
-									} ]
-				      			},
-				      			"message" : "Kontrollmeddelande för förenklad delgivning\\n\\nVi har nyligen delgivit dig ett beslut via brev. Du får nu ett kontrollmeddelande för att säkerställa att du mottagit informationen.\\nNär det har gått två veckor från det att beslutet skickades anses du blivit delgiven och du har då tre veckor på dig att överklaga beslutet.\\nOm du bara fått kontrollmeddelandet men inte själva delgivningen med beslutet måste du kontakta oss via e-post till\\nkontakt@sundsvall.se eller telefon till 060-19 10 00.",
-				                "sendAsOwner" : false,
-				                "oepInstance" : "EXTERNAL",
-				      			"attachments" : [ ]
-				    		}
-				"""));
+			equalToJson(
+				"""
+								{
+									"party" : {
+										"partyId" : "6b8928bb-9800-4d52-a9fa-20d88c81f1d6",
+										"externalReferences" : [ {
+											"key" : "flowInstanceId",
+											"value" : "2971"
+										} ]
+					      			},
+					      			"message" : "Kontrollmeddelande för förenklad delgivning\\n\\nVi har nyligen delgivit dig ett beslut via brev. Du får nu ett kontrollmeddelande för att säkerställa att du mottagit informationen.\\nNär det har gått två veckor från det att beslutet skickades anses du blivit delgiven och du har då tre veckor på dig att överklaga beslutet.\\nOm du bara fått kontrollmeddelandet men inte själva delgivningen med beslutet måste du kontakta oss via e-post till\\nkontakt@sundsvall.se eller telefon till 060-19 10 00.",
+					                "sendAsOwner" : false,
+					                "oepInstance" : "EXTERNAL",
+					      			"attachments" : [ ]
+					    		}
+					"""));
 		return state;
 	}
 }

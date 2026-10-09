@@ -1,14 +1,5 @@
 package apptest;
 
-import static generated.se.sundsvall.camunda.HistoricProcessInstanceDto.StateEnum.COMPLETED;
-import static java.util.Comparator.comparing;
-import static java.util.Objects.isNull;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static java.util.stream.Stream.concat;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.equalTo;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import generated.se.sundsvall.camunda.HistoricActivityInstanceDto;
@@ -25,6 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import se.sundsvall.dept44.test.AbstractAppTest;
 import se.sundsvall.paratransit.integration.camunda.CamundaClient;
+
+import static generated.se.sundsvall.camunda.HistoricProcessInstanceDto.StateEnum.COMPLETED;
+import static java.util.Comparator.comparing;
+import static java.util.Objects.isNull;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.stream.Stream.concat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Engine-neutral base for the testcontainer-driven process tests. Holds the shared assertion and await helpers; the

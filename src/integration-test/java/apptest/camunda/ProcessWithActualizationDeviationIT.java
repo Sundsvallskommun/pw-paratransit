@@ -22,7 +22,6 @@ import static apptest.mock.Decision.mockDecision;
 import static apptest.mock.Execution.mockExecution;
 import static apptest.mock.FollowUp.mockFollowUp;
 import static apptest.mock.Investigation.mockInvestigation;
-import static apptest.mock.api.ApiGateway.mockApiGatewayToken;
 import static apptest.mock.api.CaseData.mockCaseDataGet;
 import static apptest.mock.api.CaseData.mockCaseDataPatchExtraParameters;
 import static apptest.verification.ProcessPathway.canceledPathway;
@@ -71,7 +70,6 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		final var scenarioName = "test_actualization_001_createProcessForCancelInActualization";
 
 		// Setup mocks
-		mockApiGatewayToken();
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
 		final var stateAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, stateAfterUpdatePhase);
@@ -153,7 +151,6 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		final var scenarioName = "test_actualization_002_createProcessForActualizationNotComplete";
 
 		// Setup mocks
-		mockApiGatewayToken();
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
 		final var stateAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, stateAfterUpdatePhase);
@@ -261,7 +258,6 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		final var scenarioName = "test_actualization_003_createProcessForCancelInVerifyStatus";
 
 		// Setup mocks
-		mockApiGatewayToken();
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
 
@@ -329,7 +325,6 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		final var scenarioName = "test_actualization_test004_createProcessWaitingForStatusUpdateInActualization";
 
 		// Setup mocks
-		mockApiGatewayToken();
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
 		final var stateAfterVerifyStatusDraft = mockCaseDataGet(caseId, scenarioName, stateAfterUpdatePhase,
@@ -434,7 +429,6 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		final var scenarioName = "test_actualization_005_createProcessForCancelInVerifyStakeholders";
 
 		// Setup mocks
-		mockApiGatewayToken();
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
 		final var stateAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, stateAfterUpdatePhase);
@@ -505,7 +499,6 @@ class ProcessWithActualizationDeviationIT extends AbstractCamundaAppTest {
 		final var scenarioName = "test_actualization_006_createProcessWaitingForStakeholdersUpdateInActualization";
 
 		// Setup mocks
-		mockApiGatewayToken();
 		final var stateAfterCheckAppeal = mockCheckAppeal(caseId, scenarioName, CASE_TYPE_PARATRANSIT);
 		final var stateAfterUpdatePhase = mockActualizationUpdatePhase(caseId, scenarioName, stateAfterCheckAppeal);
 		final var stateAfterVerifyStatus = mockActualizationVerifyStatus(caseId, scenarioName, stateAfterUpdatePhase);
