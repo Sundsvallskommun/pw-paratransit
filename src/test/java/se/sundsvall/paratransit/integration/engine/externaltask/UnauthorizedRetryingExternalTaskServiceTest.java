@@ -83,6 +83,19 @@ class UnauthorizedRetryingExternalTaskServiceTest {
 		verifyNoInteractions(tokenMock);
 	}
 
+	@Test
+	void propagatesErrorWithoutRetry() {
+		doThrow(new OutOfMemoryError("out of memory")).when(externalTaskServiceMock).complete(externalTaskMock);
+
+		final var externalTaskService = UnauthorizedRetryingExternalTaskService.wrap(externalTaskServiceMock, tokenMock);
+
+		assertThatExceptionOfType(OutOfMemoryError.class)
+			.isThrownBy(() -> externalTaskService.complete(externalTaskMock));
+
+		verify(externalTaskServiceMock).complete(externalTaskMock);
+		verifyNoInteractions(tokenMock);
+	}
+
 	private static UnknownHttpErrorException unauthorized() {
 		final var restException = new RestException("message", "type", 0);
 		restException.setHttpStatusCode(401);
