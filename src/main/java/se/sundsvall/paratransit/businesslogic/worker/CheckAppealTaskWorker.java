@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 import se.sundsvall.paratransit.integration.engine.EngineClient;
+import se.sundsvall.paratransit.integration.engine.externaltask.OperatonExternalTaskToken;
 
 import static se.sundsvall.paratransit.Constants.CASE_TYPE_APPEAL;
 import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_IS_APPEAL;
@@ -17,9 +18,9 @@ import static se.sundsvall.paratransit.Constants.PROCESS_VARIABLE_IS_APPEAL;
 @ExternalTaskSubscription("CheckAppealTask")
 public class CheckAppealTaskWorker extends AbstractWorker {
 
-	CheckAppealTaskWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
+	CheckAppealTaskWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler, final OperatonExternalTaskToken token) {
 
-		super(engineClient, caseDataClient, failureHandler);
+		super(engineClient, caseDataClient, failureHandler, token);
 	}
 
 	@Override

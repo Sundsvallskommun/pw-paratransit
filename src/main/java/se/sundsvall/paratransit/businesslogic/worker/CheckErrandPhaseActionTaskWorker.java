@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 import se.sundsvall.paratransit.integration.engine.EngineClient;
+import se.sundsvall.paratransit.integration.engine.externaltask.OperatonExternalTaskToken;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
@@ -29,9 +30,9 @@ import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMappe
 @ExternalTaskSubscription("CheckErrandPhaseActionTask")
 public class CheckErrandPhaseActionTaskWorker extends AbstractWorker {
 
-	CheckErrandPhaseActionTaskWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
+	CheckErrandPhaseActionTaskWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler, final OperatonExternalTaskToken token) {
 
-		super(engineClient, caseDataClient, failureHandler);
+		super(engineClient, caseDataClient, failureHandler, token);
 	}
 
 	@Override

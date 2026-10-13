@@ -17,6 +17,15 @@ openapi:
   title: ${spring.application.name}
   version: '@project.version@'
 #----------------------------------------
+# External task client
+#----------------------------------------
+# Why: subscriptions open one by one at startup and the first long poll only carries the topics open at that moment,
+# so the remaining topics wait for it to time out. Kept below the 30 s await of the process tests.
+camunda:
+  bpm:
+    client:
+      async-response-timeout: 2000
+#----------------------------------------
 # Camunda integration settings
 #----------------------------------------
 # Rest client

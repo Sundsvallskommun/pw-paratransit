@@ -65,6 +65,11 @@ camunda:
       # URL to the process engine REST API that the external task client polls to fetch and lock external tasks.
       # Derived from process-engine.type, so polling always hits the same engine the workers write to.
       base-url: ${config.${process-engine.type}.base-url}
+      # Long polling: the engine answers as soon as a task is created, so the timeout only bounds an idle poll. Must stay
+      # below the WSO2 endpoint timeout, the ingress idle timeout and the pod's termination grace period, since
+      # shutdown waits for the ongoing poll
+      async-response-timeout: 25000
+      # Backs off after a failed fetch only, see ExternalTaskClientConfiguration
       backoff:
         initTime: 500
         factor: 2

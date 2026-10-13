@@ -10,6 +10,7 @@ import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.businesslogic.worker.AbstractWorker;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 import se.sundsvall.paratransit.integration.engine.EngineClient;
+import se.sundsvall.paratransit.integration.engine.externaltask.OperatonExternalTaskToken;
 
 import static java.util.Objects.isNull;
 import static se.sundsvall.paratransit.Constants.CASEDATA_STATUS_DRAFT;
@@ -26,9 +27,9 @@ import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMappe
 @ExternalTaskSubscription("VerifyStatus")
 public class VerifyStatusTaskWorker extends AbstractWorker {
 
-	VerifyStatusTaskWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
+	VerifyStatusTaskWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler, final OperatonExternalTaskToken token) {
 
-		super(engineClient, caseDataClient, failureHandler);
+		super(engineClient, caseDataClient, failureHandler, token);
 	}
 
 	@Override

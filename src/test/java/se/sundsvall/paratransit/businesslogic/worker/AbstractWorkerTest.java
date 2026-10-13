@@ -2,6 +2,8 @@ package se.sundsvall.paratransit.businesslogic.worker;
 
 import generated.se.sundsvall.camunda.VariableValueDto;
 import java.util.UUID;
+import org.camunda.bpm.client.exception.RestException;
+import org.camunda.bpm.client.exception.UnknownHttpErrorException;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.camunda.bpm.engine.variable.type.ValueType;
@@ -15,8 +17,11 @@ import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 import se.sundsvall.paratransit.integration.engine.EngineClient;
+import se.sundsvall.paratransit.integration.engine.externaltask.OperatonExternalTaskToken;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -27,15 +32,15 @@ class AbstractWorkerTest {
 
 	private static class Worker extends AbstractWorker {
 
-		protected Worker(EngineClient engineClient, CaseDataClient caseDataClient, FailureHandler failureHandler) {
-			super(engineClient, caseDataClient, failureHandler);
+		protected Worker(EngineClient engineClient, CaseDataClient caseDataClient, FailureHandler failureHandler, OperatonExternalTaskToken token) {
+			super(engineClient, caseDataClient, failureHandler, token);
 		}
 
 		@Override
 		protected void executeBusinessLogic(ExternalTask externalTask, ExternalTaskService externalTaskService) {
-			// Do nothing
+			externalTaskService.complete(externalTask);
 		}
-	} // Test class extending the abstract class containing the clearUpdateAvailable method
+	} // Test class extending the abstract class, completing the task through the service it is given
 
 	@Mock
 	private EngineClient engineClientMock;
@@ -48,6 +53,9 @@ class AbstractWorkerTest {
 
 	@Mock
 	private CaseDataClient caseDataClientMock;
+
+	@Mock
+	private OperatonExternalTaskToken tokenMock;
 
 	@InjectMocks
 	private Worker worker;
@@ -84,6 +92,19 @@ class AbstractWorkerTest {
 			// Verify static method
 			requestIdMock.verify(() -> RequestId.init(requestId));
 		}
+		verify(externalTaskServiceMock).complete(externalTaskMock);
+	}
+
+	@Test
+	void executeRetriesServiceCallOnUnauthorized() {
+		final var restException = new RestException("message", "type", 0);
+		restException.setHttpStatusCode(401);
+		doThrow(new UnknownHttpErrorException("Unauthorized", restException)).doNothing().when(externalTaskServiceMock).complete(externalTaskMock);
+
+		worker.execute(externalTaskMock, externalTaskServiceMock);
+
+		verify(externalTaskServiceMock, times(2)).complete(externalTaskMock);
+		verifyNoMoreInteractions(externalTaskServiceMock);
 	}
 
 }
