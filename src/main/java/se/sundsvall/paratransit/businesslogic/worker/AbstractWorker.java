@@ -11,6 +11,8 @@ import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 import se.sundsvall.paratransit.integration.engine.EngineClient;
+import se.sundsvall.paratransit.integration.engine.externaltask.OperatonExternalTaskToken;
+import se.sundsvall.paratransit.integration.engine.externaltask.UnauthorizedRetryingExternalTaskService;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
@@ -33,11 +35,14 @@ public abstract class AbstractWorker implements ExternalTaskHandler {
 
 	protected final FailureHandler failureHandler;
 
-	protected AbstractWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler) {
+	private final OperatonExternalTaskToken token;
+
+	protected AbstractWorker(final EngineClient engineClient, final CaseDataClient caseDataClient, final FailureHandler failureHandler, final OperatonExternalTaskToken token) {
 		this.logger = LoggerFactory.getLogger(getClass());
 		this.engineClient = engineClient;
 		this.caseDataClient = caseDataClient;
 		this.failureHandler = failureHandler;
+		this.token = token;
 	}
 
 	protected void clearUpdateAvailable(final ExternalTask externalTask) {
@@ -71,7 +76,7 @@ public abstract class AbstractWorker implements ExternalTaskHandler {
 	@Override
 	public void execute(final ExternalTask externalTask, final ExternalTaskService externalTaskService) {
 		RequestId.init(externalTask.getVariable(PROCESS_VARIABLE_REQUEST_ID));
-		executeBusinessLogic(externalTask, externalTaskService);
+		executeBusinessLogic(externalTask, UnauthorizedRetryingExternalTaskService.wrap(externalTaskService, token));
 	}
 
 	protected String getMunicipalityId(final ExternalTask externalTask) {

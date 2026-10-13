@@ -1,4 +1,4 @@
-package se.sundsvall.paratransit.integration.camunda.configuration;
+package se.sundsvall.paratransit.integration.engine.externaltask;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

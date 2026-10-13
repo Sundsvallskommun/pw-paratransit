@@ -15,6 +15,7 @@ import se.sundsvall.paratransit.businesslogic.handler.FailureHandler;
 import se.sundsvall.paratransit.businesslogic.worker.AbstractWorker;
 import se.sundsvall.paratransit.integration.casedata.CaseDataClient;
 import se.sundsvall.paratransit.integration.engine.EngineClient;
+import se.sundsvall.paratransit.integration.engine.externaltask.OperatonExternalTaskToken;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
@@ -36,8 +37,8 @@ import static se.sundsvall.paratransit.integration.casedata.mapper.CaseDataMappe
 @ExternalTaskSubscription("VerifyStakeholdersExists")
 public class VerifyStakeholdersExistsTaskWorker extends AbstractWorker {
 
-	VerifyStakeholdersExistsTaskWorker(EngineClient engineClient, CaseDataClient caseDataClient, FailureHandler failureHandler) {
-		super(engineClient, caseDataClient, failureHandler);
+	VerifyStakeholdersExistsTaskWorker(EngineClient engineClient, CaseDataClient caseDataClient, FailureHandler failureHandler, OperatonExternalTaskToken token) {
+		super(engineClient, caseDataClient, failureHandler, token);
 	}
 
 	@Override
